@@ -1,0 +1,1009 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Chappal Dodge 🥿</title>
+<link href="https://fonts.googleapis.com/css2?family=Boogaloo&family=Nunito:wght@700;900&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --bg:#0e0a00;--amber:#ffb300;--red:#ff3d3d;--green:#00e676;
+  --orange:#ff6d00;--cyan:#00d4ff;--purple:#c044ff;--glow:0 0 20px #ffb30088;
+}
+body{
+  background:var(--bg);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;min-height:100vh;
+  font-family:'Nunito',sans-serif;overflow:hidden;
+  background-image:
+    radial-gradient(ellipse at 20% 20%,#2a1400 0%,transparent 55%),
+    radial-gradient(ellipse at 80% 80%,#1a0800 0%,transparent 55%);
+}
+
+/* ─── BACK TO HUB BUTTON (shared style) ─── */
+.back-to-hub{
+  position:absolute;top:14px;left:16px;z-index:15;
+  background:rgba(0,0,0,0.5);border:1px solid #3a2a00;
+  border-radius:8px;padding:7px 14px;color:#6a4a10;
+  font-family:'Boogaloo',cursive;font-size:1rem;
+  cursor:pointer;transition:all .18s;letter-spacing:1px;
+  text-decoration:none; color:#6a4a10;
+}
+.back-to-hub:hover{border-color:var(--amber);color:var(--amber);background:rgba(0,0,0,0.7);}
+
+/* ─── TITLE ─── */
+#titleScreen{
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;z-index:10;
+  background:radial-gradient(ellipse at center,#1c1000 0%,#060400 100%);
+}
+.game-title{
+  font-family:'Boogaloo',cursive;font-size:clamp(3rem,9vw,5.5rem);
+  color:var(--amber);text-shadow:0 0 50px #ffb300bb,0 5px 0 #6a4500;
+  letter-spacing:2px;margin-bottom:6px;
+  animation:titleBob 2s ease-in-out infinite;
+}
+@keyframes titleBob{0%,100%{transform:translateY(0) rotate(-1.5deg);}50%{transform:translateY(-10px) rotate(1.5deg);}}
+.chappal-emoji{font-size:5rem;display:block;text-align:center;margin-bottom:14px;
+  animation:spin 2.5s linear infinite;}
+@keyframes spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+.subtitle{color:#a07000;font-size:1.05rem;margin-bottom:10px;font-weight:700;letter-spacing:1px;}
+.difficulty-tag{
+  background:#ff3d3d22;border:1px solid #ff3d3d55;border-radius:20px;
+  color:#ff7060;font-size:0.78rem;font-weight:700;letter-spacing:2px;
+  padding:5px 14px;margin-bottom:32px;
+}
+
+.btn-start{
+  background:linear-gradient(135deg,var(--amber),var(--orange));
+  border:none;border-radius:16px;padding:16px 52px;font-size:1.45rem;
+  font-family:'Boogaloo',cursive;color:#120800;cursor:pointer;letter-spacing:1px;
+  box-shadow:0 6px 32px #ffb30077,0 3px 0 #7a5200;
+  transition:transform .12s,box-shadow .15s;
+}
+.btn-start:hover{transform:translateY(-4px) scale(1.05);box-shadow:0 12px 44px #ffb300aa,0 3px 0 #7a5200;}
+.btn-start:active{transform:translateY(1px);}
+
+.how-to{margin-top:28px;color:#5a3a00;font-size:0.82rem;text-align:center;line-height:2.2;}
+.how-to span{color:#a07020;}
+.legend{
+  display:flex;gap:16px;margin-top:14px;flex-wrap:wrap;justify-content:center;
+}
+.legend-item{
+  display:flex;align-items:center;gap:6px;font-size:0.75rem;color:#6a4a10;
+}
+.legend-dot{width:12px;height:12px;border-radius:50%;}
+
+/* ─── BACK TO HUB BUTTON (visible only after game over) ─── */
+#backToHub{
+  position:absolute;top:14px;left:16px;z-index:15;
+  background:rgba(0,0,0,0.5);border:1px solid #3a2a00;
+  border-radius:8px;padding:7px 14px;color:#6a4a10;
+  font-family:'Boogaloo',cursive;font-size:1rem;
+  cursor:pointer;transition:all .18s;letter-spacing:1px;
+  display:none; /* hidden by default, shown after game over */
+  text-decoration:none; color:#6a4a10;
+}
+#backToHub:hover{border-color:var(--amber);color:var(--amber);background:rgba(0,0,0,0.7);}
+
+/* ─── HUD ─── */
+#hud{
+  position:absolute;top:0;left:0;right:0;
+  display:none;justify-content:space-between;align-items:flex-start;
+  padding:12px 20px;z-index:5;
+  background:linear-gradient(to bottom,#0e0a00dd,transparent);
+}
+.hud-left{display:flex;flex-direction:column;gap:2px;}
+.hud-score{font-family:'Boogaloo',cursive;font-size:2rem;color:var(--amber);text-shadow:var(--glow);line-height:1;}
+.hud-level{font-size:0.78rem;color:#a07020;font-weight:700;letter-spacing:1px;}
+.hud-center{display:flex;flex-direction:column;align-items:center;gap:4px;}
+.hud-lives{font-size:1.4rem;letter-spacing:3px;}
+.hud-combo{
+  font-family:'Boogaloo',cursive;font-size:1rem;color:var(--green);
+  min-height:20px;letter-spacing:1px;
+}
+.hud-right{display:flex;flex-direction:column;align-items:flex-end;gap:4px;}
+.powerup-indicator{
+  font-size:0.82rem;font-weight:700;padding:3px 10px;border-radius:10px;
+  display:none;
+}
+.powerup-indicator.shield{background:#00d4ff22;border:1px solid #00d4ff55;color:var(--cyan);}
+.powerup-indicator.slow{background:#c044ff22;border:1px solid #c044ff55;color:var(--purple);}
+.hud-best{font-size:0.72rem;color:#5a4000;font-weight:700;}
+
+/* ─── CANVAS ─── */
+canvas{display:block;}
+
+/* ─── WARNING FLASH ─── */
+#warningFlash{
+  position:absolute;inset:0;pointer-events:none;z-index:4;
+  background:#ff000000;transition:background .05s;
+}
+
+/* ─── BOSS WAVE ─── */
+#bossWarn{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  display:none;z-index:8;text-align:center;pointer-events:none;
+}
+.boss-text{
+  font-family:'Boogaloo',cursive;font-size:clamp(2rem,6vw,3.5rem);
+  color:#ff3d3d;text-shadow:0 0 40px #ff3d3daa;
+  animation:bossWobble .4s ease-in-out infinite alternate;
+}
+@keyframes bossWobble{from{transform:scale(1) rotate(-2deg);}to{transform:scale(1.08) rotate(2deg);}}
+.boss-sub{color:#c07000;font-size:1rem;margin-top:6px;font-weight:700;}
+
+/* ─── PAUSE ─── */
+#pauseBanner{
+  position:absolute;inset:0;display:none;align-items:center;justify-content:center;
+  z-index:9;pointer-events:none;
+}
+.pause-text{
+  font-family:'Boogaloo',cursive;font-size:3rem;color:var(--amber);
+  text-shadow:var(--glow);background:#0e0a00cc;padding:14px 44px;border-radius:18px;
+}
+
+/* ─── GAME OVER ─── */
+#gameOver{
+  position:absolute;inset:0;display:none;flex-direction:column;
+  align-items:center;justify-content:center;z-index:10;
+  background:#0a0700f0;backdrop-filter:blur(8px);
+}
+.go-title{
+  font-family:'Boogaloo',cursive;font-size:clamp(2.5rem,8vw,4.5rem);
+  color:var(--red);text-shadow:0 0 50px #ff3d3daa;margin-bottom:4px;
+}
+.go-msgs{
+  color:#a07020;font-size:0.95rem;text-align:center;margin-bottom:6px;
+  max-width:300px;line-height:1.5;
+}
+.go-score{
+  font-family:'Boogaloo',cursive;font-size:3.2rem;color:var(--amber);
+  text-shadow:var(--glow);margin:10px 0 2px;
+}
+.go-stats{
+  display:flex;gap:24px;margin-bottom:6px;
+}
+.go-stat{text-align:center;}
+.go-stat-val{font-family:'Boogaloo',cursive;font-size:1.4rem;color:#c8a040;}
+.go-stat-lbl{font-size:0.7rem;color:#5a4000;font-weight:700;letter-spacing:1px;}
+.go-best{color:#5a4000;font-size:0.88rem;margin-bottom:30px;}
+.go-best span{color:#c88000;}
+
+/* ─── SCORE POP ─── */
+.score-pop{
+  position:absolute;pointer-events:none;font-family:'Boogaloo',cursive;
+  font-size:1.3rem;font-weight:900;animation:floatUp .95s ease-out forwards;z-index:8;
+  white-space:nowrap;
+}
+@keyframes floatUp{
+  0%{opacity:1;transform:translateY(0) scale(1);}
+  100%{opacity:0;transform:translateY(-80px) scale(1.5);}
+}
+</style>
+</head>
+<body>
+
+<!-- TITLE SCREEN BACK BUTTON (always visible on title) -->
+<a href="crazy.html" class="back-to-hub" id="backToHubTitle">← Back to Hub</a>
+
+<!-- BACK TO HUB BUTTON (only after game over) -->
+<a href="crazy.html" id="backToHub">← Back to Hub</a>
+
+<!-- TITLE -->
+<div id="titleScreen">
+  <span class="chappal-emoji">🥿</span>
+  <div class="game-title">CHAPPAL DODGE</div>
+  <div class="subtitle">Amma ki saari chappals se bacho! 😱</div>
+  <div class="difficulty-tag">⚡ MODERATE MODE — GOOD LUCK BHAI</div>
+  <button class="btn-start" id="startBtn">Khelo Bhai! 🔥</button>
+  <div class="how-to">
+    <span>← →</span> / <span>A D</span> to move &nbsp;|&nbsp; <span>SPACE</span> = Pause<br/>
+    Collect <span>🛡️</span> Shield &amp; <span>⏱️</span> Slow-Mo powerups!
+  </div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:#c8860a"></div>Normal</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#00aaff"></div>Zigzag</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#ff3366"></div>Homing</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#aa00ff"></div>Bouncer</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#ff6600"></div>BOSS 💀</div>
+  </div>
+</div>
+
+<!-- HUD -->
+<div id="hud">
+  <div class="hud-left">
+    <div class="hud-score" id="scoreDisplay">0</div>
+    <div class="hud-level" id="levelDisplay">LEVEL 1</div>
+  </div>
+  <div class="hud-center">
+    <div class="hud-lives" id="livesDisplay">❤️❤️❤️</div>
+    <div class="hud-combo" id="comboDisplay"></div>
+  </div>
+  <div class="hud-right">
+    <div class="hud-best" id="bestDisplay">BEST: 0</div>
+    <div class="powerup-indicator shield" id="shieldInd">🛡️ SHIELD</div>
+    <div class="powerup-indicator slow" id="slowInd">⏱️ SLOW MO</div>
+  </div>
+</div>
+
+<canvas id="gameCanvas"></canvas>
+
+<div id="warningFlash"></div>
+
+<!-- BOSS WARNING -->
+<div id="bossWarn">
+  <div class="boss-text">⚠️ AMMA AAYI! ⚠️</div>
+  <div class="boss-sub">Boss chappal incoming 💀</div>
+</div>
+
+<!-- PAUSE -->
+<div id="pauseBanner"><div class="pause-text">⏸ RUKA BHAI</div></div>
+
+<!-- GAME OVER -->
+<div id="gameOver">
+  <div class="go-title" id="goTitle">CHAPPAL LAGI! 💀</div>
+  <div class="go-msgs" id="goMsg">Amma khush nahi hain...</div>
+  <div class="go-score" id="finalScore">0</div>
+  <div class="go-stats">
+    <div class="go-stat"><div class="go-stat-val" id="goLevel">1</div><div class="go-stat-lbl">MAX LEVEL</div></div>
+    <div class="go-stat"><div class="go-stat-val" id="goCombo">0</div><div class="go-stat-lbl">MAX COMBO</div></div>
+    <div class="go-stat"><div class="go-stat-val" id="goDodged">0</div><div class="go-stat-lbl">DODGED</div></div>
+  </div>
+  <div class="go-best">Best: <span id="bestScore">0</span></div>
+  <button class="btn-start" id="restartBtn">Phir Se! 🔄</button>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════
+//  SETUP
+// ═══════════════════════════════════════════════
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const titleScreen  = document.getElementById('titleScreen');
+const gameOverEl   = document.getElementById('gameOver');
+const hud          = document.getElementById('hud');
+const pauseBanner  = document.getElementById('pauseBanner');
+const bossWarn     = document.getElementById('bossWarn');
+const warnFlash    = document.getElementById('warningFlash');
+const backToHub    = document.getElementById('backToHub'); // game over back button
+const backToHubTitle = document.getElementById('backToHubTitle'); // title screen back button
+
+function resize(){
+  canvas.width  = Math.min(window.innerWidth, 520);
+  canvas.height = window.innerHeight;
+}
+resize();
+window.addEventListener('resize', resize);
+
+// ═══════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════
+const STATE = { TITLE:0, PLAYING:1, PAUSED:2, OVER:3 };
+let state = STATE.TITLE;
+let score, lives, combo, maxCombo, comboTimer, level, spawnRate, baseSpeed;
+let dodged, totalHits;
+let player, chappals, particles, powerups, warnings, frameId;
+let bestScore = 0;
+let keys = {};
+let lastTime = 0;
+let spawnTimer = 0;
+let screenShake = { x:0, y:0, dur:0, mag:0 };
+let slowTimer  = 0;  // frames of slow-mo remaining
+let shieldTimer = 0; // frames of shield remaining
+let bossSpawned = false;
+let nextBossAt = 5;  // spawn boss at level 5, 10, 15...
+
+// chappal type constants
+const T_NORMAL  = 0;
+const T_ZIGZAG  = 1;
+const T_HOMING  = 2;
+const T_BOUNCER = 3;
+const T_BOSS    = 4;
+
+const COLORS = {
+  [T_NORMAL] : ['#c8860a','#a05010','#8b4513','#d4891a'],
+  [T_ZIGZAG] : ['#0088cc','#0055aa','#1199dd'],
+  [T_HOMING] : ['#cc0044','#aa0033','#ee1155'],
+  [T_BOUNCER]: ['#8800cc','#6600aa','#aa33ee'],
+  [T_BOSS]   : ['#ff6600','#ee4400','#ff8822'],
+};
+
+// ═══════════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════════
+function initPlayer(){
+  return {
+    x: canvas.width / 2,
+    y: canvas.height - 90,
+    w: 48, h: 48,
+    speed: 5.5,
+    trail: [],
+    invincible: 0,
+    dx: 0,
+  };
+}
+
+function returnToTitle(){
+  // Stop game completely and go back to title screen
+  state = STATE.TITLE;
+  cancelAnimationFrame(frameId);
+  chappals=[]; particles=[]; powerups=[]; warnings=[];
+  hud.style.display='none';
+  gameOverEl.style.display='none';
+  pauseBanner.style.display='none';
+  bossWarn.style.display='none';
+  document.getElementById('shieldInd').style.display='none';
+  document.getElementById('slowInd').style.display='none';
+  backToHub.style.display='none'; // hide game over back button
+  // title back button is already visible
+  titleScreen.style.display='flex';
+}
+
+function initGame(){
+  score = 0; lives = 3; combo = 0; maxCombo = 0;
+  comboTimer = 0; level = 1; spawnRate = 72; baseSpeed = 3.4;
+  dodged = 0; totalHits = 0;
+  chappals = []; particles = []; powerups = []; warnings = [];
+  spawnTimer = 0; slowTimer = 0; shieldTimer = 0;
+  bossSpawned = false; nextBossAt = 5;
+  player = initPlayer();
+
+  hud.style.display = 'flex';
+  gameOverEl.style.display = 'none';
+  titleScreen.style.display = 'none';
+  pauseBanner.style.display = 'none';
+  bossWarn.style.display = 'none';
+  document.getElementById('shieldInd').style.display = 'none';
+  document.getElementById('slowInd').style.display = 'none';
+  backToHub.style.display = 'none'; // ensure back button hidden during gameplay
+  // title back button is hidden because title screen is hidden
+
+  updateHUD();
+  state = STATE.PLAYING;
+  lastTime = performance.now();
+  cancelAnimationFrame(frameId);
+  frameId = requestAnimationFrame(loop);
+}
+
+// ═══════════════════════════════════════════════
+//  SPAWN CHAPPAL
+// ═══════════════════════════════════════════════
+function spawnChappal(type = T_NORMAL, forceX){
+  const isBoss = type === T_BOSS;
+  const size   = isBoss ? 80 : 28 + Math.random() * 22;
+  const colorArr = COLORS[type];
+  const color = colorArr[Math.floor(Math.random() * colorArr.length)];
+  const x = forceX !== undefined ? forceX : size + Math.random() * (canvas.width - size * 2);
+
+  const spd = isBoss
+    ? baseSpeed * 0.6
+    : (type === T_HOMING ? baseSpeed * 1.1 : baseSpeed + Math.random() * 1.8);
+
+  return {
+    x, y: -size * 2,
+    w: size, h: size * 0.6,
+    speed: spd,
+    rot: Math.random() * Math.PI * 2,
+    rotSpeed: isBoss ? 0.08 : (Math.random() - 0.5) * 0.25,
+    wobble: Math.random() * Math.PI * 2,
+    color, type,
+    // zigzag
+    zigPhase: Math.random() * Math.PI * 2,
+    zigAmp: 60 + Math.random() * 80,
+    zigSpeed: 0.04 + Math.random() * 0.04,
+    // bouncer
+    vx: type === T_BOUNCER ? (Math.random() < 0.5 ? -3 : 3) + (Math.random()-0.5) : 0,
+    // warning shown?
+    warned: false,
+  };
+}
+
+// ═══════════════════════════════════════════════
+//  SPAWN WARNING ARROW
+// ═══════════════════════════════════════════════
+function addWarning(x, type){
+  warnings.push({ x, type, life:1, maxLife:1 });
+}
+
+// ═══════════════════════════════════════════════
+//  POWERUP SPAWN
+// ═══════════════════════════════════════════════
+function trySpawnPowerup(){
+  if(Math.random() > 0.007) return; // ~0.7% per frame
+  const type = Math.random() < 0.5 ? 'shield' : 'slow';
+  powerups.push({
+    x: 40 + Math.random()*(canvas.width-80),
+    y: -20,
+    type,
+    speed: 1.5,
+    life: 1,
+    pulse: 0,
+  });
+}
+
+// ═══════════════════════════════════════════════
+//  HUD UPDATE
+// ═══════════════════════════════════════════════
+const OVER_MSGS = [
+  ['Bas itna hi? 💀','Amma 1, Tu 0 — teri toh ho gayi!'],
+  ['CHAPPAL KA DARD! 🥿','Bhai kya move tha woh? Reverse move? 😂'],
+  ['Ouch ouch ouch! 😭','Teri speed dekh ke chappal bhi pighal gayi!'],
+  ['GAME OVER BHAI 💀','Amma abhi bhi haath mein aur chappals hain 😈'],
+];
+
+function updateHUD(){
+  document.getElementById('scoreDisplay').textContent = score;
+  document.getElementById('levelDisplay').textContent = `LEVEL ${level}`;
+  document.getElementById('livesDisplay').textContent = '❤️'.repeat(lives) + '🖤'.repeat(Math.max(0,3-lives));
+  document.getElementById('bestDisplay').textContent = `BEST: ${bestScore}`;
+  if(combo >= 3){
+    const stars = combo >= 10 ? '🔥🔥🔥' : combo >= 6 ? '🔥🔥' : '🔥';
+    document.getElementById('comboDisplay').textContent = `${stars} ×${combo} COMBO!`;
+  } else {
+    document.getElementById('comboDisplay').textContent = '';
+  }
+}
+
+function addScorePop(x, y, text, color='#ffb300'){
+  const el = document.createElement('div');
+  el.className = 'score-pop';
+  el.textContent = text;
+  el.style.left  = (x - 40) + 'px';
+  el.style.top   = y + 'px';
+  el.style.color = color;
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(), 980);
+}
+
+// ═══════════════════════════════════════════════
+//  SCREEN SHAKE
+// ═══════════════════════════════════════════════
+function triggerShake(mag, dur){
+  screenShake.mag = mag; screenShake.dur = dur;
+}
+
+// ═══════════════════════════════════════════════
+//  HIT FLASH
+// ═══════════════════════════════════════════════
+function flashRed(){
+  warnFlash.style.background = '#ff000044';
+  setTimeout(()=>{ warnFlash.style.background = 'transparent'; }, 120);
+}
+
+// ═══════════════════════════════════════════════
+//  DRAWING
+// ═══════════════════════════════════════════════
+function drawBackground(){
+  // Sky gradient
+  const sky = ctx.createLinearGradient(0,0,0,canvas.height);
+  sky.addColorStop(0,'#0e0a00');
+  sky.addColorStop(1,'#1c1200');
+  ctx.fillStyle = sky; ctx.fillRect(0,0,canvas.width,canvas.height);
+
+  // Subtle vertical lines
+  ctx.strokeStyle='#1a1400'; ctx.lineWidth=1;
+  for(let x=0;x<canvas.width;x+=48){
+    ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,canvas.height); ctx.stroke();
+  }
+
+  // Floor
+  const floorY = canvas.height - 68;
+  ctx.fillStyle='#1c1400';
+  ctx.fillRect(0, floorY, canvas.width, 68);
+  ctx.strokeStyle='#2e2200'; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(0,floorY); ctx.lineTo(canvas.width,floorY); ctx.stroke();
+  ctx.strokeStyle='#222000'; ctx.lineWidth=1;
+  for(let x=0;x<canvas.width;x+=36){
+    ctx.beginPath(); ctx.moveTo(x,floorY); ctx.lineTo(x,canvas.height); ctx.stroke();
+  }
+}
+
+function darken(hex, amt){
+  if(hex[0]!=='#') return hex;
+  const r=Math.max(0,parseInt(hex.slice(1,3),16)-amt);
+  const g=Math.max(0,parseInt(hex.slice(3,5),16)-amt);
+  const b=Math.max(0,parseInt(hex.slice(5,7),16)-amt);
+  return `rgb(${r},${g},${b})`;
+}
+function lighten(hex, amt){
+  if(hex[0]!=='#') return hex;
+  const r=Math.min(255,parseInt(hex.slice(1,3),16)+amt);
+  const g=Math.min(255,parseInt(hex.slice(3,5),16)+amt);
+  const b=Math.min(255,parseInt(hex.slice(5,7),16)+amt);
+  return `rgb(${r},${g},${b})`;
+}
+
+function drawChappal(c){
+  const isBoss = c.type === T_BOSS;
+  ctx.save();
+  ctx.translate(c.x, c.y);
+  ctx.rotate(c.rot);
+
+  const sc = isBoss ? 1 : 1; // scale already in w/h
+
+  // Glow for special types
+  if(c.type === T_HOMING){
+    ctx.shadowColor='#ff2255'; ctx.shadowBlur=20;
+  } else if(c.type === T_ZIGZAG){
+    ctx.shadowColor='#0088ff'; ctx.shadowBlur=16;
+  } else if(c.type === T_BOUNCER){
+    ctx.shadowColor='#aa00ff'; ctx.shadowBlur=18;
+  } else if(isBoss){
+    ctx.shadowColor='#ff6600'; ctx.shadowBlur=35;
+  }
+
+  // Sole
+  ctx.beginPath();
+  ctx.ellipse(0, 0, c.w*0.48, c.h*0.44, 0, 0, Math.PI*2);
+  ctx.fillStyle = c.color;
+  ctx.fill();
+  ctx.strokeStyle='rgba(0,0,0,0.3)'; ctx.lineWidth=2; ctx.stroke();
+
+  // Strap arch
+  ctx.shadowBlur=0;
+  ctx.beginPath();
+  ctx.moveTo(-c.w*0.3, -c.h*0.1);
+  ctx.bezierCurveTo(-c.w*0.1,-c.h*0.52,c.w*0.1,-c.h*0.52,c.w*0.3,-c.h*0.1);
+  ctx.strokeStyle=darken(c.color,40); ctx.lineWidth=c.h*0.24; ctx.lineCap='round'; ctx.stroke();
+
+  // Middle strap
+  ctx.beginPath();
+  ctx.moveTo(0,-c.h*0.04); ctx.lineTo(0,c.h*0.36);
+  ctx.stroke();
+
+  // Shine
+  ctx.beginPath();
+  ctx.ellipse(-c.w*0.13,-c.h*0.08,c.w*0.1,c.h*0.07,-0.4,0,Math.PI*2);
+  ctx.fillStyle='rgba(255,255,255,0.22)'; ctx.fill();
+
+  // Boss label
+  if(isBoss){
+    ctx.rotate(-c.rot); // counter-rotate text
+    ctx.font=`bold ${c.w*0.28}px Boogaloo,cursive`;
+    ctx.fillStyle='#fff';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.shadowColor='#ff4400';ctx.shadowBlur=10;
+    ctx.fillText('AMMA',0,0);
+    ctx.shadowBlur=0;
+  }
+
+  ctx.restore();
+}
+
+function drawWarnings(){
+  warnings.forEach(w => {
+    const colors = { [T_HOMING]:'#ff2255', [T_ZIGZAG]:'#0088ff',
+                     [T_BOUNCER]:'#aa00ff', [T_BOSS]:'#ff6600', [T_NORMAL]:'#ffb300' };
+    const col = colors[w.type] || '#ffb300';
+    ctx.save();
+    ctx.globalAlpha = w.life * (0.5 + 0.5*Math.sin(Date.now()*0.02));
+    ctx.translate(w.x, 24);
+    // Down arrow
+    ctx.beginPath();
+    ctx.moveTo(0,-12); ctx.lineTo(10,0); ctx.lineTo(5,0);
+    ctx.lineTo(5,12);  ctx.lineTo(-5,12); ctx.lineTo(-5,0);
+    ctx.lineTo(-10,0); ctx.closePath();
+    ctx.fillStyle=col;
+    ctx.shadowColor=col; ctx.shadowBlur=10;
+    ctx.fill();
+    ctx.globalAlpha=1; ctx.restore();
+  });
+}
+
+function drawPowerup(p){
+  p.pulse += 0.08;
+  const glow = 8 + Math.sin(p.pulse)*6;
+  const emoji = p.type==='shield' ? '🛡️' : '⏱️';
+  const col   = p.type==='shield' ? '#00d4ff' : '#c044ff';
+  ctx.save();
+  ctx.translate(p.x, p.y);
+  // Aura
+  ctx.beginPath();
+  ctx.arc(0,0,20+glow,0,Math.PI*2);
+  ctx.fillStyle = col+'22'; ctx.fill();
+  ctx.beginPath();
+  ctx.arc(0,0,15,0,Math.PI*2);
+  ctx.fillStyle = col+'44'; ctx.fill();
+  ctx.strokeStyle=col; ctx.lineWidth=2; ctx.stroke();
+  // Emoji
+  ctx.font='22px serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText(emoji,0,0);
+  ctx.restore();
+}
+
+function drawPlayer(p){
+  if(p.invincible > 0 && Math.floor(p.invincible/5)%2===0) return;
+  ctx.save();
+  ctx.translate(p.x, p.y);
+
+  // Shield bubble
+  if(shieldTimer > 0){
+    ctx.beginPath();
+    ctx.arc(0,0,p.w*0.7,0,Math.PI*2);
+    ctx.strokeStyle=`rgba(0,212,255,${0.4+0.3*Math.sin(Date.now()*0.01)})`;
+    ctx.lineWidth=3; ctx.shadowColor='#00d4ff'; ctx.shadowBlur=14; ctx.stroke();
+    ctx.shadowBlur=0;
+  }
+
+  // Shadow
+  ctx.beginPath();
+  ctx.ellipse(0,p.h/2+4,p.w*0.32,7,0,0,Math.PI*2);
+  ctx.fillStyle='rgba(0,0,0,0.4)'; ctx.fill();
+
+  // Body
+  ctx.beginPath();
+  ctx.roundRect(-p.w*0.2,-p.h*0.14,p.w*0.4,p.h*0.52,8);
+  ctx.fillStyle='#3a86ff'; ctx.fill();
+
+  // Head
+  ctx.beginPath();
+  ctx.arc(0,-p.h*0.31,p.w*0.22,0,Math.PI*2);
+  ctx.fillStyle='#ffd580'; ctx.fill();
+
+  // Eyes — scared or normal
+  const eyeOff = p.invincible > 0 ? 0 : 0;
+  ctx.fillStyle='#1a0a00';
+  if(p.invincible > 30){
+    // scared X eyes
+    ctx.font='8px sans-serif'; ctx.textAlign='center'; ctx.fillText('×',-5,-p.h*0.33);
+    ctx.fillText('×',5,-p.h*0.33);
+  } else {
+    ctx.beginPath(); ctx.arc(-5,-p.h*0.33,2.8,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc( 5,-p.h*0.33,2.8,0,Math.PI*2); ctx.fill();
+  }
+
+  // Running legs
+  const moving = Math.abs(p.dx)>0.1;
+  const legT = Math.sin(Date.now()*0.018) * (moving ? 14 : 2);
+  ctx.strokeStyle='#1a4080'; ctx.lineWidth=5; ctx.lineCap='round';
+  ctx.beginPath(); ctx.moveTo(-6,p.h*0.2); ctx.lineTo(-10,p.h*0.44+legT); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo( 6,p.h*0.2); ctx.lineTo( 10,p.h*0.44-legT); ctx.stroke();
+
+  ctx.restore();
+
+  // Motion trail
+  for(let i=0;i<p.trail.length;i++){
+    const t=p.trail[i];
+    ctx.beginPath();
+    ctx.arc(t.x,t.y,(i+1)*1.8,0,Math.PI*2);
+    ctx.fillStyle=`rgba(58,134,255,${(p.trail.length-i)/p.trail.length*0.25})`;
+    ctx.fill();
+  }
+}
+
+// ═══════════════════════════════════════════════
+//  BOSS WAVE
+// ═══════════════════════════════════════════════
+function triggerBossWave(){
+  bossWarn.style.display='block';
+  triggerShake(6, 40);
+  setTimeout(()=>{
+    bossWarn.style.display='none';
+    // Spawn giant boss chappal + 2 flankers
+    chappals.push(spawnChappal(T_BOSS, canvas.width/2));
+    setTimeout(()=>{
+      chappals.push(spawnChappal(T_HOMING, canvas.width*0.2));
+      chappals.push(spawnChappal(T_HOMING, canvas.width*0.8));
+    }, 300);
+  }, 1400);
+}
+
+// ═══════════════════════════════════════════════
+//  MAIN LOOP
+// ═══════════════════════════════════════════════
+function loop(timestamp){
+  if(state !== STATE.PLAYING) return;
+
+  const rawDt = Math.min((timestamp - lastTime) / 16.67, 3);
+  lastTime = timestamp;
+
+  // Slow-mo effect
+  const slowMult = slowTimer > 0 ? 0.38 : 1.0;
+  const dt = rawDt * slowMult;
+
+  if(slowTimer  > 0) slowTimer  -= rawDt;
+  if(shieldTimer > 0) shieldTimer -= rawDt;
+
+  // Update powerup indicators
+  const shInd = document.getElementById('shieldInd');
+  const slInd = document.getElementById('slowInd');
+  shInd.style.display = shieldTimer > 0 ? 'block' : 'none';
+  slInd.style.display  = slowTimer  > 0 ? 'block' : 'none';
+  if(shieldTimer>0) shInd.textContent = `🛡️ ${Math.ceil(shieldTimer/60)}s`;
+  if(slowTimer>0)   slInd.textContent  = `⏱️ ${Math.ceil(slowTimer/60)}s`;
+
+  // Screen shake
+  let shakeX=0, shakeY=0;
+  if(screenShake.dur > 0){
+    shakeX = (Math.random()-0.5)*screenShake.mag*2;
+    shakeY = (Math.random()-0.5)*screenShake.mag*2;
+    screenShake.dur -= rawDt;
+  }
+
+  // ── FIX: wrap entire render in try/finally so ctx.restore() always runs ──
+  // ── This prevents ctx save/restore stack corruption on any error ──
+  ctx.save();
+  ctx.translate(shakeX, shakeY);
+
+  try {
+    ctx.clearRect(-10,-10,canvas.width+20,canvas.height+20);
+    drawBackground();
+
+    // ── WARNINGS ──
+    drawWarnings();
+    warnings = warnings.filter(w=>{ w.life-=0.025; return w.life>0; });
+
+    // ── PLAYER ──
+    player.dx = 0;
+    if(keys['ArrowLeft']||keys['a']||keys['A']) player.dx = -player.speed;
+    if(keys['ArrowRight']||keys['d']||keys['D']) player.dx = player.speed;
+    player.x = Math.max(player.w/2, Math.min(canvas.width-player.w/2, player.x + player.dx*(slowTimer>0?1.6:1)*rawDt));
+    player.trail.unshift({x:player.x, y:player.y});
+    if(player.trail.length > 10) player.trail.pop();
+    if(player.invincible > 0) player.invincible -= rawDt;
+
+    // ── SPAWN ──
+    spawnTimer += rawDt;
+    if(spawnTimer >= spawnRate){
+      spawnTimer = 0;
+      let type = T_NORMAL;
+      const r = Math.random();
+      if(level >= 3 && r < 0.18) type = T_ZIGZAG;
+      else if(level >= 4 && r < 0.32) type = T_HOMING;
+      else if(level >= 5 && r < 0.42) type = T_BOUNCER;
+
+      const c = spawnChappal(type);
+      chappals.push(c);
+      addWarning(c.x, type);
+
+      if(level >= 3 && Math.random() < 0.35){
+        const c2 = spawnChappal(Math.random()<0.4?T_ZIGZAG:T_NORMAL);
+        chappals.push(c2); addWarning(c2.x, c2.type);
+      }
+      if(level >= 6 && Math.random() < 0.3){
+        const c3 = spawnChappal(T_HOMING);
+        chappals.push(c3); addWarning(c3.x, T_HOMING);
+      }
+      if(level >= nextBossAt && !bossSpawned){
+        bossSpawned = true; nextBossAt += 5;
+        setTimeout(()=>{ triggerBossWave(); bossSpawned=false; }, 200);
+      }
+    }
+
+    // ── POWERUP SPAWN ──
+    trySpawnPowerup();
+
+    const px=player.x, py=player.y, pw=player.w*0.5, ph=player.h*0.55;
+
+    // ── UPDATE POWERUPS ──
+    powerups = powerups.filter(p=>{
+      p.y += 1.5 * rawDt;
+      drawPowerup(p);
+      const collected = Math.abs(p.x-px)<30 && Math.abs(p.y-py)<30;
+      if(collected){
+        if(p.type==='shield') shieldTimer=300;
+        else                  slowTimer=300;
+        addScorePop(p.x, p.y-20, p.type==='shield'?'🛡️ SHIELD!':'⏱️ SLOW MO!',
+          p.type==='shield'?'#00d4ff':'#c044ff');
+        return false;
+      }
+      return p.y < canvas.height + 40;
+    });
+
+    // ── UPDATE CHAPPALS ──
+    // FIX: hitThisFrame flag — only ONE hit allowed per frame.
+    // Prevents edge-case double hits if multiple chappals overlap simultaneously.
+    let hitThisFrame = false;
+
+    // FIX: pendingGameOver flag — never call endGame() inside filter().
+    // Calling endGame() mid-filter used to set state=OVER, but then the loop
+    // kept running and called requestAnimationFrame(loop) anyway. On the next
+    // frame, state!==PLAYING → early return → canvas frozen forever.
+    let pendingGameOver = false;
+
+    chappals = chappals.filter(c=>{
+      c.y += c.speed * dt;
+      c.rot += c.rotSpeed * dt;
+
+      if(c.type === T_ZIGZAG){
+        c.zigPhase += c.zigSpeed * rawDt;
+        c.x += Math.sin(c.zigPhase) * c.zigAmp * 0.04 * rawDt;
+        c.x = Math.max(c.w, Math.min(canvas.width-c.w, c.x));
+      }
+      if(c.type === T_HOMING){
+        c.x += (px - c.x) * 0.018 * rawDt;
+      }
+      if(c.type === T_BOUNCER){
+        c.x += c.vx * rawDt;
+        if(c.x < c.w || c.x > canvas.width-c.w) c.vx *= -1;
+      }
+
+      // Passed bottom safely → dodged!
+      if(c.y > canvas.height + 80){
+        combo++;
+        maxCombo = Math.max(maxCombo, combo);
+        comboTimer = 110; dodged++;
+        const comboMult = combo>=10?4 : combo>=6?3 : combo>=3?2 : 1;
+        const typePts   = c.type===T_BOSS?60 : c.type===T_HOMING?25 : c.type===T_BOUNCER?20 : c.type===T_ZIGZAG?18 : 10;
+        const pts = typePts * comboMult;
+        score += pts;
+        const col = combo>=6?'#c044ff' : combo>=3?'#00e676' : '#ffb300';
+        addScorePop(c.x, canvas.height-80, `+${pts}${combo>=3?' ×'+combo:''}`, col);
+        const threshold = level * 130;
+        if(score > threshold){
+          level++;
+          baseSpeed = Math.min(11, baseSpeed + 0.45);
+          spawnRate = Math.max(30, spawnRate - 4);
+          addScorePop(canvas.width/2, canvas.height/2-40, `LEVEL ${level}! 🔥`, '#ffb300');
+        }
+        updateHUD();
+        return false;
+      }
+
+      const isBoss = c.type === T_BOSS;
+      const hitW   = c.w*(isBoss?0.38:0.35) + pw*0.45;
+      const hitH   = c.h*(isBoss?0.36:0.32) + ph*0.45;
+      const inRange = Math.abs(c.x - px) < hitW && Math.abs(c.y - py) < hitH;
+
+      // Shield block
+      if(!hitThisFrame && player.invincible <= 0 && shieldTimer > 0 && inRange){
+        shieldTimer = 0;
+        hitThisFrame = true;
+        spawnParticles(px, py, '#00d4ff', 16);
+        addScorePop(px, py-30,'🛡️ BLOCKED!','#00d4ff');
+        triggerShake(4, 20);
+        return false;
+      }
+
+      // Normal hit — FIX: check hitThisFrame so only one hit per frame max
+      if(!hitThisFrame && player.invincible <= 0 && shieldTimer <= 0 && inRange){
+        hitThisFrame = true;     // ← block any further hits this frame
+        lives--;
+        combo = 0; totalHits++;
+        player.invincible = isBoss ? 140 : 100;  // generous invincible window
+        spawnParticles(px, py, '#ff3d3d', isBoss?20:12);
+        addScorePop(px, py-30, isBoss?'AMMA KI BARI CHAPPAL! 💀':'CHAPPAL LAGI! 🥿','#ff3d3d');
+        triggerShake(isBoss?10:6, isBoss?30:18);
+        flashRed();
+        updateHUD();
+        // FIX: DON'T call endGame() here — just set flag and handle AFTER filter
+        if(lives <= 0) pendingGameOver = true;
+        return false;
+      }
+
+      return true;
+    });
+
+    // FIX: Now it's safe to call endGame() — filter is fully done
+    if(pendingGameOver){
+      endGame();
+      return;  // skip drawing and rAF — endGame handles everything
+    }
+
+    if(comboTimer > 0){ comboTimer-=rawDt; } else { combo=0; }
+
+    // ── DRAW CHAPPALS ──
+    chappals.forEach(c=>drawChappal(c));
+
+    // ── PARTICLES ──
+    particles = particles.filter(p=>{
+      p.x+=p.vx*rawDt; p.y+=p.vy*rawDt;
+      p.vy+=0.2*rawDt; p.life-=0.028*rawDt;
+      const r = Math.max(0, p.size * p.life);
+      ctx.beginPath(); ctx.arc(p.x,p.y,r,0,Math.PI*2);
+      ctx.fillStyle=p.color+Math.floor(Math.max(0,p.life)*255).toString(16).padStart(2,'0');
+      ctx.fill();
+      return p.life>0;
+    });
+
+    // Slow-mo overlay
+    if(slowTimer > 0){
+      ctx.fillStyle='rgba(180,80,255,0.04)';
+      ctx.fillRect(-10,-10,canvas.width+20,canvas.height+20);
+    }
+
+    drawPlayer(player);
+    updateHUD();
+
+  } finally {
+    // FIX: ctx.restore() is ALWAYS called even if an error is thrown mid-frame.
+    // Without this, any JS error would corrupt the ctx transform stack permanently.
+    ctx.restore();
+  }
+
+  // FIX: Only schedule next frame if still playing.
+  // Previously, requestAnimationFrame was always called even after endGame().
+  if(state === STATE.PLAYING){
+    frameId = requestAnimationFrame(loop);
+  }
+}
+
+function spawnParticles(x,y,color,count=10){
+  for(let i=0;i<count;i++){
+    const angle=(Math.PI*2/count)*i+Math.random()*0.6;
+    particles.push({
+      x,y,
+      vx:Math.cos(angle)*(2+Math.random()*5),
+      vy:Math.sin(angle)*(2+Math.random()*5),
+      life:1,color,size:4+Math.random()*7,
+    });
+  }
+}
+
+// ═══════════════════════════════════════════════
+//  ROUNDRECT POLYFILL
+//  Some browsers (older Chrome/Firefox/Safari)
+//  don't have ctx.roundRect() — this adds it
+// ═══════════════════════════════════════════════
+if(!CanvasRenderingContext2D.prototype.roundRect){
+  CanvasRenderingContext2D.prototype.roundRect = function(x,y,w,h,r){
+    r = Math.min(r, w/2, h/2);
+    this.beginPath();
+    this.moveTo(x+r,y); this.lineTo(x+w-r,y);
+    this.arcTo(x+w,y,x+w,y+r,r); this.lineTo(x+w,y+h-r);
+    this.arcTo(x+w,y+h,x+w-r,y+h,r); this.lineTo(x+r,y+h);
+    this.arcTo(x,y+h,x,y+h-r,r); this.lineTo(x,y+r);
+    this.arcTo(x,y,x+r,y,r); this.closePath();
+    return this;
+  };
+}
+
+// ═══════════════════════════════════════════════
+//  GAME OVER
+// ═══════════════════════════════════════════════
+function endGame(){
+  if(state === STATE.OVER) return;  // guard: never trigger twice
+  state = STATE.OVER;
+  cancelAnimationFrame(frameId);
+  if(score > bestScore) bestScore = score;
+
+  const m = OVER_MSGS[Math.floor(Math.random()*OVER_MSGS.length)];
+  document.getElementById('goTitle').textContent = m[0];
+  document.getElementById('goMsg').textContent   = m[1];
+  document.getElementById('finalScore').textContent = score;
+  document.getElementById('goLevel').textContent  = level;
+  document.getElementById('goCombo').textContent  = maxCombo;
+  document.getElementById('goDodged').textContent = dodged;
+  document.getElementById('bestScore').textContent = bestScore;
+
+  gameOverEl.style.display='flex';
+  hud.style.display='none';
+  // Show back to hub button only after game over
+  backToHub.style.display = 'block';
+}
+
+// ═══════════════════════════════════════════════
+//  CONTROLS
+// ═══════════════════════════════════════════════
+window.addEventListener('keydown',e=>{
+  keys[e.key]=true;
+  if(e.key===' '){
+    if(state===STATE.PLAYING){
+      state=STATE.PAUSED;
+      pauseBanner.style.display='flex';
+    } else if(state===STATE.PAUSED){
+      state=STATE.PLAYING;
+      pauseBanner.style.display='none';
+      lastTime=performance.now();
+      frameId=requestAnimationFrame(loop);
+    }
+  }
+  e.preventDefault();
+});
+window.addEventListener('keyup',e=>{ keys[e.key]=false; });
+
+// Touch drag
+let touchStartX=null;
+canvas.addEventListener('touchstart',e=>{ touchStartX=e.touches[0].clientX; },{passive:true});
+canvas.addEventListener('touchmove',e=>{
+  if(touchStartX===null||state!==STATE.PLAYING) return;
+  const dx=e.touches[0].clientX-touchStartX;
+  player.x=Math.max(player.w/2,Math.min(canvas.width-player.w/2,player.x+dx*(slowTimer>0?1.8:1)*0.7));
+  touchStartX=e.touches[0].clientX;
+},{passive:true});
+
+document.getElementById('startBtn').addEventListener('click',initGame);
+document.getElementById('restartBtn').addEventListener('click',initGame);
+</script>
+</body>
+</html>

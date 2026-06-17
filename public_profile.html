@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Karma – Profile</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        /* ═══════════════════════════════════════════
+           ROOT & RESET
+        ═══════════════════════════════════════════ */
+        :root {
+            --bg: #000000;
+            --bg2: #111114;
+            --surface: rgba(255, 255, 255, 0.04);
+            --glass: rgba(255, 255, 255, 0.06);
+            --border: rgba(255, 255, 255, 0.08);
+            --neon-blue: #4f9eff;
+            --neon-purple: #9b5de5;
+            --neon-cyan: #00f5d4;
+            --neon-gold: #f7c948;
+            --text: #f1f1f5;
+            --muted: #777;
+            --danger: #ff3b30;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            background: var(--bg);
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: var(--text);
+            max-width: 680px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: var(--bg);
+            overflow-x: hidden;
+        }
+
+        /* ═══════════════════════════════════════════
+           1. TOP NAVIGATION BAR
+        ═══════════════════════════════════════════ */
+        .top-nav {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: rgba(10, 10, 10, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            color: var(--text);
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.15s;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .nav-username {
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+        }
+
+        /* 3-dot menu dropdown */
+        .menu-anchor {
+            position: relative;
+        }
+
+        .menu-dropdown {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 36px;
+            background: #1a1a20;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            min-width: 170px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+            z-index: 200;
+        }
+
+        .menu-dropdown.open {
+            display: block;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 13px 16px;
+            font-size: 13px;
+            color: var(--text);
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .menu-item:hover {
+            background: rgba(255, 255, 255, 0.06);
+        }
+
+        .menu-item.danger {
+            color: var(--danger);
+        }
+
+        /* ═══════════════════════════════════════════
+           2. PROFILE INFO SECTION
+        ═══════════════════════════════════════════ */
+        .profile-header {
+            padding: 24px 24px 0;
+        }
+
+        /* Row 1 — Avatar + Stats */
+        .profile-row-1 {
+            display: flex;
+            align-items: center;
+            gap: 36px;
+        }
+
+        /* Avatar with neon ring */
+        .avatar-wrap {
+            position: relative;
+            flex-shrink: 0;
+            width: 130px;
+            height: 130px;
+        }
+
+        .avatar-glow {
+            position: absolute;
+            inset: -5px;
+            border-radius: 50%;
+            background: conic-gradient(var(--neon-blue), var(--neon-purple), var(--neon-cyan), var(--neon-blue));
+            animation: ringPulse 4s linear infinite;
+        }
+
+        @keyframes ringPulse {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .avatar-glow-breathing {
+            position: absolute;
+            inset: -9px;
+            border-radius: 50%;
+            border: 2px solid var(--neon-blue);
+            opacity: 0.3;
+            animation: breathe 3s ease-in-out infinite;
+        }
+
+        @keyframes breathe {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.25;
+            }
+
+            50% {
+                transform: scale(1.06);
+                opacity: 0.5;
+            }
+        }
+
+        .avatar-img {
+            position: relative;
+            z-index: 2;
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--bg);
+            background: #1a1a2e;
+        }
+
+        /* Stats — 3 columns */
+        .profile-stats {
+            display: flex;
+            flex: 1;
+            justify-content: space-around;
+            text-align: center;
+        }
+
+        .stat-col {}
+
+        .stat-num {
+            font-size: 28px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+
+        /* Row 2 — Bio Area */
+        .profile-bio-area {
+            margin-top: 14px;
+        }
+
+        .bio-name {
+            font-size: 20px;
+            font-weight: 800;
+            letter-spacing: -0.3px;
+        }
+
+        .bio-location {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 2px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .bio-text {
+            font-size: 14px;
+            color: #ddd;
+            margin-top: 6px;
+            line-height: 1.5;
+        }
+
+        .bio-link {
+            font-size: 13px;
+            color: var(--neon-blue);
+            margin-top: 4px;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .bio-link:hover {
+            text-decoration: underline;
+        }
+
+        /* ═══════════════════════════════════════════
+           3. ACTION BUTTONS
+        ═══════════════════════════════════════════ */
+        .action-row {
+            display: flex;
+            gap: 10px;
+            padding: 20px 24px 0;
+        }
+
+        .btn-primary {
+            flex: 1;
+            padding: 13px 0;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.12s, box-shadow 0.12s;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-purple));
+            color: #fff;
+            box-shadow: 0 0 14px rgba(79, 158, 255, 0.2);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 0 22px rgba(79, 158, 255, 0.35);
+        }
+
+        .btn-primary.following-state {
+            background: var(--glass);
+            color: var(--text);
+            box-shadow: none;
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary {
+            flex: 1;
+            padding: 10px 0;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            color: var(--text);
+            transition: background 0.15s;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* ═══════════════════════════════════════════
+           4. CUSTOM TABS
+        ═══════════════════════════════════════════ */
+        .tabs-bar {
+            display: flex;
+            margin-top: 20px;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 49px;
+            z-index: 50;
+            background: rgba(10, 10, 10, 0.9);
+            backdrop-filter: blur(16px);
+        }
+
+        .tab-btn {
+            flex: 1;
+            background: none;
+            border: none;
+            padding: 13px 0;
+            font-family: 'Inter', sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            color: var(--muted);
+            cursor: pointer;
+            position: relative;
+            transition: color 0.2s;
+        }
+
+        .tab-btn.active {
+            color: var(--text);
+        }
+
+        .tab-btn::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 20%;
+            right: 20%;
+            height: 2px;
+            border-radius: 2px;
+            background: transparent;
+            transition: background 0.25s, box-shadow 0.25s;
+        }
+
+        .tab-btn.active::after {
+            background: var(--neon-blue);
+            box-shadow: 0 0 8px var(--neon-blue);
+        }
+
+        /* ═══════════════════════════════════════════
+           5. CONTENT GRIDS
+        ═══════════════════════════════════════════ */
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        /* Square grid (Deeds, Communities, Rooms) */
+        .grid-square {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2px;
+        }
+
+        .grid-cell {
+            position: relative;
+            aspect-ratio: 1;
+            background: #111;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .grid-cell img,
+        .grid-cell video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.25s;
+        }
+
+        .grid-cell:hover img,
+        .grid-cell:hover video {
+            transform: scale(1.05);
+        }
+
+        /* Hover overlay for likes/comments */
+        .cell-hover {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .grid-cell:hover .cell-hover {
+            opacity: 1;
+        }
+
+        .cell-hover span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        /* Vertical Reels grid (Awaaz TV tab) */
+        .grid-reels {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2px;
+        }
+
+        .reel-cell {
+            position: relative;
+            aspect-ratio: 9/16;
+            background: #111;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .reel-cell video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.25s;
+        }
+
+        .reel-cell:hover video {
+            transform: scale(1.05);
+        }
+
+        .reel-views {
+            position: absolute;
+            bottom: 6px;
+            left: 6px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #fff;
+            text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+        }
+
+        /* Text-only deed card */
+        .text-cell {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            background: #111118;
+        }
+
+        .text-cell p {
+            font-size: 11px;
+            color: #bbb;
+            text-align: center;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+            line-height: 1.4;
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .empty-state .empty-icon {
+            font-size: 40px;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+
+        /* ═══════════════════════════════════════════
+           SCROLLBAR
+        ═══════════════════════════════════════════ */
+        ::-webkit-scrollbar {
+            width: 3px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ═══════════════════════════════════════════
+         1. TOP NAVIGATION BAR
+    ═══════════════════════════════════════════ -->
+    <nav class="top-nav">
+        <button class="nav-btn" onclick="history.back()" title="Back">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                stroke-linecap="round">
+                <polyline points="15 18 9 12 15 6" />
+            </svg>
+        </button>
+        <span class="nav-username" id="nav-username">@loading…</span>
+        <div class="menu-anchor">
+            <button class="nav-btn" id="menu-toggle" title="More">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                    <circle cx="12" cy="5" r="1.5" />
+                    <circle cx="12" cy="12" r="1.5" />
+                    <circle cx="12" cy="19" r="1.5" />
+                </svg>
+            </button>
+            <div class="menu-dropdown" id="menu-dropdown">
+                <div class="menu-item" onclick="handleShare()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 2L11 13" />
+                        <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                    </svg>
+                    Share Profile
+                </div>
+                <div class="menu-item" onclick="handleCopyLink()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+                    </svg>
+                    Copy Profile Link
+                </div>
+                <div class="menu-item danger" onclick="alert('Report feature coming soon.')">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z" />
+                        <line x1="4" y1="22" x2="4" y2="15" />
+                    </svg>
+                    Report
+                </div>
+                <div class="menu-item danger" onclick="alert('Block feature coming soon.')">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" />
+                    </svg>
+                    Block
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ═══════════════════════════════════════════
+         2. PROFILE INFO SECTION
+    ═══════════════════════════════════════════ -->
+    <div class="profile-header">
+        <!-- Row 1 — Avatar + Stats -->
+        <div class="profile-row-1">
+            <div class="avatar-wrap">
+                <div class="avatar-glow" id="avatar-glow"></div>
+                <div class="avatar-glow-breathing"></div>
+                <img class="avatar-img" id="avatar-img" src="" alt="Avatar">
+            </div>
+            <div class="profile-stats">
+                <div class="stat-col">
+                    <div class="stat-num" id="s-karm">–</div>
+                    <div class="stat-label">Karm</div>
+                </div>
+                <div class="stat-col">
+                    <div class="stat-num" id="s-followers">–</div>
+                    <div class="stat-label">Followers</div>
+                </div>
+                <div class="stat-col">
+                    <div class="stat-num" id="s-following">–</div>
+                    <div class="stat-label">Following</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Row 2 — Bio -->
+        <div class="profile-bio-area">
+            <div class="bio-name" id="bio-name">—</div>
+            <div class="bio-location" id="bio-location">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                        d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                </svg>
+                <span>—</span>
+            </div>
+            <div class="bio-text" id="bio-text"></div>
+            <a class="bio-link" id="bio-link" href="#" style="display:none;"></a>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         3. ACTION BUTTONS
+    ═══════════════════════════════════════════ -->
+    <div class="action-row" id="action-row">
+        <button class="btn-primary" id="btn-follow" onclick="toggleFollow()">Follow</button>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         4. THE 4 CUSTOM TABS
+    ═══════════════════════════════════════════ -->
+    <div class="tabs-bar">
+        <button class="tab-btn active" data-tab="deeds" onclick="switchTab('deeds', this)">Deeds</button>
+        <button class="tab-btn" data-tab="communities" onclick="switchTab('communities', this)">Communities</button>
+        <button class="tab-btn" data-tab="rooms" onclick="switchTab('rooms', this)">Rooms</button>
+        <button class="tab-btn" data-tab="awaaz" onclick="switchTab('awaaz', this)">Awaaz TV</button>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         5. CONTENT GRIDS
+    ═══════════════════════════════════════════ -->
+    <!-- DEEDS TAB -->
+    <div id="panel-deeds" class="tab-panel active">
+        <div class="grid-square" id="grid-deeds"></div>
+    </div>
+
+    <!-- COMMUNITIES TAB -->
+    <div id="panel-communities" class="tab-panel">
+        <div id="communities-content">
+            <div class="empty-state">
+                <div class="empty-icon">🏘️</div>
+                Communities are coming soon. This user hasn't joined any communities yet.
+            </div>
+        </div>
+    </div>
+
+    <!-- ROOMS TAB -->
+    <div id="panel-rooms" class="tab-panel">
+        <div id="rooms-content">
+            <div class="empty-state">
+                <div class="empty-icon">🎙️</div>
+                Skill-sharing Rooms are launching soon. Stay tuned!
+            </div>
+        </div>
+    </div>
+
+    <!-- AWAAZ TV TAB -->
+    <div id="panel-awaaz" class="tab-panel">
+        <div class="grid-reels" id="grid-awaaz"></div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════
+         JAVASCRIPT
+    ═══════════════════════════════════════════ -->
+    <script>
+        const API = 'http://127.0.0.1:5000';
+        const selfEmail = localStorage.getItem('karma_user_email') || '';
+        const targetEmail = new URLSearchParams(location.search).get('email') || '';
+        let isFollowing = false;
+        let userData = {};
+
+        if (!targetEmail) {
+            document.body.innerHTML = '<div style="text-align:center;padding:40vh 20px;color:#555;">No user specified. Go back and try again.</div>';
+        }
+
+        // ── 3-DOT MENU ──────────────────────────────
+        document.getElementById('menu-toggle').addEventListener('click', (e) => {
+            e.stopPropagation();
+            document.getElementById('menu-dropdown').classList.toggle('open');
+        });
+        document.addEventListener('click', () => {
+            document.getElementById('menu-dropdown').classList.remove('open');
+        });
+
+        // ── LOAD PROFILE ────────────────────────────
+        async function loadProfile() {
+            try {
+                const res = await fetch(`${API}/api/profile?email=${encodeURIComponent(targetEmail)}`);
+                const data = await res.json();
+                if (!data.ok) throw new Error(data.error);
+                userData = data.user;
+                renderProfile(data.user);
+            } catch (e) {
+                document.getElementById('bio-name').textContent = 'User not found';
+                document.getElementById('nav-username').textContent = '@—';
+            }
+        }
+
+        function renderProfile(u) {
+            // Nav
+            document.getElementById('nav-username').textContent = '@' + (u.username || 'user');
+
+            // Avatar — only show real photo, otherwise show initials
+            if (u.avatar_url) {
+                document.getElementById('avatar-img').src = `${API}${u.avatar_url}`;
+            } else {
+                // Show initials as canvas placeholder
+                const name = (u.full_name || u.username || 'U').trim();
+                const initials = name.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+                const canvas = document.createElement('canvas');
+                canvas.width = 110; canvas.height = 110;
+                const ctx = canvas.getContext('2d');
+                ctx.fillStyle = '#1a1a30';
+                ctx.beginPath(); ctx.arc(55, 55, 55, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = '#4f9eff';
+                ctx.font = 'bold 36px Inter, sans-serif';
+                ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+                ctx.fillText(initials, 55, 55);
+                document.getElementById('avatar-img').src = canvas.toDataURL();
+            }
+
+            // Ring colour by tier
+            const coins = u.karma_coins || 0;
+            const glow = document.getElementById('avatar-glow');
+            if (coins >= 10000) {
+                glow.style.background = 'conic-gradient(#f7c948, #ff9800, #f7c948)';
+            } else if (coins >= 2000) {
+                glow.style.background = 'conic-gradient(#9b5de5, #4f9eff, #00f5d4, #9b5de5)';
+            }
+            // default = blue-purple-cyan (from CSS)
+
+            // Stats — karm filled by post count in loadPosts()
+            document.getElementById('s-followers').textContent = u.followers || 0;
+            // Following count
+            document.getElementById('s-following').textContent = u.following_count || 0;
+
+            // Bio
+            document.getElementById('bio-name').textContent = u.full_name || u.username || 'Karma User';
+            document.querySelector('#bio-location span').textContent = u.locality || 'Unknown';
+            document.getElementById('bio-text').textContent = u.bio || '';
+
+            // Self-profile: hide action row completely (no Edit/Share buttons)
+            if (targetEmail === selfEmail) {
+                const actionRow = document.getElementById('action-row');
+                if (actionRow) actionRow.style.display = 'none';
+            }
+        }
+
+        // ── LOAD POSTS ──────────────────────────────
+        async function loadPosts() {
+            try {
+                const res = await fetch(`${API}/api/feed?viewer=${encodeURIComponent(selfEmail)}&user=${encodeURIComponent(targetEmail)}`);
+                const data = await res.json();
+                if (!data.ok) return;
+
+                const all = data.posts || [];
+                const deeds = all.filter(p => p.category !== 'awaaz');
+                const awaaz = all.filter(p => p.category === 'awaaz');
+
+                // Karm = total post count (real)
+                document.getElementById('s-karm').textContent = all.length;
+
+                renderDeedsGrid(deeds);
+                renderAwaazGrid(awaaz);
+            } catch (e) { console.error('Posts load error:', e); }
+        }
+
+        function renderDeedsGrid(posts) {
+            const grid = document.getElementById('grid-deeds');
+            if (!posts.length) {
+                grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><div class="empty-icon">🤝</div>No deed posts yet.</div>';
+                return;
+            }
+            grid.innerHTML = '';
+            posts.forEach(p => {
+                const el = document.createElement('div');
+                el.className = 'grid-cell';
+
+                const mediaUrl = p.media_url ? p.media_url.split(',')[0] : null;
+                if (mediaUrl && mediaUrl.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
+                    el.innerHTML = `
+                    <img src="${API}${mediaUrl}" alt="" loading="lazy">
+                    <div class="cell-hover">
+                        <span>❤️ ${p.like_count || 0}</span>
+                        <span>💬 ${p.comment_count || 0}</span>
+                    </div>`;
+                } else if (mediaUrl && mediaUrl.match(/\.(mp4|webm|ogg)$/i)) {
+                    el.innerHTML = `
+                    <video muted preload="metadata" src="${API}${mediaUrl}#t=1"></video>
+                    <div class="cell-hover">
+                        <span>❤️ ${p.like_count || 0}</span>
+                        <span>💬 ${p.comment_count || 0}</span>
+                    </div>`;
+                } else {
+                    el.className = 'grid-cell text-cell';
+                    el.innerHTML = `<p>${p.content || 'No content'}</p>`;
+                }
+                grid.appendChild(el);
+            });
+        }
+
+        function renderAwaazGrid(posts) {
+            const grid = document.getElementById('grid-awaaz');
+            if (!posts.length) {
+                grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><div class="empty-icon">🎬</div>No Awaaz TV videos yet.</div>';
+                return;
+            }
+            grid.innerHTML = '';
+            posts.forEach(p => {
+                const mediaUrl = p.media_url ? p.media_url.split(',')[0] : null;
+                if (!mediaUrl || !mediaUrl.match(/\.(mp4|webm|ogg)$/i)) return;
+
+                const el = document.createElement('div');
+                el.className = 'reel-cell';
+                el.innerHTML = `
+                <video muted preload="metadata" src="${API}${mediaUrl}#t=1"></video>
+                <div class="reel-views">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                    ${(p.like_count || 0).toLocaleString()}
+                </div>`;
+                el.addEventListener('click', () => { window.location.href = 'awaaz_tv.html'; });
+                grid.appendChild(el);
+            });
+        }
+
+        // ── FOLLOW STATE CHECK ───────────────────────
+        async function checkFollowState() {
+            if (!selfEmail || targetEmail === selfEmail) return;
+            try {
+                const res = await fetch(`${API}/api/followers?email=${encodeURIComponent(targetEmail)}`);
+                const data = await res.json();
+                if (data.ok) {
+                    const alreadyFollowing = (data.followers || []).some(f => f.email === selfEmail);
+                    isFollowing = alreadyFollowing;
+                    const btn = document.getElementById('btn-follow');
+                    if (btn) {
+                        btn.textContent = isFollowing ? 'Following' : 'Follow';
+                        btn.className = isFollowing ? 'btn-primary following-state' : 'btn-primary';
+                    }
+                }
+            } catch (e) { }
+        }
+
+        // ── TABS ────────────────────────────────────
+        function switchTab(tabId, btn) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('panel-' + tabId).classList.add('active');
+        }
+
+        // ── FOLLOW ──────────────────────────────────
+        async function toggleFollow() {
+            if (!selfEmail) { alert('Please log in first.'); return; }
+            const btn = document.getElementById('btn-follow');
+            try {
+                const res = await fetch(`${API}/api/follow`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ follower_email: selfEmail, target_email: targetEmail })
+                });
+                const data = await res.json();
+                if (data.ok) {
+                    isFollowing = data.following;
+                    btn.textContent = isFollowing ? 'Following' : 'Follow';
+                    btn.className = isFollowing ? 'btn-primary following-state' : 'btn-primary';
+                    // Update follower count
+                    const fc = document.getElementById('s-followers');
+                    const n = parseInt(fc.textContent) || 0;
+                    fc.textContent = isFollowing ? n + 1 : Math.max(0, n - 1);
+                }
+            } catch (e) { }
+        }
+
+        // ── SHARE / COPY ────────────────────────────
+        function handleShare() {
+            const url = location.href;
+            if (navigator.share) {
+                navigator.share({ title: (userData.username || 'User') + ' on KARMA', url }).catch(() => { });
+            } else {
+                handleCopyLink();
+            }
+        }
+        function handleCopyLink() {
+            navigator.clipboard.writeText(location.href).then(() => alert('Profile link copied!'));
+            document.getElementById('menu-dropdown').classList.remove('open');
+        }
+
+        // ── INIT ────────────────────────────────────
+        (async function () {
+            await loadProfile();
+            await Promise.all([loadPosts(), checkFollowState()]);
+        })();
+    </script>
+</body>
+
+</html>

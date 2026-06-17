@@ -1,0 +1,143 @@
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dastarkhwan | Desi Entrance</title>
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Arial Black', sans-serif; 
+            background: #1a1a1a; 
+            overflow: hidden; 
+        }
+
+        /* Realistic Dhaba Shutter */
+        #shop-shutter {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: #4682B4;
+            background-image: 
+                linear-gradient(rgba(0,0,0,0.4) 1px, transparent 1px),
+                repeating-linear-gradient(to bottom, #3b6d96 0px, #4682B4 22px, #5a9bd5 44px);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: transform 2.5s cubic-bezier(0.25, 0.1, 0.25, 1);
+            border-bottom: 40px solid #2c3e50;
+            box-shadow: inset 0 0 30px rgba(0,0,0,0.6);
+        }
+
+        /* Rust & Dirt */
+        #shop-shutter::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: 
+                radial-gradient(circle at 15% 25%, rgba(139,69,19,0.25) 0%, transparent 25%),
+                radial-gradient(circle at 85% 65%, rgba(139,69,19,0.2) 0%, transparent 20%);
+            pointer-events: none;
+        }
+
+        /* Heavy Iron Locking Bar (Kunda) */
+        .shutter-bar {
+            position: absolute;
+            bottom: 90px;
+            width: 85%;
+            height: 18px;
+            background: #2c3e50;
+            border-radius: 6px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+        }
+
+        .center-lock {
+            position: absolute;
+            bottom: 78px;
+            width: 45px;
+            height: 45px;
+            background: #7f8c8d;
+            border: 5px solid #2c3e50;
+            border-radius: 6px;
+            z-index: 2;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+        }
+
+        /* Hand-Painted Text */
+        .welcome-box {
+            text-align: center;
+            z-index: 10000;
+            transform: rotate(-2deg);
+        }
+
+        .welcome-box h1 {
+            font-size: 5.5rem;
+            color: #ffffff;
+            letter-spacing: 6px;
+            text-transform: uppercase;
+            text-shadow: 
+                4px 4px 0px #c0392b,
+                8px 8px 0px rgba(0,0,0,0.6);
+            -webkit-text-stroke: 2.5px #000;
+        }
+
+        .welcome-box p {
+            font-size: 1.9rem;           
+            color: #f1c40f;
+            margin-top: 8px;
+            font-weight: bold;
+            text-shadow: 3px 3px #000;
+        }
+
+        /* Lift Animation */
+        .shutter-lifted {
+            transform: translateY(-100%);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Make sure shutter.mp3 is in the same folder as this HTML file -->
+    <audio id="shutterSound" src="shutter.mp3" preload="auto"></audio>
+
+    <div id="shop-shutter">
+        <div class="welcome-box">
+            <h1>Welcome to Dastarkhwan</h1>
+            <p>Sewa Ki Ek Nayi Pehchan</p>
+        </div>
+        <div class="shutter-bar"></div>
+        <div class="center-lock"></div>
+    </div>
+
+    <script>
+        window.addEventListener('load', () => {
+            const shutter = document.getElementById('shop-shutter');
+            const sound = document.getElementById('shutterSound');
+
+            setTimeout(() => {
+                // Try to play the sound when the shutter starts moving
+                sound.currentTime = 0;
+                sound.play().catch(err => {
+                    console.log("Audio play was blocked or failed:", err);
+                    // Most common reason: browser autoplay policy
+                    // It will still work if user has already interacted with the page
+                });
+
+                // Start lifting animation
+                shutter.classList.add('shutter-lifted');
+
+                // Redirect after animation finishes
+                setTimeout(() => {
+                    window.location.href = "index.html";
+                }, 2800); // 2.5s transition + small buffer
+            }, 2000); // 2-second delay to read the welcome text
+        });
+    </script>
+
+</body>
+</html>

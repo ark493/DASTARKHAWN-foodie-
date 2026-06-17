@@ -1,0 +1,1390 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🧿 Polaroid · Dastarkhwan</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+  <style>
+    /* (All existing CSS remains exactly the same) */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --primary: #10b981;
+      --accent: #e57a44;
+      --bg: #fdfcf8;
+      --paper: rgba(0,0,0,0.018);
+      --glass: rgba(255,255,255,0.72);
+      --shadow: 0 20px 50px -12px rgba(0,0,0,0.08);
+    }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      background-image: radial-gradient(circle at 2px 2px, var(--paper) 1px, transparent 1px);
+      background-size: 40px 40px;
+      color: #1e293b;
+      min-height: 100vh;
+      padding: 20px 16px 100px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::after {
+      content: ""; position: fixed; inset: 0;
+      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300"><filter id="f"><feTurbulence type="fractalNoise" baseFrequency="0.68" numOctaves="3"/></filter><rect width="100%" height="100%" filter="url(%23f)" opacity="0.035"/></svg>');
+      pointer-events: none; z-index: 1;
+    }
+
+    /* ----- Back Button ----- */
+    .back-home {
+      position: fixed; top: 16px; left: 16px; z-index: 1000;
+      background: var(--glass); backdrop-filter: blur(24px);
+      border: 1px solid rgba(255,255,255,0.5); border-radius: 999px;
+      padding: 10px 20px; font-weight: 700; color: #0f172a;
+      text-decoration: none; display: inline-flex; align-items: center; gap: 8px;
+      box-shadow: var(--shadow); transition: all 0.28s ease;
+    }
+    .back-home:hover { background: white; transform: translateY(-2px); }
+
+    /* ----- Header ----- */
+    .memories-header {
+      text-align: center; margin: 40px auto 50px; max-width: 700px;
+    }
+    .memories-header h1 {
+      font-family: 'Playfair Display', serif; font-size: clamp(2.5rem, 8vw, 4.5rem);
+      font-weight: 900; color: #065f46; letter-spacing: -0.03em; line-height: 0.92;
+    }
+    .memories-header h1 span { color: var(--accent); }
+    .memories-header p {
+      margin-top: 10px; color: #64748b; font-size: 1rem; font-weight: 500;
+    }
+
+    /* ----- HOLOGRAM MUSIC PLAYER ----- */
+    .hologram-player {
+      position: fixed; top: 16px; right: 16px; z-index: 950;
+      width: 120px; height: 120px;
+      background: radial-gradient(circle at 30% 30%, rgba(16, 185, 129, 0.3), rgba(229, 122, 68, 0.1));
+      backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+      border: 2px solid rgba(16, 185, 129, 0.4);
+      border-radius: 50%;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 8px; box-shadow: 0 0 40px rgba(16, 185, 129, 0.3), inset 0 0 40px rgba(16, 185, 129, 0.1);
+      cursor: pointer; transition: all 0.3s ease;
+    }
+
+    .hologram-player:hover {
+      border-color: var(--primary);
+      box-shadow: 0 0 60px rgba(16, 185, 129, 0.5), inset 0 0 40px rgba(16, 185, 129, 0.15);
+      transform: scale(1.05);
+    }
+
+    .hologram-disk {
+      width: 80px; height: 80px;
+      background: conic-gradient(from 0deg, var(--primary), var(--accent), #fbbf24, var(--primary));
+      border-radius: 50%;
+      box-shadow: inset 0 0 30px rgba(0,0,0,0.2), 0 0 20px rgba(16, 185, 129, 0.4);
+      position: relative;
+      transition: all 0.2s;
+    }
+
+    .hologram-disk.playing {
+      animation: rotateHologram 4s linear infinite;
+    }
+
+    .hologram-disk::after {
+      content: "";
+      position: absolute; inset: 25%;
+      background: radial-gradient(circle, #065f46, #0a3622);
+      border-radius: 50%;
+      box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+    }
+
+    @keyframes rotateHologram {
+      to { transform: rotate(360deg); }
+    }
+
+    .hologram-play-icon {
+      position: absolute; bottom: -8px;
+      font-size: 0.7rem; color: var(--accent); font-weight: 900;
+    }
+
+    .hologram-info {
+      position: absolute; bottom: -35px; left: 50%; transform: translateX(-50%);
+      text-align: center; font-size: 0.65rem; white-space: nowrap;
+      color: #64748b; font-weight: 600; max-width: 150px;
+    }
+
+    /* ----- POLAROID GRID (now 2 columns, but can hold many cards) ----- */
+    .polaroid-grid {
+      display: grid; grid-template-columns: repeat(2, 1fr);
+      gap: 50px 35px; max-width: 1280px; margin: 0 auto; padding: 0 12px;
+    }
+
+    /* ----- LIQUID POLAROID CARD ----- */
+    .liquid-card {
+      position: relative;
+      background: var(--glass); backdrop-filter: blur(28px);
+      border: 1px solid rgba(255,255,255,0.45); border-radius: 28px;
+      padding: 40px 28px 32px;
+      box-shadow: var(--shadow);
+      transition: all 0.42s cubic-bezier(0.34, 1.56, 0.64, 1);
+      transform-style: preserve-3d; perspective: 1000px;
+    }
+
+    .liquid-card:hover {
+      transform: translateY(-16px) rotateX(3deg) rotateY(4deg) scale(1.018);
+      box-shadow: 0 32px 70px -16px rgba(16, 185, 129, 0.25);
+    }
+
+    /* ----- HANGING CLOTHESPIN & STRING ----- */
+    .card-hanger {
+      position: absolute; top: -24px; left: 50%;
+      transform: translateX(-50%); width: 48px; text-align: center; z-index: 10;
+    }
+    .clothespin {
+      width: 38px; height: 18px; margin: 0 auto;
+      background: linear-gradient(135deg, #8d5e35, #5f3e1f);
+      border-radius: 6px 6px 12px 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      position: relative;
+    }
+    .clothespin::after {
+      content: ''; position: absolute; inset: 5px 8px;
+      background: #c9a06e; border-radius: 3px;
+    }
+    .twine {
+      width: 3px; height: 38px;
+      background: linear-gradient(#a67c52, #8d5e35);
+      margin: -2px auto 0; border-radius: 2px;
+    }
+
+    /* ----- FAIRY LIGHTS ----- */
+    .fairy-lights {
+      position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+      pointer-events: none; z-index: 5; border-radius: 28px;
+    }
+    .light {
+      position: absolute; width: 10px; height: 10px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, #fff, #fbbf24);
+      box-shadow: 0 0 15px 5px rgba(251, 191, 36, 0.6);
+      animation: glow 2s infinite alternate;
+    }
+    .light:nth-child(1) { top: 8%; left: 5%; }
+    .light:nth-child(2) { top: 15%; right: 6%; animation-delay: 0.5s; }
+    .light:nth-child(3) { bottom: 18%; left: 10%; animation-delay: 1s; }
+    .light:nth-child(4) { bottom: 8%; right: 12%; animation-delay: 0.2s; }
+    .light:nth-child(5) { top: 50%; left: 8%; animation-delay: 0.8s; }
+    .light:nth-child(6) { top: 45%; right: 7%; animation-delay: 1.3s; }
+    .light:nth-child(7) { bottom: 32%; left: 15%; animation-delay: 0.1s; }
+    .light:nth-child(8) { bottom: 25%; right: 8%; animation-delay: 0.7s; }
+
+    @keyframes glow {
+      0% { opacity: 0.5; transform: scale(0.7); }
+      100% { opacity: 1; transform: scale(1.3); }
+    }
+
+    /* ----- 3 POLAROID STRIP ----- */
+    .polaroid-strip {
+      display: flex; gap: 16px; justify-content: center;
+      margin: 0 0 28px; flex-wrap: wrap; position: relative; z-index: 10;
+    }
+    .polaroid {
+      background: white; padding: 10px 10px 28px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+      border-radius: 8px;
+      transform: rotate(calc(var(--rot, 0) * 1deg));
+      transition: all 0.35s ease; width: 130px; flex-shrink: 0;
+    }
+    .polaroid:hover {
+      transform: rotate(0deg) translateY(-10px) scale(1.08);
+      box-shadow: 0 18px 45px rgba(0,0,0,0.18);
+    }
+    .polaroid:nth-child(1) { --rot: -4; }
+    .polaroid:nth-child(2) { --rot: 0; }
+    .polaroid:nth-child(3) { --rot: 4; }
+    .polaroid-img {
+      width: 100%; aspect-ratio: 3 / 4;
+      object-fit: cover; border-radius: 4px; background: #111;
+    }
+    .polaroid-caption {
+      text-align: center; font-size: 0.7rem;
+      color: #334155; font-weight: 700; margin-top: 8px;
+    }
+
+    /* ----- DOUBLE TAP HEART ----- */
+    .doubletap-heart {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      pointer-events: none; font-size: 6.5rem;
+      color: var(--accent); opacity: 0; transform: scale(0); z-index: 20;
+    }
+    .doubletap-heart.show { animation: heartBurst 0.6s forwards; }
+    @keyframes heartBurst {
+      0% { transform: scale(0); opacity: 0; }
+      30% { transform: scale(1.4); opacity: 0.95; }
+      100% { transform: scale(0); opacity: 0; }
+    }
+
+    /* ----- CARD CONTENT ----- */
+    .hotel-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.85rem; font-weight: 900;
+      color: #065f46; text-align: center; margin-bottom: 8px;
+    }
+    .location {
+      text-align: center; color: #64748b; font-size: 0.85rem;
+      font-weight: 600; margin-bottom: 20px;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+
+    /* ----- COMMENTS PREVIEW (cycling) ----- */
+    .comments-preview {
+      background: rgba(16, 185, 129, 0.08);
+      border: 1px solid rgba(16, 185, 129, 0.15);
+      border-radius: 16px; padding: 14px;
+      margin-bottom: 16px;
+      min-height: 70px; display: flex; align-items: center;
+      justify-content: center; font-size: 0.8rem;
+      color: #334155; text-align: center; position: relative;
+      overflow: hidden;
+    }
+    .comment-bubble {
+      position: absolute;
+      width: 100%;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .comment-bubble.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .comment-bubble b {
+      color: #065f46;
+    }
+
+    /* ----- ACTION BAR ----- */
+    .action-bar {
+      display: flex; justify-content: space-around; gap: 10px;
+      padding-top: 16px; border-top: 1px solid rgba(226, 232, 240, 0.6);
+    }
+    .action-btn {
+      background: rgba(255,255,255,0.65); backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.7); border-radius: 999px;
+      padding: 10px 18px; font-weight: 700; color: #475569;
+      display: flex; align-items: center; gap: 8px;
+      cursor: pointer; transition: all 0.26s ease; font-size: 0.9rem;
+    }
+    .action-btn:hover {
+      background: white; border-color: var(--primary);
+      color: var(--primary); transform: translateY(-1px);
+    }
+    .action-btn i { color: var(--primary); font-size: 1.15rem; }
+    .action-btn.liked i { color: #e57a44; } /* Instagram-style liked color */
+
+    /* ----- COMMENT SHEET ----- */
+    .comment-sheet {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: var(--glass); backdrop-filter: blur(32px);
+      border-top-left-radius: 32px; border-top-right-radius: 32px;
+      padding: 24px 24px 34px;
+      transform: translateY(100%);
+      transition: transform 0.42s cubic-bezier(0.32, 0, 0, 1);
+      max-height: 85vh; overflow-y: auto; z-index: 1100;
+    }
+    .comment-sheet.open { transform: translateY(0); }
+    .comment-header {
+      display: flex; justify-content: space-between;
+      align-items: center; margin-bottom: 20px;
+    }
+    .comment-header h3 {
+      font-size: 1.2rem; font-weight: 800; color: #065f46;
+    }
+    .close-sheet {
+      background: none; border: none; font-size: 1.8rem;
+      color: #64748b; cursor: pointer; transition: 0.2s;
+    }
+    .close-sheet:hover { color: #0f172a; }
+    .comment-list {
+      display: flex; flex-direction: column;
+      gap: 16px; margin-bottom: 20px;
+    }
+    .comment-item {
+      display: flex; gap: 12px;
+    }
+    .comment-avatar {
+      width: 40px; height: 40px;
+      background: var(--primary); border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      color: white; font-weight: 900; flex-shrink: 0;
+    }
+    .comment-username {
+      font-weight: 800; color: #0f172a; font-size: 0.9rem;
+    }
+    .comment-text {
+      color: #334155; font-size: 0.9rem; margin-top: 4px;
+    }
+    .comment-time {
+      color: #94a3b8; font-size: 0.7rem; margin-top: 6px;
+    }
+    .comment-input-area {
+      display: flex; gap: 12px;
+      border-top: 1px solid #e2e8f0; padding-top: 20px;
+    }
+    .comment-input-area input {
+      flex: 1; padding: 12px 16px;
+      border: 2px solid #e2e8f0; border-radius: 60px;
+      outline: none; font-size: 0.95rem;
+    }
+    .comment-input-area input:focus {
+      border-color: var(--primary);
+    }
+    .comment-input-area button {
+      background: var(--primary); border: none;
+      border-radius: 60px; padding: 12px 24px;
+      color: white; font-weight: 800;
+      cursor: pointer; transition: 0.2s;
+    }
+    .comment-input-area button:hover {
+      background: #0d9488;
+    }
+
+    /* ----- LOADING STATE ----- */
+    .loading, .error {
+      grid-column: span 2; text-align: center;
+      padding: 60px 20px; font-size: 1.1rem;
+      color: #64748b;
+      background: rgba(255,255,255,0.5);
+      backdrop-filter: blur(12px); border-radius: 60px;
+    }
+    .loading i { animation: spin 1s linear infinite; margin-right: 8px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ----- FOOTER ----- */
+    .footer {
+      text-align: center; margin-top: 80px;
+      font-weight: 700; letter-spacing: 4px;
+      color: #94a3b8; opacity: 0.6;
+      text-transform: uppercase; font-size: 0.7rem;
+    }
+
+    /* ----- RESPONSIVE ----- */
+    @media (max-width: 1023px) {
+      .polaroid-grid { grid-template-columns: 1fr; }
+      .hologram-player { width: 100px; height: 100px; top: 10px; right: 10px; }
+      .hologram-disk { width: 70px; height: 70px; }
+    }
+
+    @media (max-width: 640px) {
+      body { padding: 16px 12px 80px; }
+      .memories-header { margin: 30px auto 35px; }
+      .memories-header h1 { font-size: 2.2rem; }
+      .polaroid-grid { gap: 35px 20px; padding: 0 8px; }
+      .liquid-card { padding: 30px 20px 24px; }
+      .polaroid { width: 110px; }
+      .hologram-player { width: 90px; height: 90px; }
+      .hologram-disk { width: 60px; height: 60px; }
+      .action-btn span { display: none; }
+      .action-btn { padding: 10px 12px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Back Button -->
+  <a href="index.html" class="back-home">
+    <i class="fa-solid fa-arrow-left"></i> Back
+  </a>
+
+  <!-- Hologram Music Player -->
+  <div class="hologram-player" id="hologramPlayer" title="Now Playing">
+    <div class="hologram-disk" id="hologramDisk"></div>
+    <div class="hologram-play-icon">▶</div>
+    <div class="hologram-info">
+      <div id="hologramTrack" style="font-weight: 800;">🎵</div>
+      <div id="hologramArtist" style="opacity: 0.7; margin-top: 2px;">Dastarkhwan</div>
+    </div>
+  </div>
+
+  <!-- Header with 🧿 -->
+  <div class="memories-header">
+    <h1>🧿<span>.</span></h1>
+    <p>Hanging memories · fairy lights · moments</p>
+  </div>
+
+  <!-- Polaroid Grid -->
+  <div id="polaroidGrid" class="polaroid-grid">
+    <div class="loading"><i class="fa-solid fa-spinner fa-spin"></i> Loading memories…</div>
+  </div>
+
+  <div class="footer">✦ Dastarkhwan · 2026 ✦</div>
+
+  <!-- Comment Sheet -->
+  <div id="commentSheet" class="comment-sheet">
+    <div class="comment-header">
+      <h3 id="commentSheetTitle">Comments</h3>
+      <button class="close-sheet" id="closeSheetBtn">&times;</button>
+    </div>
+    <div id="commentList" class="comment-list"></div>
+    <div class="comment-input-area">
+      <input type="text" id="commentInput" placeholder="Add a comment...">
+      <button id="postCommentBtn">Post</button>
+    </div>
+  </div>
+
+  <audio id="globalAudio"></audio>
+
+  <script>
+    // ============================================================
+    // CONFIG
+    // ============================================================
+    const API_URL = "http://127.0.0.1:5000";
+    const USER_NAME = localStorage.getItem('dastarkhwan_user') || "Foodie";
+    const USER_ID = localStorage.getItem('dastarkhwan_user_id') || `user_${Date.now()}`;
+    localStorage.setItem('dastarkhwan_user_id', USER_ID);
+
+    // ============================================================
+    // MUSIC TRACKS – now only 5 songs (MP3 files)
+    // ============================================================
+    const TRACKS = [
+      { name: "I love you", artist: "Dastarkhwan", url: "song1.mp3" },
+      { name: "Apna har din", artist: "Dastarkhwan", url: "song2.mp3" },
+      { name: "Subha hone na de", artist: "Dastarkhwan", url: "song3.mp3" },
+      { name: "Love is waste of time", artist: "Dastarkhwan", url: "song4.mp3" },
+      { name: "Aal izz well", artist: "Dastarkhwan", url: "song5.mp3" }
+    ];
+
+    const audio = document.getElementById('globalAudio');
+    const hologramPlayer = document.getElementById('hologramPlayer');
+    const hologramDisk = document.getElementById('hologramDisk');
+    let isPlaying = false;
+
+    // Function to load and play a random track
+    function playRandomTrack() {
+      const randomIndex = Math.floor(Math.random() * TRACKS.length);
+      const track = TRACKS[randomIndex];
+      document.getElementById('hologramTrack').innerText = track.name;
+      document.getElementById('hologramArtist').innerText = track.artist;
+      audio.src = track.url;
+      audio.play().catch(() => {
+        // If play fails (e.g., user interaction needed), we'll handle it on click anyway
+      });
+      hologramDisk.classList.add('playing');
+      isPlaying = true;
+    }
+
+    // Click handler: always play a random track (stop current if any)
+    hologramPlayer.addEventListener('click', () => {
+      // Pause any currently playing
+      audio.pause();
+      // Reset source to force new load (optional, but ensures change)
+      audio.src = '';
+      // Play a new random track
+      playRandomTrack();
+    });
+
+    // When a track ends, play another random one (optional, but nice)
+    audio.addEventListener('ended', () => {
+      playRandomTrack();
+    });
+
+    // Start with a random track on first click (remove the old initMusic)
+    // We'll just let the first click trigger playRandomTrack via the click handler.
+    // No initial load needed.
+
+    // ============================================================
+    // COMMENT SHEET (unchanged, uses backend)
+    // ============================================================
+    const commentSheet = document.getElementById('commentSheet');
+    const closeSheetBtn = document.getElementById('closeSheetBtn');
+    const commentList = document.getElementById('commentList');
+    const commentInput = document.getElementById('commentInput');
+    const postCommentBtn = document.getElementById('postCommentBtn');
+    const commentSheetTitle = document.getElementById('commentSheetTitle');
+
+    let currentMemoryId = null;
+
+    closeSheetBtn.addEventListener('click', () => {
+      commentSheet.classList.remove('open');
+    });
+
+    async function loadCommentsForSheet(memoryId) {
+      try {
+        const res = await fetch(`${API_URL}/get_memory_comments?memory_id=${memoryId}`);
+        const comments = await res.json();
+        commentList.innerHTML = '';
+        if (comments.length === 0) {
+          commentList.innerHTML = '<div style="text-align:center; padding:20px; color:#64748b;">💬 No comments yet. Be the first!</div>';
+        } else {
+          comments.forEach(c => {
+            const div = document.createElement('div');
+            div.className = 'comment-item';
+            div.innerHTML = `
+              <div class="comment-avatar">${c.username.charAt(0).toUpperCase()}</div>
+              <div>
+                <div class="comment-username">${escapeHTML(c.username)}</div>
+                <div class="comment-text">${escapeHTML(c.comment)}</div>
+                <div class="comment-time">${timeAgo(c.created_at)}</div>
+              </div>
+            `;
+            commentList.appendChild(div);
+          });
+        }
+      } catch (e) {
+        commentList.innerHTML = '<div style="text-align:center; padding:20px;">⚠️ Failed to load comments.</div>';
+      }
+    }
+
+    window.openCommentSheet = function(memoryId, hotelName) {
+      currentMemoryId = memoryId;
+      commentSheetTitle.innerText = `Comments · ${escapeHTML(hotelName)}`;
+      commentSheet.classList.add('open');
+      loadCommentsForSheet(memoryId);
+    };
+
+    postCommentBtn.addEventListener('click', async () => {
+      const text = commentInput.value.trim();
+      if (!text || !currentMemoryId) {
+        alert('Please enter a comment.');
+        return;
+      }
+      postCommentBtn.disabled = true;
+      postCommentBtn.innerText = '⏳';
+      try {
+        const res = await fetch(`${API_URL}/add_memory_comment`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ memory_id: currentMemoryId, username: USER_NAME, comment: text })
+        });
+        if (res.ok) {
+          commentInput.value = '';
+          await loadCommentsForSheet(currentMemoryId);
+        } else {
+          alert('❌ Failed to post comment');
+        }
+      } catch (e) {
+        alert('❌ Server error');
+      } finally {
+        postCommentBtn.disabled = false;
+        postCommentBtn.innerText = 'Post';
+      }
+    });
+
+    // ============================================================
+    // LIKE HANDLER – SIMPLE LOCAL COUNTER (no backend, no toggle)
+    // ============================================================
+    window.handleLike = function(btn, memoryId) {
+      const countSpan = btn.querySelector('.like-count');
+      const icon = btn.querySelector('i');
+      let currentCount = parseInt(countSpan.innerText) || 0;
+      currentCount++;
+      countSpan.innerText = currentCount;
+      
+      // Change heart to solid and color after first click
+      if (!btn.classList.contains('liked')) {
+        btn.classList.add('liked');
+        icon.className = 'fa-solid fa-heart';
+      } else {
+        // Keep solid, just increment count
+        icon.className = 'fa-solid fa-heart';
+      }
+      
+      // Store count in localStorage per memory
+      localStorage.setItem(`count_${memoryId}`, currentCount);
+    };
+
+    // ============================================================
+    // SHARE HANDLER
+    // ============================================================
+    window.handleShare = function() {
+      if (navigator.share) {
+        navigator.share({
+          title: 'Dastarkhwan Memory',
+          text: 'Check out this beautiful memory!',
+          url: window.location.href
+        }).catch(() => {});
+      } else {
+        navigator.clipboard.writeText(window.location.href);
+        alert('📋 Link copied to clipboard!');
+      }
+    };
+
+    // ============================================================
+    // UPDATE HOTEL CARD – refreshes the main grid card for a specific hotel
+    // ============================================================
+    async function updateHotelCard(hotelId) {
+      const card = document.querySelector(`.liquid-card[data-hotel-id="${hotelId}"]`);
+      if (!card) return;
+
+      try {
+        const res = await fetch(`${API_URL}/get_memories?hotel_id=${hotelId}`);
+        const mems = await res.json();
+        const latestMemories = mems.sort((a,b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 3);
+        const hotel = allHotels.find(h => h.unique_id === hotelId);
+        if (!hotel) return;
+        const newCard = createCardElement(latestMemories, hotel);
+        card.parentNode.replaceChild(newCard, card);
+      } catch (e) {
+        console.error("Failed to update hotel card", e);
+      }
+    }
+
+    // ============================================================
+    // LOAD MEMORIES – now takes top 3 memories per hotel
+    // ============================================================
+    let allHotels = [];
+
+    async function loadMemories() {
+      const grid = document.getElementById('polaroidGrid');
+      try {
+        const res = await fetch(`${API_URL}/get_hotels?category=all`);
+        allHotels = await res.json();
+        grid.innerHTML = '';
+
+        for (let hotel of allHotels) {
+          const mRes = await fetch(`${API_URL}/get_memories?hotel_id=${hotel.unique_id}`);
+          const mems = await mRes.json();
+          if (mems.length > 0) {
+            const latestMemories = mems.sort((a,b) => new Date(b.created_at) - new Date(a.created_at)).slice(0, 3);
+            const card = createCardElement(latestMemories, hotel);
+            grid.appendChild(card);
+          }
+        }
+      } catch (e) {
+        // ======== SAMPLE DATA – INCREASED TO SHOW MORE CARDS ========
+        grid.innerHTML = '<div class="error">⚠️ Backend Offline – showing sample data</div>';
+        const sampleHotels = [
+          { unique_id: '1', name: 'Taj Palace', location: 'Delhi' },
+          { unique_id: '2', name: 'Spice Route', location: 'Mumbai' },
+          { unique_id: '3', name: 'The Grand', location: 'Kolkata' },
+          { unique_id: '4', name: 'Royal Cafe', location: 'Bangalore' },
+          { unique_id: '5', name: 'Biryani House', location: 'Hyderabad' }
+        ];
+        const sampleMemories = [
+          { id: 'm1', caption: 'Lovely evening!', likes: 12, image_data: null },
+          { id: 'm2', caption: 'Yummy biryani', likes: 8, image_data: null },
+          { id: 'm3', caption: 'Another memory', likes: 5, image_data: null },
+          { id: 'm4', caption: 'Great ambiance', likes: 7, image_data: null },
+          { id: 'm5', caption: 'Must visit!', likes: 10, image_data: null }
+        ];
+        sampleHotels.forEach((hotel, idx) => {
+          // Assign some memories to each hotel
+          const mems = idx === 0 ? sampleMemories.slice(0,2) : 
+                       idx === 1 ? sampleMemories.slice(2,4) : 
+                       idx === 2 ? sampleMemories.slice(1,3) : 
+                       idx === 3 ? sampleMemories.slice(0,3) : 
+                       sampleMemories.slice(0,2);
+          const card = createCardElement(mems, hotel);
+          grid.appendChild(card);
+        });
+      }
+    }
+
+    // ============================================================
+    // CREATE CARD ELEMENT – takes memories array and hotel object
+    // ============================================================
+    function createCardElement(memories, hotel) {
+      const card = document.createElement('div');
+      card.className = 'liquid-card';
+      card.dataset.hotelId = hotel.unique_id;
+
+      const firstMem = memories[0];
+      const countKey = `count_${firstMem.id}`;
+      let initialCount = localStorage.getItem(countKey);
+      if (initialCount === null) {
+        initialCount = 0; // start at 0
+        localStorage.setItem(countKey, initialCount);
+      } else {
+        initialCount = parseInt(initialCount);
+      }
+
+      // Check if this memory has been liked before (heart should be solid if count > 0)
+      const liked = initialCount > 0;
+
+      // Generate up to 3 images from the memories array
+      const imageSources = [];
+      for (let i = 0; i < 3; i++) {
+        if (i < memories.length && memories[i].image_data) {
+          imageSources.push(memories[i].image_data);
+        } else {
+          const baseSeed = firstMem.id ? parseInt(firstMem.id.toString().replace(/\D/g, '')) || 100 : 100;
+          imageSources.push(`https://picsum.photos/seed/${baseSeed}${i+1}/300/400`);
+        }
+      }
+
+      const stripHTML = imageSources.map((src, idx) => `
+        <div class="polaroid">
+          <img class="polaroid-img" src="${src}" alt="Memory ${idx+1}" loading="lazy">
+          <div class="polaroid-caption">✦ Moment ✦</div>
+        </div>
+      `).join('');
+
+      card.innerHTML = `
+        <div class="card-hanger"><div class="clothespin"></div><div class="twine"></div></div>
+        <div class="fairy-lights">${Array(8).fill('<div class="light"></div>').join('')}</div>
+        <div class="media-tap-area" style="position:relative; cursor:pointer; border-radius: 20px; overflow: hidden;">
+          <div class="polaroid-strip">${stripHTML}</div>
+          <div class="doubletap-heart">❤️</div>
+        </div>
+        <div class="hotel-name">${escapeHTML(hotel.name)}</div>
+        <div class="location"><i class="fa-solid fa-location-dot"></i> ${escapeHTML(hotel.location)}</div>
+        <div class="comments-preview" id="preview-${firstMem.id}">
+          <div class="comment-bubble active"><b>✨</b> Loading comments...</div>
+        </div>
+        <div class="action-bar">
+          <button class="action-btn ${liked ? 'liked' : ''}" onclick="handleLike(this, '${firstMem.id}')">
+            <i class="fa-${liked ? 'solid' : 'regular'} fa-heart"></i> <span class="like-count">${initialCount}</span>
+          </button>
+          <button class="action-btn" onclick="openCommentSheet('${firstMem.id}', '${escapeHTML(hotel.name)}')">
+            <i class="fa-regular fa-comment"></i>
+          </button>
+          <button class="action-btn" onclick="handleShare()">
+            <i class="fa-regular fa-paper-plane"></i>
+          </button>
+        </div>
+      `;
+
+      // Double-tap detection
+      let lastTap = 0;
+      card.querySelector('.media-tap-area').addEventListener('click', (e) => {
+        const now = Date.now();
+        if (now - lastTap < 300) {
+          const btn = card.querySelector('.action-btn');
+          handleLike(btn, firstMem.id);
+          const heart = card.querySelector('.doubletap-heart');
+          heart.classList.add('show');
+          setTimeout(() => heart.classList.remove('show'), 600);
+        }
+        lastTap = now;
+      });
+
+      startCommentTicker(firstMem.id);
+      return card;
+    }
+
+    // ============================================================
+    // COMMENT TICKER (cycles through comments every 4 seconds)
+    // ============================================================
+    async function startCommentTicker(memoryId) {
+      const previewDiv = document.getElementById(`preview-${memoryId}`);
+      if (!previewDiv) return;
+
+      try {
+        const res = await fetch(`${API_URL}/get_memory_comments?memory_id=${memoryId}`);
+        const comments = await res.json();
+        if (comments.length === 0) {
+          previewDiv.innerHTML = '<div class="comment-bubble active"><b>✨</b> No comments yet</div>';
+          return;
+        }
+
+        previewDiv.innerHTML = '';
+        comments.forEach((c, idx) => {
+          const bubble = document.createElement('div');
+          bubble.className = 'comment-bubble' + (idx === 0 ? ' active' : '');
+          bubble.innerHTML = `<b>${escapeHTML(c.username)}:</b> ${escapeHTML(c.comment)}`;
+          previewDiv.appendChild(bubble);
+        });
+
+        let currentIndex = 0;
+        setInterval(() => {
+          const bubbles = previewDiv.querySelectorAll('.comment-bubble');
+          if (bubbles.length === 0) return;
+          bubbles[currentIndex].classList.remove('active');
+          currentIndex = (currentIndex + 1) % bubbles.length;
+          bubbles[currentIndex].classList.add('active');
+        }, 4000);
+      } catch (e) {
+        previewDiv.innerHTML = '<div class="comment-bubble active"><b>⚠️</b> Could not load comments</div>';
+      }
+    }
+
+    // ============================================================
+    // FIXED: SAVE MEMORY WITH CAPTION – now updates main grid
+    // ============================================================
+    async function saveMemoryWithCaption() {
+      const caption = document.getElementById('captionInput').value.trim();
+      if (!currentHotelId) {
+        showToast("No hotel selected", "error");
+        return;
+      }
+      if (!capturedImageData) return;
+
+      try {
+        const res = await fetch(`${API_URL}/add_memory`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            hotel_id: currentHotelId,
+            image_data: capturedImageData,
+            caption: caption,
+            filter_used: isGalleryMode ? 'gallery' : currentFilter
+          })
+        });
+        if (res.ok) {
+          showToast("Memory saved!");
+          addMemory(capturedImageData);
+          document.getElementById('captionInput').value = '';
+          await updateHotelCard(currentHotelId);
+          if (isGalleryMode) {
+            if (galleryFilesQueue.length > 0) {
+              processNextGalleryFile();
+            } else {
+              isGalleryMode = false;
+              document.getElementById('captionOverlay').style.display = 'none';
+              document.getElementById('fileInp').value = '';
+              if (activeTab === 'mem') {
+                fetchMemories(currentHotelId);
+              }
+            }
+          } else {
+            document.getElementById('captionOverlay').style.display = 'none';
+            resetCam();
+            if (activeTab === 'mem') {
+              fetchMemories(currentHotelId);
+            }
+          }
+        } else {
+          showToast("Failed to save memory", "error");
+        }
+      } catch(e) {
+        showToast("Server error", "error");
+      }
+    }
+
+    // ============================================================
+    // ORIGINAL FUNCTIONS (unchanged except added updateHotelCard)
+    // ============================================================
+    let memories = [];
+    let camStream = null;
+    let currentHotel = null;
+    let currentHotelId = null;
+    let currentFilter = 'normal';
+    let capturedImageData = null;
+    let currentCommentHotelId = null;
+    let currentRatingHotelId = null;
+    let selectedRating = 0;
+    let activeTab = 'menu';
+    let countdownInterval;
+    let galleryFilesQueue = [];
+    let isGalleryMode = false;
+
+    function addMemory(data) {
+      if(memories.length >= 3) return;
+      memories.push(data);
+      renderMemPreviews();
+      document.getElementById('memCount').innerText = `${memories.length} / 3 Memories`;
+      if(memories.length >= 3) stopCamera();
+    }
+
+    function renderMemPreviews() {
+      const container = document.getElementById('memPreviews');
+      container.innerHTML = "";
+      memories.forEach((img, idx) => {
+        const div = document.createElement('div');
+        div.className = "relative group w-full aspect-square animate-fade-in";
+        div.innerHTML = `
+          <img src="${img}" class="w-full h-full object-cover rounded-2xl shadow-lg border-2 border-white mem-img">
+          <button onclick="removeMemory(${idx})" class="mem-del-btn hover:scale-110 shadow-lg"><i class="fa-solid fa-xmark"></i></button>
+        `;
+        container.appendChild(div);
+      });
+    }
+
+    function removeMemory(idx) {
+      memories.splice(idx, 1);
+      renderMemPreviews();
+      document.getElementById('memCount').innerText = `${memories.length} / 3 Memories`;
+      showToast("Memory removed");
+    }
+
+    function showToast(msg, type = 'success') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `px-8 py-4 rounded-3xl backdrop-blur-3xl shadow-2xl border flex items-center gap-4 transition-all duration-500 toast-in pointer-events-auto ${
+        type === 'success' ? 'bg-emerald-500/80 border-emerald-400 text-white' : 'bg-red-500/80 border-red-400 text-white'
+      }`;
+      const icon = type === 'success' ? 'fa-circle-check' : 'fa-circle-exclamation';
+      toast.innerHTML = `<i class="fa-solid ${icon} text-xl"></i> <span class="text-[10px] font-black uppercase tracking-[0.2em]">${msg}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.classList.add('opacity-0', '-translate-y-4');
+        setTimeout(() => toast.remove(), 500);
+      }, 3000);
+    }
+
+    function stopCamera() {
+      if(camStream) { 
+        camStream.getTracks().forEach(t => t.stop()); 
+        camStream = null; 
+      }
+      const v = document.getElementById('vFeed');
+      v.srcObject = null;
+      const overlay = document.getElementById('overlay');
+      const rightPanel = overlay.querySelector('.overflow-y-auto.bg-white');
+      if(rightPanel) {
+        rightPanel.style.visibility = 'visible';
+        rightPanel.style.display = '';
+        rightPanel.style.width = '';
+        rightPanel.style.height = '';
+      }
+      document.getElementById('camPrompt').classList.remove('hidden');
+      document.getElementById('vFeed').classList.add('hidden');
+      document.getElementById('camUI').classList.add('hidden');
+      document.getElementById('filterBar').classList.add('hidden');
+      document.getElementById('captionOverlay').style.display = 'none';
+    }
+
+    function resetCam() { stopCamera(); }
+
+    function triggerFile() { document.getElementById('fileInp').click(); }
+
+    async function openCamera() {
+      if(memories.length >= 3) return showToast("Limit 3 memories per visit", "error");
+      document.getElementById('camPrompt').classList.add('hidden');
+      const v = document.getElementById('vFeed');
+      v.classList.remove('hidden');
+      document.getElementById('camUI').classList.remove('hidden');
+      document.getElementById('filterBar').classList.remove('hidden');
+      const overlay = document.getElementById('overlay');
+      const rightPanel = overlay.querySelector('.overflow-y-auto.bg-white');
+      if(rightPanel) {
+        rightPanel.style.visibility = 'hidden';
+        rightPanel.style.display = 'none !important';
+        rightPanel.style.width = '0';
+        rightPanel.style.height = '0';
+      }
+      try {
+        camStream = await navigator.mediaDevices.getUserMedia({ 
+          video: { width: { ideal: 1280 }, height: { ideal: 720 } }, 
+          audio: false 
+        });
+        v.srcObject = camStream;
+        v.play().catch(e => console.warn("Play:", e));
+      } catch(err) {
+        try {
+          camStream = await navigator.mediaDevices.getUserMedia({
+            video: { facingMode: "user" },
+            audio: false
+          });
+          v.srcObject = camStream;
+          v.play().catch(e => console.warn("Play:", e));
+        } catch(e) {
+          showToast("Camera not available. Check permissions or try alternative method.", "error");
+          resetCam();
+        }
+      }
+    }
+
+    function startCountdown() {
+      let count = 3;
+      const timerEl = document.getElementById('timer');
+      const smileEl = document.getElementById('smile');
+      timerEl.classList.remove('hidden');
+      timerEl.innerText = count;
+      countdownInterval = setInterval(() => {
+        count--;
+        if (count > 0) {
+          timerEl.innerText = count;
+        } else {
+          clearInterval(countdownInterval);
+          timerEl.classList.add('hidden');
+          smileEl.classList.remove('hidden');
+          setTimeout(() => {
+            smileEl.classList.add('hidden');
+            capturePhoto();
+          }, 300);
+        }
+      }, 1000);
+    }
+
+    function capturePhoto() {
+      const v = document.getElementById('vFeed');
+      const c = document.getElementById('capCanvas');
+      c.width = v.videoWidth;
+      c.height = v.videoHeight;
+      const ctx = c.getContext('2d');
+      ctx.filter = v.style.filter;
+      ctx.drawImage(v, 0, 0, c.width, c.height);
+      capturedImageData = c.toDataURL('image/jpeg');
+      document.getElementById('camUI').classList.add('hidden');
+      document.getElementById('filterBar').classList.add('hidden');
+      document.getElementById('captionOverlay').style.display = 'flex';
+    }
+
+    function cancelCaption() {
+      document.getElementById('captionOverlay').style.display = 'none';
+      document.getElementById('camUI').classList.remove('hidden');
+      document.getElementById('filterBar').classList.remove('hidden');
+      capturedImageData = null;
+    }
+
+    function capture() {
+      startCountdown();
+    }
+
+    async function handleFile(inp) {
+      const files = Array.from(inp.files).slice(0, 3 - memories.length);
+      if (files.length === 0) {
+        showToast("Memory limit reached!", "error");
+        return;
+      }
+      galleryFilesQueue = files;
+      isGalleryMode = true;
+      processNextGalleryFile();
+    }
+
+    function processNextGalleryFile() {
+      if (galleryFilesQueue.length === 0) {
+        isGalleryMode = false;
+        document.getElementById('fileInp').value = '';
+        if (activeTab === 'mem') {
+          fetchMemories(currentHotelId);
+        }
+        return;
+      }
+      const file = galleryFilesQueue.shift();
+      const reader = new FileReader();
+      reader.onload = function() {
+        capturedImageData = reader.result;
+        document.getElementById('captionInput').value = '';
+        document.getElementById('captionInput').placeholder = `Add caption (${galleryFilesQueue.length + 1}/${Array.from(document.getElementById('fileInp').files).length})`;
+        document.getElementById('captionOverlay').style.display = 'flex';
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function switchTab(t) {
+      activeTab = t;
+      document.getElementById('secMenu').classList.toggle('hidden', t !== 'menu');
+      document.getElementById('secRev').classList.toggle('hidden', t !== 'rev');
+      document.getElementById('secMem').classList.toggle('hidden', t !== 'mem');
+      const baseClass = "flex-1 py-3 rounded-2xl text-[10px] font-black uppercase transition-all";
+      document.getElementById('tMenu').className = t === 'menu' ? baseClass + " bg-white shadow-sm" : baseClass + " text-slate-400";
+      document.getElementById('tRev').className = t === 'rev' ? baseClass + " bg-white shadow-sm" : baseClass + " text-slate-400";
+      document.getElementById('tMem').className = t === 'mem' ? baseClass + " bg-white shadow-sm" : baseClass + " text-slate-400";
+      if (t === 'mem' && currentHotelId) {
+        fetchMemories(currentHotelId);
+      }
+    }
+
+    function openOverlay(hotel) {
+      currentHotel = hotel;
+      currentHotelId = hotel.unique_id;
+      fetchMemories(hotel.unique_id);
+      document.getElementById('overlay').classList.remove('hidden');
+      document.getElementById('ovName').innerText = hotel.name;
+      document.getElementById('ovLoc').innerText = hotel.location || 'Location not set';
+      memories = [];
+      document.getElementById('memPreviews').innerHTML = "";
+      document.getElementById('memCount').innerText = "0 / 3 Memories";
+      const menuSec = document.getElementById('secMenu');
+      menuSec.innerHTML = "";
+      const menuItems = typeof hotel.menu === 'string' ? JSON.parse(hotel.menu) : hotel.menu;
+      if(menuItems && menuItems.length > 0) {
+        menuItems.forEach(i => {
+          menuSec.innerHTML += `<div class="flex justify-between p-5 bg-slate-50 rounded-2xl border border-slate-100 font-bold text-sm"><span>${i.dish || i.name}</span><span class="text-emerald-600">₹${i.price}</span></div>`;
+        });
+      } else {
+        menuSec.innerHTML = '<div class="text-center text-slate-400 py-4">No menu items added</div>';
+      }
+      switchTab('mem');
+    }
+
+    function closeOverlay() {
+      document.getElementById('overlay').classList.add('hidden');
+      stopCamera();
+    }
+
+    function openHotelLocation() {
+      if (!currentHotel || !currentHotel.location || currentHotel.location.trim() === '') {
+        showToast("No address provided", "error");
+        return;
+      }
+      openGoogleMaps(currentHotel.location);
+    }
+
+    function openGoogleMaps(location) {
+      if (!location || location.trim() === '') {
+        showToast("No address provided", "error");
+        return;
+      }
+      const cleanLocation = location.trim();
+      const encodedLocation = encodeURIComponent(cleanLocation);
+      const url = `https://www.google.com/maps/search/${encodedLocation}`;
+      window.open(url, '_blank');
+      showToast("Opening location in Google Maps...");
+    }
+
+    function openCommentModal(hotelId) {
+      currentCommentHotelId = hotelId;
+      const modal = document.getElementById('commentModal');
+      const list = document.getElementById('commentList');
+      list.innerHTML = '<div class="text-center text-slate-400">Loading comments...</div>';
+      modal.style.display = 'flex';
+      fetch(`${API_URL}/get_comments?hotel_id=${hotelId}`)
+        .then(res => res.json())
+        .then(comments => {
+          list.innerHTML = '';
+          if (comments.length === 0) {
+            list.innerHTML = '<div class="text-center text-slate-400">No comments yet. Be the first!</div>';
+          } else {
+            comments.forEach(c => {
+              const div = document.createElement('div');
+              div.className = 'comment-item';
+              div.innerHTML = `
+                <div class="comment-avatar">${c.username.charAt(0).toUpperCase()}</div>
+                <div class="comment-content">
+                  <div class="comment-username">${c.username}</div>
+                  <div class="comment-text">${c.comment}</div>
+                  <div class="comment-time">${timeAgo(c.created_at)}</div>
+                </div>
+              `;
+              list.appendChild(div);
+            });
+          }
+        })
+        .catch(() => showToast("Failed to load comments", "error"));
+    }
+
+    function closeCommentModal() {
+      document.getElementById('commentModal').style.display = 'none';
+    }
+
+    async function postComment() {
+      const input = document.getElementById('commentInput');
+      const text = input.value.trim();
+      if (!text) return showToast("Comment cannot be empty", "error");
+      if (!currentCommentHotelId) return;
+      try {
+        const res = await fetch(`${API_URL}/add_comment`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            hotel_id: currentCommentHotelId,
+            username: USER_NAME,
+            comment: text
+          })
+        });
+        if (res.ok) {
+          input.value = '';
+          showToast("Comment posted!");
+          openCommentModal(currentCommentHotelId);
+        } else {
+          showToast("Failed to post comment", "error");
+        }
+      } catch(e) {
+        showToast("Server error", "error");
+      }
+    }
+
+    function setupRatingStars() {
+      const stars = document.querySelectorAll('#ratingStarsModal i');
+      stars.forEach((star, index) => {
+        star.addEventListener('mouseenter', function() {
+          const rating = parseInt(this.dataset.rating);
+          highlightStars(rating);
+        });
+        star.addEventListener('mouseleave', function() {
+          highlightStars(selectedRating);
+        });
+        star.addEventListener('click', function() {
+          selectedRating = parseInt(this.dataset.rating);
+          highlightStars(selectedRating);
+        });
+      });
+    }
+
+    function highlightStars(rating) {
+      const stars = document.querySelectorAll('#ratingStarsModal i');
+      stars.forEach((s, i) => {
+        s.style.color = i < rating ? '#fb923c' : '#e2e8f0';
+      });
+    }
+
+    function openRatingModal(hotelId, currentAvg) {
+      currentRatingHotelId = hotelId;
+      selectedRating = 0;
+      document.getElementById('currentRatingDisplay').innerText = `Current: ⭐ ${currentAvg ? currentAvg.toFixed(1) : '5.0'}`;
+      const stars = document.querySelectorAll('#ratingStarsModal i');
+      stars.forEach(s => {
+        s.classList.remove('active');
+        s.style.color = '#e2e8f0';
+      });
+      document.getElementById('ratingModal').style.display = 'flex';
+    }
+
+    function closeRatingModal() {
+      document.getElementById('ratingModal').style.display = 'none';
+    }
+
+    async function submitRating() {
+      if (selectedRating === 0) return showToast("Select a rating", "error");
+      if (!currentRatingHotelId) return;
+      try {
+        const res = await fetch(`${API_URL}/add_rating`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            hotel_id: currentRatingHotelId,
+            rating: selectedRating
+          })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          showToast(`Rated ${selectedRating} ⭐`);
+          const hotel = allHotels.find(h => h.unique_id === currentRatingHotelId);
+          if (hotel) {
+            hotel.rating = data.new_average;
+            processFilters();
+          }
+          for (let i = 0; i < 30; i++) {
+            setTimeout(() => createConfetti(), i * 30);
+          }
+          closeRatingModal();
+        } else {
+          showToast("Failed to submit rating", "error");
+        }
+      } catch(e) {
+        showToast("Server error", "error");
+      }
+    }
+
+    function createConfetti() {
+      const confetti = document.createElement('div');
+      confetti.className = 'confetti';
+      confetti.style.left = Math.random() * 100 + '%';
+      confetti.style.background = `hsl(${Math.random() * 360}, 80%, 60%)`;
+      confetti.style.width = Math.random() * 10 + 5 + 'px';
+      confetti.style.height = confetti.style.width;
+      document.body.appendChild(confetti);
+      setTimeout(() => confetti.remove(), 2000);
+    }
+
+    async function fetchMemories(hotelId) {
+      try {
+        const res = await fetch(`${API_URL}/get_memories?hotel_id=${hotelId}`);
+        const memories = await res.json();
+        renderMemoriesTriptych(memories);
+      } catch(e) {
+        console.error(e);
+      }
+    }
+
+    function renderMemoriesTriptych(memories) {
+      const container = document.getElementById('secMem');
+      container.innerHTML = '';
+      if (memories.length === 0) {
+        container.innerHTML = '<div class="text-center text-slate-400 py-12">No memories yet. Add one with the camera icon!</div>';
+        return;
+      }
+      for (let i = 0; i < memories.length; i += 3) {
+        const group = memories.slice(i, i + 3);
+        const card = document.createElement('div');
+        card.className = 'memory-triptych';
+        let photosHtml = '<div class="triptych-photos">';
+        group.forEach(m => {
+          photosHtml += `<img src="${m.image_data}" class="triptych-photo" alt="memory">`;
+        });
+        for (let j = group.length; j < 3; j++) {
+          photosHtml += `<div class="triptych-photo bg-slate-100 flex items-center justify-center text-slate-300"><i class="fa-solid fa-image"></i></div>`;
+        }
+        photosHtml += '</div>';
+        const hotel = allHotels.find(h => h.unique_id === memories[i].hotel_id);
+        const restaurantName = hotel ? hotel.name : 'Dastarkhwan';
+        const location = hotel ? hotel.location : 'India';
+        const caption = group[0].caption || 'A beautiful memory';
+        card.innerHTML = `
+          ${photosHtml}
+          <div class="restaurant-name">
+            <span>🍽️</span> ${restaurantName}
+          </div>
+          <div class="memory-caption" onclick="this.classList.toggle('expanded')">
+            ${caption}
+            <span class="caption-fade"></span>
+            <span class="read-more">read more</span>
+          </div>
+          <div class="location-chip" onclick="openGoogleMaps('${location}')">
+            <i class="fa-solid fa-location-dot"></i> ${location.split(',')[0]}
+          </div>
+          <div class="memory-meta">
+            <span>${new Date(memories[i].created_at).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</span>
+            <span class="memory-rating"><i class="fa-solid fa-star" style="color: #E57A44;"></i> ${hotel ? hotel.rating.toFixed(1) : '5.0'}</span>
+          </div>
+          <div class="quick-actions">
+            <button class="quick-action-btn" onclick="likeMemory('${memories[i].id}')"><i class="fa-regular fa-heart"></i></button>
+            <button class="quick-action-btn" onclick="shareMemory('${memories[i].id}')"><i class="fa-regular fa-paper-plane"></i></button>
+            <button class="quick-action-btn" onclick="saveMemory('${memories[i].id}')"><i class="fa-regular fa-bookmark"></i></button>
+          </div>
+        `;
+        container.appendChild(card);
+      }
+    }
+
+    function likeMemory(id) { showToast("Liked memory!"); }
+    function shareMemory(id) { showToast("Share feature coming soon"); }
+    function saveMemory(id) { showToast("Memory saved"); }
+
+    function setFilter(filter) {
+      currentFilter = filter;
+      const v = document.getElementById('vFeed');
+      v.style.filter = '';
+      switch(filter) {
+        case 'vintage':
+          v.style.filter = 'sepia(0.8) contrast(1.1)';
+          break;
+        case 'mono':
+          v.style.filter = 'grayscale(1)';
+          break;
+        case 'warm':
+          v.style.filter = 'brightness(1.1) saturate(1.4) hue-rotate(-15deg)';
+          break;
+        default:
+          v.style.filter = 'none';
+      }
+      document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+    }
+
+    function openMemoryCapture(hotelId) {
+      currentHotelId = hotelId;
+      const hotel = allHotels.find(h => h.unique_id === hotelId);
+      if (hotel) {
+        openOverlay(hotel);
+        showToast("Click 'Camera' or 'Gallery' to add memories");
+      }
+    }
+
+    function escapeHTML(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function timeAgo(timestamp) {
+      const diff = Date.now() - new Date(timestamp).getTime();
+      const seconds = Math.floor(diff / 1000);
+      if (seconds < 60) return `${seconds}s ago`;
+      const minutes = Math.floor(seconds / 60);
+      if (minutes < 60) return `${minutes}m ago`;
+      const hours = Math.floor(minutes / 60);
+      if (hours < 24) return `${hours}h ago`;
+      const days = Math.floor(hours / 24);
+      return `${days}d ago`;
+    }
+
+    // ============================================================
+    // INIT
+    // ============================================================
+    loadMemories();
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/js/all.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,332 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Kitchen · Dastarkhwan</title>
+
+    <!-- UI Core -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&family=Playfair+Display:ital,wght@1,900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+    <style>
+        body { 
+            font-family: 'Outfit', sans-serif; 
+            background: #fdfcf8; 
+            color: #1e293b; 
+            margin: 0; 
+            height: 100vh; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+            background-image: radial-gradient(rgba(16, 185, 129, 0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7); 
+            backdrop-filter: blur(40px) saturate(160%);
+            -webkit-backdrop-filter: blur(40px) saturate(160%);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            border-radius: 4rem;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.06);
+            width: 95%; max-width: 580px;
+            animation: bentoPop 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+        }
+
+        @keyframes bentoPop { from { opacity: 0; transform: scale(0.95) translateY(30px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+
+        .scroll-area {
+            max-height: 50vh;
+            overflow-y: auto;
+            padding-right: 12px;
+        }
+        .scroll-area::-webkit-scrollbar { width: 5px; }
+        .scroll-area::-webkit-scrollbar-thumb { background: rgba(16, 185, 129, 0.2); border-radius: 10px; }
+
+        .input-box {
+            width: 100%; padding: 18px; background: #ffffff;
+            border: 2px solid #f1f5f9; border-radius: 20px;
+            color: #1e293b; outline: none; transition: 0.3s;
+            font-weight: 700; font-size: 14px;
+        }
+        .input-box:focus { border-color: #10b981; box-shadow: 0 0 0 5px rgba(16, 185, 129, 0.08); }
+
+        .modal-overlay {
+            position: fixed; inset: 0; background: rgba(255,255,255,0.9);
+            backdrop-filter: blur(30px); display: none;
+            align-items: center; justify-content: center; z-index: 9999;
+        }
+        .success-glass {
+            background: #ffffff;
+            border: 1px solid rgba(0,0,0,0.05);
+            border-radius: 4rem; padding: 4rem 3rem;
+            text-align: center; max-width: 440px; width: 90%;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.1);
+        }
+
+        .btn-main {
+            width: 100%; background: #065f46; color: white;
+            padding: 22px; border-radius: 2.2rem; font-weight: 900;
+            text-transform: uppercase; letter-spacing: 2px; font-size: 11px;
+            transition: 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            box-shadow: 0 20px 40px rgba(6, 95, 70, 0.2);
+        }
+        .btn-main:hover { transform: translateY(-5px); background: #044332; box-shadow: 0 30px 60px rgba(6, 95, 70, 0.3); }
+
+        #global-loader {
+            position: fixed; inset: 0; background: #fdfcf8;
+            z-index: 10000; display: none; flex-direction: column; align-items: center; justify-content: center;
+        }
+    </style>
+</head>
+<body>
+
+<!-- GLOBAL LOADER -->
+<div id="global-loader">
+    <lottie-player src="https://assets10.lottiefiles.com/packages/lf20_S6vWj7.json" background="transparent" speed="1" style="width: 250px; height: 250px;" loop autoplay></lottie-player>
+    <p class="mt-6 font-black tracking-[0.4em] uppercase text-[10px] text-emerald-800 animate-pulse">Setting the Dastarkhwan...</p>
+</div>
+
+<!-- SUCCESS MODAL -->
+<div id="successModal" class="modal-overlay">
+    <div class="success-glass">
+        <div class="w-20 h-20 bg-emerald-500 text-white rounded-full flex items-center justify-center mx-auto mb-8 text-3xl shadow-xl">
+            <i class="fa-solid fa-check"></i>
+        </div>
+        <h3 id="successTitle" class="text-4xl font-black mb-2 uppercase tracking-tighter text-slate-800">Awesome!</h3>
+        <p id="successSub" class="text-slate-400 font-bold text-[10px] mb-10 uppercase tracking-[0.3em]">Kitchen Registered Successfully</p>
+        
+        <div id="idSection" class="py-6 px-8 bg-emerald-50 border-2 border-dashed border-emerald-200 rounded-[2.5rem] mb-10">
+            <p class="text-[9px] font-black uppercase tracking-[0.2em] mb-2 text-emerald-600">Your Hotel Code</p>
+            <h4 id="modalIdDisplay" class="text-4xl font-black tracking-widest text-emerald-700">DK-XXXX</h4>
+        </div>
+        
+        <div class="flex flex-col gap-4">
+            <button onclick="location.reload()" class="w-full py-5 rounded-[2rem] bg-slate-900 text-white font-black uppercase text-[10px] tracking-widest transition">Add Another</button>
+            <button onclick="window.location.href='index.html'" class="w-full py-5 rounded-[2rem] bg-slate-100 text-slate-500 font-black uppercase text-[10px] tracking-widest transition">Back to Home</button>
+        </div>
+    </div>
+</div>
+
+<!-- MAIN FORM CARD -->
+<div class="glass-card p-10 relative">
+    <div class="flex justify-between items-center mb-8">
+        <h2 class="text-3xl font-black italic tracking-tighter text-emerald-800 uppercase font-['Playfair_Display']">Register<span class="text-orange-500">.</span></h2>
+        <a href="index.html" class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-slate-400 hover:text-orange-500 transition shadow-sm border border-slate-100">
+            <i class="fa-solid fa-xmark"></i>
+        </a>
+    </div>
+
+    <!-- TABS -->
+    <div class="flex bg-slate-100 p-1.5 rounded-[2rem] mb-8 border border-slate-200/50">
+        <button id="regTab" onclick="toggleMode('register')" class="flex-1 py-4 rounded-[1.8rem] text-[9px] font-black uppercase tracking-widest transition-all bg-emerald-600 text-white shadow-md">New Entry</button>
+        <button id="updTab" onclick="toggleMode('update')" class="flex-1 py-4 rounded-[1.8rem] text-[9px] font-black uppercase tracking-widest transition-all text-slate-400">Update Entry</button>
+    </div>
+
+    <!-- FETCH SECTION -->
+    <div id="updateForm" class="hidden mb-8 flex gap-3 animate-pulse">
+        <input type="text" id="targetId" placeholder="Enter ID or Phone" class="input-box border-emerald-100">
+        <button onclick="fetchData()" class="px-8 rounded-2xl bg-slate-900 text-white text-[9px] font-black uppercase tracking-widest">Fetch</button>
+    </div>
+
+    <!-- SCROLLABLE FORM -->
+    <div class="scroll-area space-y-6">
+        <div class="grid grid-cols-2 gap-4">
+            <input type="text" id="h_name" placeholder="Hotel Name" class="input-box">
+            <input type="text" id="h_owner" placeholder="Owner Name" class="input-box">
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+            <input type="number" id="h_phone" placeholder="Mobile Number" class="input-box">
+            <select id="h_category" class="input-box">
+                <option value="veg">Pure Veg</option>
+                <option value="nonveg">Non Veg</option>
+                <option value="tiffin">Daily Tiffins</option>
+                <option value="fastfood">Fast Food</option>
+                <option value="satvik">Satvik Meals</option>
+            </select>
+        </div>
+
+        <!-- 🟢 ADDRESS – SIMPLE TEXT INPUT, NO MAP, NO GPS -->
+        <div class="space-y-1">
+            <input type="text" id="h_loc" placeholder="Restaurant address (street, area, city)" class="input-box">
+        </div>
+
+        <!-- BANNER IMAGE -->
+        <div onclick="document.getElementById('fileInp').click()" class="border-2 border-dashed border-slate-200 rounded-[2.5rem] p-10 text-center cursor-pointer hover:bg-emerald-50 transition bg-white/50">
+            <input type="file" id="fileInp" hidden onchange="preview(this)" accept="image/*">
+            <img id="prev" class="hidden w-full h-40 object-cover rounded-3xl mb-4 shadow-lg border-4 border-white">
+            <div id="upload-label">
+                <i class="fa-solid fa-camera-retro text-4xl text-emerald-200 mb-4"></i>
+                <p class="text-[9px] font-black uppercase text-slate-300 tracking-[0.2em]">Upload Banner Image</p>
+            </div>
+        </div>
+
+        <!-- MENU BUILDER -->
+        <div class="pt-6 border-t border-slate-100">
+            <div class="flex justify-between items-center mb-6">
+                <p class="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-800">Special Menu Items</p>
+                <button onclick="addDish()" class="text-[8px] font-black uppercase bg-white text-emerald-600 px-4 py-2 rounded-full border border-emerald-100 shadow-sm hover:bg-emerald-600 hover:text-white transition">+ Add Dish</button>
+            </div>
+            <div id="dishList" class="space-y-3"></div>
+        </div>
+    </div>
+
+    <!-- SUBMIT BUTTON -->
+    <button onclick="submitForm()" class="btn-main mt-8 flex items-center justify-center gap-4">
+        <span>Save & Confirm Kitchen</span>
+        <i class="fa-solid fa-chevron-right text-[10px] opacity-40"></i>
+    </button>
+</div>
+
+<script>
+    const API_URL = "http://127.0.0.1:5000";
+    let mode = "register";
+    let imageBase64 = "";
+    let editingId = null;
+
+    window.onload = () => {
+        addDish(); // one empty row
+    };
+
+    function toggleMode(m) {
+        mode = m;
+        const active = "flex-1 py-4 rounded-[1.8rem] text-[9px] font-black uppercase tracking-widest transition-all bg-emerald-600 text-white shadow-md";
+        const inactive = "flex-1 py-4 rounded-[1.8rem] text-[9px] font-black uppercase tracking-widest transition-all text-slate-400";
+        document.getElementById("regTab").className = m === "register" ? active : inactive;
+        document.getElementById("updTab").className = m === "update" ? active : inactive;
+        document.getElementById("updateForm").classList.toggle("hidden", m !== "update");
+        if(m === 'register') { editingId = null; clearForm(); }
+    }
+
+    function preview(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = e => {
+                imageBase64 = e.target.result;
+                document.getElementById("prev").src = e.target.result;
+                document.getElementById("prev").classList.remove("hidden");
+                document.getElementById("upload-label").classList.add("hidden");
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function addDish(name = "", price = "") {
+        const div = document.createElement("div");
+        div.className = "flex gap-3 items-center animate-fadeIn";
+        div.innerHTML = `
+            <input placeholder="Dish Name" value="${name}" class="input-box py-3.5 flex-1 text-xs">
+            <input placeholder="Price" value="${price}" class="input-box py-3.5 w-24 text-center text-xs">
+            <button onclick="this.parentElement.remove()" class="text-slate-300 hover:text-red-500 transition px-2"><i class="fa-solid fa-trash-can"></i></button>
+        `;
+        document.getElementById("dishList").appendChild(div);
+    }
+
+    async function fetchData() {
+        const val = document.getElementById("targetId").value.trim();
+        if(!val) return;
+        showLoader(true);
+        try {
+            const res = await fetch(`${API_URL}/get_hotel_by_id?value=${val}`);
+            const data = await res.json();
+            if(res.ok) {
+                editingId = data.unique_id;
+                document.getElementById("h_name").value = data.name || "";
+                document.getElementById("h_owner").value = data.owner || "";
+                document.getElementById("h_phone").value = data.phone || "";
+                document.getElementById("h_category").value = data.category || "veg";
+                document.getElementById("h_loc").value = data.location || "";
+                if(data.image) {
+                    imageBase64 = data.image;
+                    document.getElementById("prev").src = data.image;
+                    document.getElementById("prev").classList.remove("hidden");
+                    document.getElementById("upload-label").classList.add("hidden");
+                }
+                document.getElementById("dishList").innerHTML = "";
+                if(data.menu && Array.isArray(data.menu)) {
+                    data.menu.forEach(item => addDish(item.dish || item.name, item.price));
+                } else {
+                    addDish();
+                }
+            } else {
+                alert("Kitchen ID not found!");
+            }
+        } catch(e) {
+            alert("Fetch error – is the backend running?");
+        } finally {
+            showLoader(false);
+        }
+    }
+
+    async function submitForm() {
+        const name = document.getElementById("h_name").value.trim();
+        const phone = document.getElementById("h_phone").value.trim();
+        if(!name || !phone) return alert("Hotel Name and Mobile are required!");
+
+        showLoader(true);
+
+        const menu = [];
+        document.querySelectorAll("#dishList > div").forEach(row => {
+            const inps = row.querySelectorAll("input");
+            if(inps[0].value) menu.push({ dish: inps[0].value, price: inps[1].value });
+        });
+
+        const payload = {
+            name,
+            phone,
+            owner: document.getElementById("h_owner").value,
+            category: document.getElementById("h_category").value,
+            location: document.getElementById("h_loc").value,
+            image: imageBase64 || "",
+            menu: menu,
+            unique_id: editingId,
+            rating: 5.0
+        };
+
+        try {
+            const path = mode === "register" ? "/register_hotel" : "/update_hotel";
+            const res = await fetch(API_URL + path, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+            const result = await res.json();
+            if(res.ok) {
+                document.getElementById("modalIdDisplay").innerText = result.unique_id || editingId;
+                document.getElementById("successModal").style.display = "flex";
+            } else {
+                alert("Error: " + (result.message || "Unknown error"));
+            }
+        } catch(e) {
+            alert("Cannot reach backend. Make sure app.py is running.");
+        } finally {
+            showLoader(false);
+        }
+    }
+
+    function showLoader(show) {
+        document.getElementById("global-loader").style.display = show ? "flex" : "none";
+    }
+
+    function clearForm() {
+        document.getElementById("h_name").value = "";
+        document.getElementById("h_owner").value = "";
+        document.getElementById("h_phone").value = "";
+        document.getElementById("h_loc").value = "";
+        document.getElementById("dishList").innerHTML = "";
+        addDish();
+        imageBase64 = "";
+        document.getElementById("prev").classList.add("hidden");
+        document.getElementById("upload-label").classList.remove("hidden");
+    }
+</script>
+
+<!-- Lottie for loader -->
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,492 @@
+ /* ===== DASTARKHWAN PREMIUM THEME – COMPLETE ===== */
+:root {
+    --emerald: #065f46;
+    --brass: #d4af37;
+    --saffron: #ea580c;
+}
+
+body {
+    font-family: 'Outfit', sans-serif;
+    margin: 0;
+    background: #fdfcf8;
+}
+
+/* 1. BALLOON CANVAS BACKGROUND */
+#balloonCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: auto;
+}
+
+#bg-video {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+    opacity: 0.1;
+    filter: saturate(1.2);
+}
+
+/* 2. MAIN UI SETUP */
+.main-wrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    z-index: 50;
+}
+
+.premium-glass-card {
+    width: 100%;
+    max-width: 850px;
+    background: rgba(255, 255, 255, 0.7);
+    -webkit-backdrop-filter: blur(30px) saturate(150%);
+    backdrop-filter: blur(30px) saturate(150%);
+    border-radius: 4rem;
+    box-shadow: 0 40px 100px rgba(0,0,0,0.08);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.brand-logo {
+    font-family: 'Playfair Display', serif;
+    color: var(--emerald);
+    text-shadow: 1px 1px 0px rgba(0,0,0,0.05);
+}
+
+/* 3. TICKER */
+.ticker-wrapper {
+    position: fixed;
+    top: 25px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    z-index: 100;
+}
+
+.ticker-pill {
+    background: white;
+    border: 1px solid rgba(0,0,0,0.05);
+    padding: 6px 18px;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    max-width: 90%;
+    width: auto;
+    overflow: hidden;
+}
+
+.ticker-badge {
+    background: var(--saffron);
+    color: white;
+    font-size: 9px;
+    font-weight: 900;
+    padding: 4px 10px;
+    border-radius: 50px;
+    flex-shrink: 0;
+}
+
+.ticker-mask {
+    flex: 1;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.ticker-content {
+    display: inline-block;
+    font-weight: 700;
+    color: #475569;
+    font-size: 12px;
+    animation: tickerLoop 22s linear infinite;
+    padding-left: 20px;
+}
+
+@keyframes tickerLoop {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+
+/* 4. BUTTONS & EFFECTS */
+.bento-btn {
+    padding: 24px;
+    border-radius: 2.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    transition: 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    border: 1px solid rgba(0,0,0,0.03);
+    text-decoration: none;
+    cursor: pointer;
+    position: relative;
+}
+
+.primary-bento {
+    background: var(--emerald);
+    color: white;
+}
+
+.primary-bento:hover {
+    transform: translateY(-5px);
+    background: #054a37;
+}
+
+.hover-glow {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, rgba(255,255,255,0.2) 0%, transparent 70%);
+    opacity: 0;
+    transition: 0.4s;
+}
+
+.primary-bento:hover .hover-glow {
+    opacity: 1;
+}
+
+.secondary-bento {
+    background: white;
+    color: #1e293b;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.secondary-bento:hover {
+    transform: translateY(-5px);
+    border-color: var(--brass);
+    box-shadow: 0 10px 25px rgba(212, 175, 55, 0.1);
+}
+
+/* 5. KARMA BUTTON – 8 FLOWERS, FLEXBOX, BUGS FIXED */
+.karma-bento {
+    background: #f0fdf4;
+    border-color: #d1db41;
+    color: #166534;
+    justify-content: center;
+    overflow: visible !important;
+    min-height: 110px;
+    padding: 16px 24px;
+    position: relative;
+    z-index: 1;
+}
+
+/* Old emoji flowers – hidden */
+.flowers-container,
+.flower {
+    display: none;
+}
+
+/* Garden container – FLEXBOX even spacing */
+.garden-container-small {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: flex-end;
+    pointer-events: none;
+    z-index: 5;
+    padding: 0 5px;
+}
+
+/* All flower SVGs – uniform size */
+.garden-container-small .flower-svg {
+    width: 32px;
+    height: 48px;
+    margin: 0 2px;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+    position: relative;
+}
+
+/* Stem styling */
+.garden-container-small .stem {
+    stroke: url(#stemGradientSmall);
+    stroke-width: 2.2;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* Flower groups – start invisible */
+.garden-container-small .flower-group {
+    transform: scale(0);
+    transform-origin: center bottom;
+}
+
+/* Leaves – also hidden initially */
+.garden-container-small .leaf {
+    transform: scale(0);
+    transform-origin: center;
+}
+
+/* 6. HERITAGE RINGS */
+.heritage-rings {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+}
+
+.god-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 90px;
+}
+
+.ring-border {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: white;
+    padding: 4px;
+    border: 4px solid transparent;
+    transition: 0.5s;
+    cursor: pointer;
+}
+
+.ring-border img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.god-item:hover .ring-border {
+    transform: translateY(-10px) scale(1.1);
+}
+
+.ring-border.saffron {
+    border-color: #000000;
+}
+
+.ring-border.emerald {
+    border-color: #000000;
+}
+
+.ring-border.brass {
+    border-color: #000000;
+}
+
+.ring-label {
+    margin-top: 12px;
+    font-size: 8px;
+    font-weight: 900;
+    color: #94a3b8;
+    letter-spacing: 2px;
+}
+
+/* 7. LOADERS */
+.loader-screen {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: #fdfcf8;
+    z-index: 500;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.loader-text {
+    margin-top: 25px;
+    font-size: 15px;
+    font-weight: 900;
+    text-transform: uppercase;
+    color: var(--emerald);
+}
+
+/* 8. LANGUAGE */
+.lang-btn {
+    position: fixed;
+    top: 25px;
+    right: 20px;
+    width: 45px;
+    height: 45px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--emerald);
+    cursor: pointer;
+    z-index: 101;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.lang-drop {
+    display: none;
+    position: absolute;
+    top: 75px;
+    right: 20px;
+    background: white;
+    border-radius: 20px;
+    width: 160px;
+    padding: 10px;
+    z-index: 100;
+}
+
+.lang-drop.show {
+    display: block;
+}
+
+.lang-opt {
+    padding: 12px;
+    color: #1e293b;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    border-radius: 12px;
+}
+
+.lang-opt:hover {
+    background: #f1f5f9;
+    color: var(--emerald);
+}
+
+/* ===== SPECIAL HOVER EFFECTS (3 buttons) ===== */
+.btn-special {
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease, border-color 0.3s !important;
+}
+
+.btn-special:hover {
+    transform: scale(1.02) translateY(-3px);
+    box-shadow: 0 20px 35px -8px rgba(6, 95, 70, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.5) inset !important;
+    border-color: rgba(212, 175, 55, 0.4) !important;
+}
+
+.primary-bento.btn-special:hover {
+    background: #054a37;
+    box-shadow: 0 25px 40px -10px rgba(6, 95, 70, 0.5), 0 0 0 1px rgba(255, 245, 200, 0.3) inset !important;
+}
+
+.secondary-bento.btn-special:hover {
+    background: white;
+    border-color: var(--brass) !important;
+    box-shadow: 0 20px 35px -10px rgba(212, 175, 55, 0.2), 0 0 0 1px rgba(212, 175, 55, 0.2) inset !important;
+}
+
+/* ===== MODAL STYLES ===== */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-overlay.active {
+    display: flex;
+}
+
+.modal-content {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(240, 245, 250, 0.95) 100%);
+    border-radius: 20px;
+    padding: 40px 30px;
+    max-width: 400px;
+    width: 90%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    animation: slideUp 0.3s ease-out;
+    position: relative;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-title {
+    font-size: 24px;
+    font-weight: 900;
+    text-align: center;
+    margin-bottom: 30px;
+    color: #1f2937;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.modal-options {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.modal-btn {
+    padding: 16px 24px;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.modal-btn-memories {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+}
+
+.modal-btn-memories:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+}
+
+.modal-btn-crazy {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: white;
+}
+
+.modal-btn-crazy:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(245, 158, 11, 0.3);
+}
+
+.modal-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #6b7280;
+    transition: color 0.3s ease;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-close:hover {
+    color: #1f2937;
+}

@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Karma - Search</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;0,700;1,300&family=Outfit:wght@200;300;400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="profile.css">
+    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="modal_styles.css">
+    <style>
+        /* Specific Search Page Styles overriding global styles */
+        body,
+        html {
+            background-color: transparent;
+            /* Changed from black to see the background */
+        }
+
+        /* ── True Black Stealth Background ── */
+        .stealth-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background-color: #000000;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        /* The magical interactive spotlight */
+        #spotlight-canvas {
+            position: fixed;
+            inset: 0;
+            z-index: 1;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            mix-blend-mode: screen;
+            opacity: 0.8;
+        }
+
+        .dashboard-container {
+            z-index: 2;
+            position: relative;
+        }
+
+        #search-view {
+            padding: 40px;
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            height: 100vh;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            box-sizing: border-box;
+            padding-top: 15vh;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+            width: 100%;
+            margin-bottom: 40px;
+        }
+
+        .search-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            padding: 20px 0;
+            font-size: 32px;
+            font-weight: 300;
+            font-family: 'Cormorant Garamond', serif;
+            transition: all 0.4s ease;
+            box-sizing: border-box;
+            outline: none;
+        }
+
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+            font-style: italic;
+        }
+
+        .search-input:focus {
+            border-bottom-color: #fff;
+        }
+
+        /* Results Area */
+        .search-results {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            width: 100%;
+        }
+
+        .user-result-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            opacity: 0.8;
+            color: #fff;
+        }
+
+        .user-result-card:hover {
+            opacity: 1;
+            transform: translateX(10px);
+            border-bottom-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .user-info-left {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+        }
+
+        .user-avatar-wrap {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            overflow: hidden;
+            background: #111;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 300;
+            font-family: 'Cormorant Garamond', serif;
+            color: #fff;
+            flex-shrink: 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .user-avatar-wrap img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .user-username {
+            font-weight: 400;
+            font-size: 22px;
+            letter-spacing: 1px;
+            font-family: 'Cormorant Garamond', serif;
+        }
+
+        .user-fullname {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 300;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .result-chevron {
+            color: rgba(255, 255, 255, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .user-result-card:hover .result-chevron {
+            color: #fff;
+            transform: translateX(5px);
+        }
+
+        /* Mobile adjustment */
+        @media (max-width: 768px) {
+            #search-view {
+                padding: 24px 16px;
+                margin-top: 5vh;
+            }
+
+            .search-input {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="stealth-bg"></div>
+    <canvas id="spotlight-canvas"></canvas>
+    <div class="noise"></div>
+    <div class="dashboard-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <video autoplay muted loop playsinline class="logo-video">
+                        <source src="karma.mp4" type="video/mp4">
+                    </video>
+                    <div class="logo-mask"></div>
+                </div>
+            </div>
+            <ul class="nav-links">
+                <li class="nav-item" data-label="Home" onclick="window.location.href='home.html'">
+                    <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                            <polyline points="9 22 9 12 15 12 15 22" />
+                        </svg></div>
+                    <span class="label">Home</span>
+                </li>
+                <li class="nav-item active" data-label="Search" onclick="window.location.href='search.html'">
+                    <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8" />
+                            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                        </svg></div>
+                    <span class="label">Search</span>
+                </li>
+                <li class="nav-item" data-label="Awaaz TV" onclick="window.location.href='awaaz_tv.html'">
+                    <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect width="20" height="15" x="2" y="7" rx="2" ry="2" />
+                            <polyline points="17 2 12 7 7 2" />
+                        </svg></div>
+                    <span class="label">Awaaz TV</span>
+                </li>
+                <li class="nav-item" data-label="Communities" onclick="showComingSoon('Communities', '🤝')">
+                    <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                            <circle cx="9" cy="7" r="4" />
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                        </svg></div>
+                    <span class="label">Communities</span>
+                </li>
+                <li class="nav-item" data-label="Rooms" onclick="showComingSoon('Rooms', '💬')">
+                    <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                        </svg></div>
+                    <span class="label">Rooms</span>
+                </li>
+                <li class="nav-item" data-label="Donations">
+                    <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 12V8H4v4" />
+                            <path d="M2 12h20" />
+                            <path d="M7 12v10" />
+                            <path d="M17 12v10" />
+                            <path d="M2 8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v4H2Z" />
+                            <path d="m12 12 3-3-3-3-3 3Z" />
+                        </svg></div>
+                    <span class="label">Donations</span>
+                </li>
+                <li class="nav-item" data-label="Profile" onclick="window.location.href='profile.html'">
+                    <div class="icon-box">
+                        <div class="nav-avatar-placeholder" id="navAvatarPlaceholder">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
+                                stroke-width="1.5">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                <circle cx="12" cy="7" r="4" />
+                            </svg>
+                        </div>
+                        <img src="" class="nav-avatar" id="navAvatar" style="display: none;">
+                    </div>
+                    <span class="label">Profile</span>
+                </li>
+                <li class="nav-item" data-label="History">
+                    <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10" />
+                            <polyline points="12 6 12 12 16 14" />
+                        </svg></div>
+                    <span class="label">History</span>
+                </li>
+                <li class="nav-item" data-label="Settings" onclick="window.location.href='settings.html'">
+                    <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="3" />
+                            <path
+                                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                        </svg></div>
+                    <span class="label">Settings</span>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div id="search-view">
+                <div class="search-input-wrapper">
+                    <input type="text" id="searchInput" class="search-input" placeholder="Search the cosmos..."
+                        autocomplete="off" autofocus>
+                </div>
+
+                <div id="searchResults" class="search-results">
+                    <!-- Results will appear here -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // ── Ultra-Premium Interactive Spotlight & Particle Trail ──
+            (function () {
+                const canvas = document.getElementById('spotlight-canvas');
+                const ctx = canvas.getContext('2d', { alpha: false });
+                let W = canvas.width = window.innerWidth;
+                let H = canvas.height = window.innerHeight;
+
+                let mouseX = W / 2;
+                let mouseY = H / 2;
+                let tX = mouseX;
+                let tY = mouseY;
+
+                let particles = [];
+                const colors = ['#8E94F2', '#6C72D9', '#00e676', '#ffffff'];
+
+                window.addEventListener('resize', () => {
+                    W = canvas.width = window.innerWidth;
+                    H = canvas.height = window.innerHeight;
+                });
+
+                document.addEventListener('mousemove', (e) => {
+                    mouseX = e.clientX;
+                    mouseY = e.clientY;
+
+                    // Add micro-particles on movement
+                    if (Math.random() > 0.5) {
+                        particles.push({
+                            x: mouseX + (Math.random() * 40 - 20),
+                            y: mouseY + (Math.random() * 40 - 20),
+                            size: Math.random() * 2 + 0.5,
+                            color: colors[Math.floor(Math.random() * colors.length)],
+                            life: 1,
+                            vx: (Math.random() * 2 - 1),
+                            vy: (Math.random() * 2 - 1) - 1 // drift up slightly
+                        });
+                    }
+                });
+
+                function draw() {
+                    // Deep black fill that fades out old frames slightly slower for long light trails
+                    ctx.fillStyle = 'rgba(0, 0, 0, 0.15)';
+                    ctx.fillRect(0, 0, W, H);
+
+                    // Smooth follow for the main spotlight
+                    tX += (mouseX - tX) * 0.08;
+                    tY += (mouseY - tY) * 0.08;
+
+                    // Draw the smooth, aesthetic spotlight gradient
+                    const gradient = ctx.createRadialGradient(tX, tY, 0, tX, tY, 400);
+                    gradient.addColorStop(0, 'rgba(142, 148, 242, 0.08)');
+                    gradient.addColorStop(0.3, 'rgba(108, 114, 217, 0.03)');
+                    gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+                    ctx.globalCompositeOperation = 'screen';
+                    ctx.fillStyle = gradient;
+                    ctx.fillRect(0, 0, W, H);
+
+                    // Update & Draw particles
+                    for (let i = particles.length - 1; i >= 0; i--) {
+                        let p = particles[i];
+                        p.x += p.vx;
+                        p.y += p.vy;
+                        p.life -= 0.015;
+
+                        if (p.life <= 0) {
+                            particles.splice(i, 1);
+                        } else {
+                            ctx.beginPath();
+                            ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                            ctx.fillStyle = p.color;
+                            ctx.globalAlpha = p.life;
+                            ctx.fill();
+                        }
+                    }
+                    ctx.globalAlpha = 1.0;
+                    ctx.globalCompositeOperation = 'source-over';
+
+                    requestAnimationFrame(draw);
+                }
+                draw();
+            })();
+
+            // Restore Sidebar Avatar
+            const navAvatarPlaceholder = document.getElementById('navAvatarPlaceholder');
+            const navAvatar = document.getElementById('navAvatar');
+            const storedAvatar = localStorage.getItem('karma_user_avatar');
+            if (navAvatar && navAvatarPlaceholder && storedAvatar) {
+                navAvatarPlaceholder.style.display = 'none';
+                navAvatar.src = 'http://127.0.0.1:5000' + storedAvatar;
+                navAvatar.style.display = 'block';
+            }
+
+            const searchInput = document.getElementById('searchInput');
+            const searchResults = document.getElementById('searchResults');
+            let debounceTimer = null;
+
+            // Rotating Placeholder Logic
+            const placeholders = [
+                "Search by username or full name...",
+                "Discover the Karma universe...",
+                "Find your friends...",
+                "Connect with Awaaz TV creators..."
+            ];
+            let currentPlaceholder = 0;
+            let currentChar = 0;
+            let isDeleting = false;
+            let typingSpeed = 80;
+
+            function typePlaceholder() {
+                const currentText = placeholders[currentPlaceholder];
+
+                if (isDeleting) {
+                    searchInput.setAttribute('placeholder', currentText.substring(0, currentChar - 1));
+                    currentChar--;
+                } else {
+                    searchInput.setAttribute('placeholder', currentText.substring(0, currentChar + 1));
+                    currentChar++;
+                }
+
+                let timer = isDeleting ? 30 : typingSpeed;
+
+                if (!isDeleting && currentChar === currentText.length) {
+                    timer = 2500; // Pause at end of sentence
+                    isDeleting = true;
+                } else if (isDeleting && currentChar === 0) {
+                    isDeleting = false;
+                    currentPlaceholder = (currentPlaceholder + 1) % placeholders.length;
+                    timer = 600; // Pause before typing next sentence
+                }
+
+                setTimeout(typePlaceholder, timer);
+            }
+
+            // Start the typing effect
+            setTimeout(typePlaceholder, 1000);
+
+            searchInput.addEventListener('input', (e) => {
+                const query = e.target.value.trim();
+
+                clearTimeout(debounceTimer);
+
+                if (query.length === 0) {
+                    searchResults.innerHTML = '';
+                    return;
+                }
+
+                searchResults.style.opacity = '0.5';
+
+                debounceTimer = setTimeout(() => {
+                    fetch(`http://127.0.0.1:5000/api/search?q=${encodeURIComponent(query)}`)
+                        .then(res => res.json())
+                        .then(data => {
+                            searchResults.style.opacity = '1';
+                            if (data.ok) {
+                                renderUsers(data.users);
+                            } else {
+                                throw new Error(data.error);
+                            }
+                        })
+                        .catch(err => {
+                            searchResults.style.opacity = '1';
+                            searchResults.innerHTML = `<p style="color:rgba(255,255,255,0.5); text-align:center; font-weight:300; font-style:italic;">Connection to Karma network lost.</p>`;
+                            console.error(err);
+                        });
+                }, 300); // 300ms debounce
+            });
+
+            function renderUsers(users) {
+                if (users.length === 0) {
+                    searchResults.innerHTML = `
+                        <div style="text-align:center; padding: 40px 0; color: rgba(255,255,255,0.5); font-style: italic; font-family: 'Cormorant Garamond', serif; font-size: 20px;">
+                            <p>No souls found matching "${searchInput.value}"...</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                let html = '';
+                users.forEach(u => {
+                    const avatarHtml = u.avatar_url
+                        ? `<img src="http://127.0.0.1:5000${u.avatar_url}" alt="">`
+                        : (u.username || '?').charAt(0).toUpperCase();
+
+                    html += `
+                        <div class="user-result-card" onclick="alert('Profile navigation to '+ '${u.username}' +' would happen here!')">
+                            <div class="user-info-left">
+                                <div class="user-avatar-wrap">${avatarHtml}</div>
+                                <div class="user-details">
+                                    <span class="user-username">${u.username || 'unknown'}</span>
+                                    <span class="user-fullname">${u.full_name || u.role || 'Member'} • ${u.locality || 'Karma'}</span>
+                                </div>
+                            </div>
+                            <svg class="result-chevron" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M9 18l6-6-6-6" />
+                            </svg>
+                        </div>
+                    `;
+                });
+                searchResults.innerHTML = html;
+            }
+        });
+    </script>
+
+    <!-- ═══ COMING SOON MODAL ═══ -->
+    <div id="coming-soon-overlay" onclick="hideComingSoon()"
+        style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);align-items:center;justify-content:center;">
+        <div id="coming-soon-card" onclick="event.stopPropagation()"
+            style="position:relative;text-align:center;background:linear-gradient(135deg,rgba(15,15,20,0.95),rgba(8,8,16,0.98));border:1px solid rgba(255,255,255,0.08);border-radius:24px;padding:60px 48px 48px;max-width:420px;width:90%;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,0.7),0 0 60px rgba(142,148,242,0.1);transform:scale(0.85);opacity:0;transition:all 0.45s cubic-bezier(0.16,1,0.3,1);">
+            <div
+                style="position:absolute;inset:-40px;border-radius:50%;background:radial-gradient(circle,rgba(142,148,242,0.06) 0%,transparent 70%);animation:csGlow 3s ease-in-out infinite alternate;pointer-events:none;">
+            </div>
+            <canvas id="cs-particles"
+                style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;border-radius:24px;"></canvas>
+            <div id="cs-icon"
+                style="font-size:56px;margin-bottom:16px;display:block;animation:csFloat 2.5s ease-in-out infinite;">🤝
+            </div>
+            <h2 id="cs-title"
+                style="font-size:28px;font-weight:700;color:#fff;margin-bottom:8px;letter-spacing:-0.5px;">Communities
+            </h2>
+            <div
+                style="width:48px;height:3px;background:linear-gradient(90deg,#8E94F2,#6C72D9);border-radius:99px;margin:0 auto 20px;">
+            </div>
+            <p style="font-size:15px;color:rgba(255,255,255,0.5);line-height:1.6;margin-bottom:32px;">This feature is
+                currently being built by our team. We'll notify you as soon as it's live.</p>
+            <div style="display:flex;gap:10px;justify-content:center;margin-bottom:32px;flex-wrap:wrap;">
+                <span
+                    style="background:rgba(142,148,242,0.12);border:1px solid rgba(142,148,242,0.25);color:#8E94F2;padding:6px 14px;border-radius:99px;font-size:12px;font-weight:600;">🔨
+                    In Development</span>
+                <span
+                    style="background:rgba(0,230,118,0.08);border:1px solid rgba(0,230,118,0.2);color:#00e676;padding:6px 14px;border-radius:99px;font-size:12px;font-weight:600;">✦
+                    Coming Soon</span>
+            </div>
+            <button onclick="hideComingSoon()"
+                style="background:linear-gradient(135deg,#8E94F2,#6C72D9);color:#fff;border:none;border-radius:12px;padding:14px 40px;font-size:15px;font-weight:600;cursor:pointer;box-shadow:0 8px 24px rgba(142,148,242,0.3);transition:transform 0.15s;">Got
+                it!</button>
+        </div>
+    </div>
+    <style>
+        @keyframes csGlow {
+            from {
+                opacity: .5;
+                transform: scale(.9)
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1.1)
+            }
+        }
+
+        @keyframes csFloat {
+
+            0%,
+            100% {
+                transform: translateY(0)
+            }
+
+            50% {
+                transform: translateY(-8px)
+            }
+        }
+    </style>
+    <script>
+        function showComingSoon(name, icon) { const o = document.getElementById('coming-soon-overlay'), c = document.getElementById('coming-soon-card'); document.getElementById('cs-title').textContent = name; document.getElementById('cs-icon').textContent = icon; o.style.display = 'flex'; requestAnimationFrame(() => requestAnimationFrame(() => { c.style.transform = 'scale(1)'; c.style.opacity = '1'; })); const cv = document.getElementById('cs-particles'), ctx = cv.getContext('2d'); cv.width = c.offsetWidth || 420; cv.height = c.offsetHeight || 380; const ps = Array.from({ length: 24 }, () => ({ x: Math.random() * cv.width, y: Math.random() * cv.height, r: Math.random() * 2 + .5, vx: (Math.random() - .5) * .6, vy: (Math.random() - .5) * .6, a: Math.random() * .5 + .2 })); let rid; function draw() { ctx.clearRect(0, 0, cv.width, cv.height); ps.forEach(p => { p.x += p.vx; p.y += p.vy; if (p.x < 0 || p.x > cv.width) p.vx *= -1; if (p.y < 0 || p.y > cv.height) p.vy *= -1; ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fillStyle = `rgba(142,148,242,${p.a})`; ctx.fill() }); rid = requestAnimationFrame(draw); } draw(); o._rid = rid; }
+        function hideComingSoon() { const o = document.getElementById('coming-soon-overlay'), c = document.getElementById('coming-soon-card'); c.style.transform = 'scale(0.85)'; c.style.opacity = '0'; setTimeout(() => o.style.display = 'none', 400); if (o._rid) cancelAnimationFrame(o._rid); }
+    </script>
+</body>
+
+</html>

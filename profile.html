@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KARMA · Profile</title>
+    <!-- Web Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Cropper.js for Avatar Cropping -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="profile.css">
+    <link rel="stylesheet" href="home.css">
+</head>
+
+<body>
+    <div class="noise"></div>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <video autoplay muted loop playsinline class="logo-video">
+                        <source src="karma.mp4" type="video/mp4">
+                    </video>
+                    <div class="logo-mask"></div>
+                </div>
+            </div>
+            <ul class="nav-links">
+                <li class="nav-item" data-label="Home" id="nav-home" onclick="window.location.href='home.html'">
+                    <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                            <polyline points="9 22 9 12 15 12 15 22" />
+                        </svg></div>
+                    <span class="label">Home</span>
+                </li>
+                <li class="nav-item" data-label="Search" onclick="window.location.href='search.html'">
+                    <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8" />
+                            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                        </svg></div>
+                    <span class="label">Search</span>
+                </li>
+                <li class="nav-item" data-label="Awaaz TV" onclick="window.location.href='awaaz_tv.html'">
+                    <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect width="20" height="15" x="2" y="7" rx="2" ry="2" />
+                            <polyline points="17 2 12 7 7 2" />
+                        </svg></div>
+                    <span class="label">Awaaz TV</span>
+                </li>
+                <li class="nav-item" data-label="Communities" onclick="showComingSoon('Communities', '🤝')">
+                    <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                            <circle cx="9" cy="7" r="4" />
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                        </svg></div>
+                    <span class="label">Communities</span>
+                </li>
+                <li class="nav-item" data-label="Rooms" onclick="showComingSoon('Rooms', '💬')">
+                    <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                        </svg></div>
+                    <span class="label">Rooms</span>
+                </li>
+                <li class="nav-item" data-label="Donations">
+                    <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 12V8H4v4" />
+                            <path d="M2 12h20" />
+                            <path d="M7 12v10" />
+                            <path d="M17 12v10" />
+                            <path d="M2 8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v4H2Z" />
+                            <path d="m12 12 3-3-3-3-3 3Z" />
+                        </svg></div>
+                    <span class="label">Donations</span>
+                </li>
+                <li class="nav-item active" data-label="Profile" id="nav-profile">
+                    <div class="icon-box">
+                        <div class="nav-avatar-placeholder" id="navAvatarPlaceholder">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
+                                stroke-width="1.5">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                <circle cx="12" cy="7" r="4" />
+                            </svg>
+                        </div>
+                        <img src="" class="nav-avatar" id="navAvatar" style="display: none;">
+                    </div>
+                    <span class="label">Profile</span>
+                </li>
+                <li class="nav-item" data-label="History">
+                    <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10" />
+                            <polyline points="12 6 12 12 16 14" />
+                        </svg></div>
+                    <span class="label">History</span>
+                </li>
+                <li class="nav-item" data-label="Settings" id="settings-nav"
+                    onclick="window.location.href='settings.html'">
+                    <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="3" />
+                            <path
+                                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                        </svg></div>
+                    <span class="label">Settings</span>
+                </li>
+            </ul>
+        </nav>
+        <!-- Main Content (Behind Modal) -->
+        <main class="main-content" id="main-content">
+
+            <!-- HOME VIEW — same layout as standalone home.html -->
+            <div id="home-view" style="display:none; position:relative; height:100%; overflow-y:auto;">
+
+                <!-- Coin Icon pinned top-right inside the home view -->
+                <div class="home-coin-btn">
+                    <svg viewBox="0 0 800 800" width="34" height="34" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="coinGrad2" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="#8E94F2" />
+                                <stop offset="100%" stop-color="#6C72D9" />
+                            </linearGradient>
+                        </defs>
+                        <ellipse cx="180" cy="380" rx="60" ry="90" fill="#6C72D9" stroke="#1E1E1E" stroke-width="12"
+                            transform="rotate(-25 180 380)" />
+                        <ellipse cx="620" cy="380" rx="60" ry="90" fill="#6C72D9" stroke="#1E1E1E" stroke-width="12"
+                            transform="rotate(25 620 380)" />
+                        <rect x="280" y="540" width="80" height="160" rx="40" fill="#6C72D9" stroke="#1E1E1E"
+                            stroke-width="12" />
+                        <rect x="440" y="540" width="80" height="160" rx="40" fill="#6C72D9" stroke="#1E1E1E"
+                            stroke-width="12" />
+                        <rect x="190" y="150" width="420" height="500" rx="210" fill="url(#coinGrad2)" stroke="#1E1E1E"
+                            stroke-width="14" />
+                        <ellipse cx="400" cy="180" rx="210" ry="60" fill="#F6C3B3" stroke="#1E1E1E" stroke-width="14" />
+                        <rect x="340" y="170" width="120" height="20" rx="10" fill="#1E1E1E" />
+                        <path d="M 290 360 A 40 40 0 0 1 370 360" fill="none" stroke="#1E1E1E" stroke-width="16"
+                            stroke-linecap="round" />
+                        <path d="M 430 360 A 40 40 0 0 1 510 360" fill="none" stroke="#1E1E1E" stroke-width="16"
+                            stroke-linecap="round" />
+                        <rect x="320" y="390" width="160" height="120" rx="60" fill="#E83E5A" stroke="#1E1E1E"
+                            stroke-width="12" />
+                        <rect x="340" y="395" width="120" height="40" fill="#FFFFFF" stroke="#1E1E1E"
+                            stroke-width="10" />
+                        <circle cx="250" cy="420" r="30" fill="#FF9AA2" />
+                        <circle cx="550" cy="420" r="30" fill="#FF9AA2" />
+                    </svg>
+                    <span class="notification-dot"></span>
+                </div>
+
+                <!-- Feed content centered -->
+                <div class="feed-column" style="max-width:470px; margin: 0 auto; padding-top: 20px;">
+
+                    <!-- Real Followers Strip -->
+                    <div class="followers-strip-wrapper" id="followers-strip-wrapper">
+                        <div class="followers-strip" id="followers-strip"></div>
+                    </div>
+
+                    <!-- Live Posts -->
+                    <div id="posts-container">
+                        <div class="feed-loading">
+                            <div class="spinner"></div>
+                            <p>Loading the Karmic balance...</p>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div id="profile-view">
+                <header class="profile-header">
+                    <div class="profile-pic-container">
+                        <div class="profile-pic-wrapper">
+                            <div class="profile-pic-placeholder" id="profilePicPlaceholder">
+                                <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="currentColor"
+                                    stroke-width="1.5">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                    <circle cx="12" cy="7" r="4" />
+                                </svg>
+                            </div>
+                            <img src="" alt="Profile" class="profile-pic" id="profileImage" style="display: none;">
+                        </div>
+                    </div>
+                    <div class="profile-info">
+                        <div class="profile-top">
+                            <h2 class="username" id="displayUsername">username</h2>
+                            <button class="btn-dark" id="editProfileBtn">Edit profile</button>
+                        </div>
+                        <ul class="profile-stats">
+                            <li><span class="stat-count" id="stat-coins">0</span> <span class="stat-label">Coins</span>
+                            </li>
+                            <li><span class="stat-count" id="stat-badges">0</span> <span
+                                    class="stat-label">Badges</span></li>
+                            <li><span class="stat-count" id="stat-donations">0</span> <span
+                                    class="stat-label">Donations</span></li>
+                            <li><span class="stat-count" id="stat-followers">0</span> <span
+                                    class="stat-label">Followers</span></li>
+                            <li><span class="stat-count" id="stat-following">0</span> <span
+                                    class="stat-label">Following</span></li>
+                        </ul>
+                        <div class="profile-bio">
+                            <span class="full-name" id="displayFullName">Name</span>
+                            <span class="role-badge" id="displayRole">NEW USER</span>
+                            <p class="locality" id="displayLocality">Unknown Location</p>
+                            <p class="bio-text" id="displayBio">Awaiting bio...</p>
+                        </div>
+                    </div>
+                </header>
+                <nav class="profile-tabs">
+                    <button class="tab active" data-target="deeds">DEEDS (Karm)</button>
+                    <button class="tab" data-target="communities">COMMUNITIES</button>
+                    <button class="tab" data-target="rooms">ROOMS</button>
+                    <button class="tab" data-target="awaaz">AWAAZ TV</button>
+                </nav>
+                <div id="tab-content-area" class="tab-content"></div>
+            </div>
+            <!-- Settings View (Hidden by default) -->
+            <div id="settings-view" style="display: none;">
+                <div class="settings-header">
+                    <h2>Edit Profile</h2>
+                    <button class="btn-dark" id="closeSettingsBtn">Back to Profile</button>
+                </div>
+                <form id="settings-form" class="settings-form-grid">
+                    <div class="input-group">
+                        <label>Username</label>
+                        <input type="text" id="edit-username" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Full Name</label>
+                        <input type="text" id="edit-fullname" required>
+                    </div>
+                    <div class="input-group full-width">
+                        <label>Bio</label>
+                        <textarea id="edit-bio" rows="3"></textarea>
+                    </div>
+                    <div class="input-group">
+                        <label>Occupation</label>
+                        <input type="text" id="edit-occupation">
+                    </div>
+                    <div class="input-group">
+                        <label>Location (City/State)</label>
+                        <input type="text" id="edit-locality">
+                    </div>
+                    <div class="submit-row full-width" style="justify-content: flex-start; margin-top: 15px;">
+                        <button type="submit" class="btn-glow small">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+    <!-- ██████████ IG DESKTOP UPLOAD MODAL ██████████ -->
+    <div id="desktop-upload-modal" class="post-modal-overlay">
+        <!-- Close button (top right) -->
+        <button class="post-modal-close" id="upload-modal-close-btn" aria-label="Close">
+            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+
+        <div class="upload-modal-container">
+            <!-- Modal Header -->
+            <div class="upload-modal-header">
+                <h3>Create new post</h3>
+                <button id="upload-publish-btn" class="upload-next-btn" disabled>Publish</button>
+            </div>
+
+            <div class="upload-modal-body">
+                <!-- Left: Media Panel (Drag & Drop / Preview) -->
+                <div class="upload-media-wrap" id="upload-media-area">
+                    <div class="upload-placeholder" id="upload-placeholder">
+                        <svg aria-label="Icon to represent media such as images or videos" color="#ffffff"
+                            fill="#ffffff" height="77" role="img" viewBox="0 0 97.6 77.3" width="96">
+                            <path
+                                d="M16.3 24h.3c2.8-.2 4.9-2.6 4.8-5.4-.2-2.8-2.6-4.9-5.4-4.8s-4.9 2.6-4.8 5.4c.1 2.7 2.4 4.8 5.1 4.8zm-2.4-7.2c.5-.6 1.3-1 2.1-1h.2c1.7.1 3.1 1.5 3.1 3.1v.2c-.1 1.3-.9 2.1-2.2 2.1s-2.6-1.2-2.7-2.5c-.1-.7.2-1.4.5-1.9zM22.9 50.1l-6.1-8.5c-.4-.5-1.1-.8-1.8-.8s-1.4.3-1.8.8l-12.2 17v-38c0-2.8 2.3-5 5-5h84.4c2.8 0 5 2.3 5 5v38l-23-32c-.4-.5-1.1-.8-1.8-.8s-1.4.3-1.8.8l-15.3 21.4c-.4.5-1.1.8-1.8.8s-1.4-.3-1.8-.8L22.9 50.1zM97.6 15.8V61c0 5-4.1 9-9 9H9c-5 0-9-4.1-9-9V15.8c0-5 4.1-9 9-9h79.6c5 0 9 4.1 9 9zM88.6 67c3.9 0 7-3.1 7-7V15.8c0-3.9-3.1-7-7-7H9c-3.9 0-7 3.1-7 7V61c0 3.9 3.1 7 7 7h79.6z">
+                            </path>
+                        </svg>
+                        <p style="font-size: 20px; margin-top: 16px;">Drag photos and videos here</p>
+                        <button class="btn-glow small" style="margin-top:24px;" id="upload-browse-btn">Upload</button>
+                        <input type="file" id="upload-file-input" style="display:none;"
+                            accept="image/jpeg,image/png,image/webp,video/mp4,video/webm" multiple>
+                    </div>
+                    <!-- This will hold the preview canvas (or img/video) and the crop controls -->
+                    <div id="upload-preview-container"
+                        style="display:none; width:100%; height:100%; position:relative; background:#000;">
+                        <!-- The cropper img or video element will go here -->
+                        <div id="upload-preview-wrapper"
+                            style="width:100%; height:100%; display:flex; align-items:center; justify-content:center;">
+                        </div>
+
+                        <!-- Overlay controls for crop aspect ratio (bottom left) -->
+                        <div class="crop-controls" id="crop-controls"
+                            style="position:absolute; bottom:16px; left:16px; display:none;">
+                            <button class="btn-dark small" id="btn-aspect-1-1">1:1</button>
+                            <button class="btn-dark small" id="btn-aspect-4-5">4:5</button>
+                            <button class="btn-dark small" id="btn-aspect-16-9">16:9</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Details Panel -->
+                <div class="upload-details-wrap">
+                    <div class="upload-author-row">
+                        <div class="modal-header-ph" id="upload-author-initial" style="width:28px; height:28px;">?</div>
+                        <span class="ig-caption-author" id="upload-author-name">username</span>
+                    </div>
+
+                    <textarea class="upload-caption-input" id="upload-caption" placeholder="Write a caption..."
+                        maxlength="2200"></textarea>
+
+                    <div class="upload-caption-footer">
+                        <span class="upload-char-count" id="upload-char-count">0/2200</span>
+                    </div>
+
+                    <div class="upload-setting-row">
+                        <input type="text" id="upload-location" placeholder="Add location" class="upload-setting-input">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+                            <path
+                                d="M12.05 2.02A8.995 8.995 0 0 0 3 11c0 5 9 11 9 11s9-6 9-11a8.995 8.995 0 0 0-9.05-8.98zm0 13.5a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9z" />
+                        </svg>
+                    </div>
+
+
+
+                    <!-- Upload State Feedback -->
+                    <div class="upload-status" id="upload-status"
+                        style="display:none; padding: 16px; border-top: 1px solid #262626;">
+                        <div class="upload-progress-bar">
+                            <div class="upload-progress-fill" id="upload-progress-fill"></div>
+                        </div>
+                        <p id="upload-status-text"
+                            style="font-size:12px; color:var(--text-secondary); margin-top:8px; text-align:center;">
+                            Uploading...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ██████████ FULL SCREEN ONBOARDING MODAL ██████████ -->
+    <div id="newUserModal" class="onboarding-modal">
+        <div class="onboarding-container">
+            <div class="ob-header">
+                <h2>Welcome to KARMA</h2>
+                <p>Let's build your identity. This is how the community will see you.</p>
+            </div>
+            <form id="new-user-form" enctype="multipart/form-data">
+                <!-- Avatar Upload Section -->
+                <div class="ob-avatar-section">
+                    <div class="avatar-upload" id="avatar-trigger">
+                        <div class="avatar-placeholder" id="ob-avatar-preview">
+                            <svg viewBox="0 0 24 24" width="30" height="30" fill="none" stroke="currentColor"
+                                stroke-width="1.5">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                <polyline points="17 8 12 3 7 8" />
+                                <line x1="12" y1="3" x2="12" y2="15" />
+                            </svg>
+                        </div>
+                        <div class="avatar-ring"></div>
+                        <div class="avatar-hint">Upload Photo</div>
+                    </div>
+                    <input type="file" id="new-avatar-input" accept="image/png, image/jpeg, image/webp"
+                        style="display: none;">
+                </div>
+                <!-- Step 1: Core Identity -->
+                <div class="ob-row">
+                    <div class="input-group">
+                        <label>Username</label>
+                        <div class="input-wrapper">
+                            <span class="prefix">@</span>
+                            <input type="text" id="new-username" autocomplete="off" spellcheck="false"
+                                placeholder="username" required>
+                        </div>
+                        <div id="new-username-feedback" class="feedback"></div>
+                    </div>
+                    <div class="input-group">
+                        <label>Full Name</label>
+                        <input type="text" id="new-fullname" autocomplete="off" placeholder="John Doe" required>
+                    </div>
+                </div>
+                <!-- Step 2: Story -->
+                <div class="input-group">
+                    <label>Bio <span class="char-count" id="bio-count">0/150</span></label>
+                    <textarea id="new-bio" rows="2" maxlength="150"
+                        placeholder="Trying to make the world a little brighter. ✨"></textarea>
+                </div>
+                <!-- Step 3: Location (Smart Pincode) -->
+                <div class="ob-row three-col">
+                    <div class="input-group">
+                        <label>Pincode</label>
+                        <input type="text" id="new-pincode" maxlength="6" autocomplete="off" pattern="[0-9]{6}"
+                            placeholder="Enter 6 digits" required>
+                        <div id="new-pincode-feedback" class="feedback"></div>
+                    </div>
+                    <div class="input-group locked">
+                        <label>City / District</label>
+                        <input type="text" id="new-city" readonly placeholder="Auto-filled">
+                    </div>
+                    <div class="input-group locked">
+                        <label>State</label>
+                        <input type="text" id="new-state" readonly placeholder="Auto-filled">
+                    </div>
+                </div>
+                <!-- Step 4: Persona -->
+                <div class="ob-row">
+                    <div class="input-group">
+                        <label>Occupation / Student</label>
+                        <input type="text" id="new-occupation" placeholder="Software Engineer">
+                    </div>
+                    <div class="input-group">
+                        <label>Social Link (Optional)</label>
+                        <input type="url" id="new-link" placeholder="Twitter / IG / Portfolio">
+                    </div>
+                </div>
+                <div class="submit-row">
+                    <button type="submit" class="btn-glow" id="finish-ob-btn">
+                        <span>Enter Dashboard</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12h14M12 5l7 7-7 7" />
+                        </svg>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <!-- ██████████ AVATAR CROPPER MODAL ██████████ -->
+    <div id="cropper-modal" class="modal">
+        <div class="cropper-container">
+            <h3>Adjust Picture</h3>
+            <div class="img-container">
+                <img id="image-to-crop" src="">
+            </div>
+            <div class="cropper-actions">
+                <button type="button" class="btn-dark" id="crop-cancel">Cancel</button>
+                <button type="button" class="btn-glow small" id="crop-save">Apply Photo</button>
+            </div>
+        </div>
+    </div>
+    <!-- Image Zoom Modal -->
+    <div id="imageModal" class="image-zoom-modal">
+        <span class="close-image-modal">&times;</span>
+        <img class="zoomed-image-content" id="fullScreenImg">
+    </div>
+
+    <!-- ██████████ IG-STYLE UPLOAD MODAL ██████████ -->
+    <div id="ig-upload-modal" class="modal" style="display: none;">
+        <div class="ig-upload-container">
+            <div class="ig-modal-header">
+                <button id="ig-cancel-btn">Cancel</button>
+                <h3>New Post</h3>
+                <button id="ig-share-btn" class="ig-share-text">Share</button>
+            </div>
+
+            <div class="ig-modal-body">
+                <!-- Left Side: Massive Image/Video Preview -->
+                <div class="ig-preview-area">
+                    <img id="ig-image-preview" src="" style="display: none;">
+                    <video id="ig-video-preview" autoplay muted loop playsinline style="display: none;"></video>
+                </div>
+
+                <!-- Right Side: Caption & Details -->
+                <div class="ig-details-area">
+                    <div class="ig-author-row">
+                        <img src="" class="ig-author-avatar" id="ig-post-avatar">
+                        <span class="ig-author-name" id="ig-post-username">username</span>
+                    </div>
+                    <textarea id="ig-caption-input" placeholder="Write a caption... share your story."></textarea>
+
+                    <div class="ig-loading-overlay" id="ig-loading-overlay" style="display:none;">
+                        <div class="spinner"></div>
+                        <p>Uploading...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast hidden">
+        <div class="toast-icon">✨</div>
+        <div class="toast-content">
+            <h4 id="toast-title">Profile Created!</h4>
+            <p><span id="toast-username"></span></p>
+        </div>
+    </div>
+    <!-- ██████████ IG DESKTOP POST MODAL ██████████ -->
+    <div id="desktop-post-modal" class="post-modal-overlay">
+        <!-- Close button (top right) -->
+        <button class="post-modal-close" id="post-modal-close-btn" aria-label="Close">
+            <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+
+        <div class="post-modal-container">
+            <!-- Left: Media Panel -->
+            <div class="post-modal-media-wrap" id="post-modal-media-container">
+                <!-- Image/Video injected via JS -->
+            </div>
+
+            <!-- Right: Comments & Info Panel -->
+            <div class="post-modal-right">
+                <!-- Header: Author info -->
+                <div class="post-modal-header" id="post-modal-header">
+                    <!-- Injected by JS -->
+                </div>
+
+                <!-- Middle: Scrollable Comments -->
+                <div class="post-modal-comments scrollable" id="post-modal-comments-list">
+                    <!-- Injected by JS -->
+                </div>
+
+                <!-- Bottom Sticky: Actions & Input -->
+                <div class="post-modal-footer">
+                    <div class="ig-action-bar">
+                        <div class="ig-actions-left">
+                            <button class="action-btn inspire" id="modal-like-btn" title="Inspire">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path
+                                        d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                                </svg>
+                            </button>
+                            <button class="action-btn comment"
+                                onclick="document.getElementById('modal-comment-input').focus()" title="Comment">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                                </svg>
+                            </button>
+                            <button class="action-btn share" id="modal-share-btn" title="Share">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="22" y1="2" x2="11" y2="13" />
+                                    <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="ig-actions-right">
+                            <button class="action-btn bookmark" id="modal-save-btn" title="Save">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" />
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="ig-likes-count" id="modal-like-count">0 likes</div>
+                    <div class="ig-post-time" id="modal-post-time">JUST NOW</div>
+
+                    <!-- Sticky Comment Input -->
+                    <div class="comment-input-row" style="margin-top:12px;">
+                        <input type="text" class="comment-input" id="modal-comment-input"
+                            placeholder="Add a comment…" />
+                        <button class="comment-post-btn" id="modal-post-comment-btn">Post</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ██████████ INLINE VIDEO COMMENT PANEL ██████████ -->
+    <div id="inline-comment-panel" class="inline-comment-panel">
+        <div class="inline-comment-header">
+            <span>Comments</span>
+            <button class="inline-comment-close" id="inline-comment-close-btn" aria-label="Close">
+                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+        <div class="inline-comment-list" id="inline-comment-list">
+            <!-- Comments injected here -->
+        </div>
+        <div class="inline-comment-input-area">
+            <input type="text" id="inline-comment-input" placeholder="Add a comment..." />
+            <button id="inline-post-comment-btn">Post</button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+    <script src="profile.js"></script>
+
+    <!-- ═══ COMING SOON MODAL ═══ -->
+    <div id="coming-soon-overlay" onclick="hideComingSoon()" style="
+        display:none; position:fixed; inset:0; z-index:99999;
+        background:rgba(0,0,0,0.85); backdrop-filter:blur(12px);
+        -webkit-backdrop-filter:blur(12px);
+        align-items:center; justify-content:center;
+    ">
+        <div id="coming-soon-card" onclick="event.stopPropagation()" style="
+            position:relative; text-align:center;
+            background:linear-gradient(135deg,rgba(15,15,20,0.95),rgba(8,8,16,0.98));
+            border:1px solid rgba(255,255,255,0.08);
+            border-radius:24px; padding:60px 48px 48px;
+            max-width:420px; width:90%; overflow:hidden;
+            box-shadow:0 40px 80px rgba(0,0,0,0.7),0 0 60px rgba(142,148,242,0.1);
+            transform:scale(0.85); opacity:0;
+            transition:all 0.45s cubic-bezier(0.16,1,0.3,1);
+        ">
+            <div
+                style="position:absolute;inset:-40px;border-radius:50%;background:radial-gradient(circle,rgba(142,148,242,0.06) 0%,transparent 70%);animation:csGlow 3s ease-in-out infinite alternate;pointer-events:none;">
+            </div>
+            <canvas id="cs-particles"
+                style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;border-radius:24px;"></canvas>
+            <div id="cs-icon"
+                style="font-size:56px;margin-bottom:16px;display:block;animation:csFloat 2.5s ease-in-out infinite;">🤝
+            </div>
+            <h2 id="cs-title"
+                style="font-size:28px;font-weight:700;color:#fff;margin-bottom:8px;letter-spacing:-0.5px;">Communities
+            </h2>
+            <div
+                style="width:48px;height:3px;background:linear-gradient(90deg,#8E94F2,#6C72D9);border-radius:99px;margin:0 auto 20px;">
+            </div>
+            <p style="font-size:15px;color:rgba(255,255,255,0.5);line-height:1.6;margin-bottom:32px;">This feature is
+                currently being built by our team. We'll notify you as soon as it's live.</p>
+            <div style="display:flex;gap:10px;justify-content:center;margin-bottom:32px;flex-wrap:wrap;">
+                <span
+                    style="background:rgba(142,148,242,0.12);border:1px solid rgba(142,148,242,0.25);color:#8E94F2;padding:6px 14px;border-radius:99px;font-size:12px;font-weight:600;">🔨
+                    In Development</span>
+                <span
+                    style="background:rgba(0,230,118,0.08);border:1px solid rgba(0,230,118,0.2);color:#00e676;padding:6px 14px;border-radius:99px;font-size:12px;font-weight:600;">✦
+                    Coming Soon</span>
+            </div>
+            <button onclick="hideComingSoon()"
+                style="background:linear-gradient(135deg,#8E94F2,#6C72D9);color:#fff;border:none;border-radius:12px;padding:14px 40px;font-size:15px;font-weight:600;cursor:pointer;box-shadow:0 8px 24px rgba(142,148,242,0.3);transition:transform 0.15s;">Got
+                it!</button>
+        </div>
+    </div>
+    <style>
+        @keyframes csGlow {
+            from {
+                opacity: .5;
+                transform: scale(.9)
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1.1)
+            }
+        }
+
+        @keyframes csFloat {
+
+            0%,
+            100% {
+                transform: translateY(0)
+            }
+
+            50% {
+                transform: translateY(-8px)
+            }
+        }
+    </style>
+    <script>
+        function showComingSoon(name, icon) { const o = document.getElementById('coming-soon-overlay'), c = document.getElementById('coming-soon-card'); document.getElementById('cs-title').textContent = name; document.getElementById('cs-icon').textContent = icon; o.style.display = 'flex'; requestAnimationFrame(() => requestAnimationFrame(() => { c.style.transform = 'scale(1)'; c.style.opacity = '1'; })); const cv = document.getElementById('cs-particles'), ctx = cv.getContext('2d'); cv.width = c.offsetWidth || 420; cv.height = c.offsetHeight || 380; const ps = Array.from({ length: 24 }, () => ({ x: Math.random() * cv.width, y: Math.random() * cv.height, r: Math.random() * 2 + .5, vx: (Math.random() - .5) * .6, vy: (Math.random() - .5) * .6, a: Math.random() * .5 + .2 })); let rid; function draw() { ctx.clearRect(0, 0, cv.width, cv.height); ps.forEach(p => { p.x += p.vx; p.y += p.vy; if (p.x < 0 || p.x > cv.width) p.vx *= -1; if (p.y < 0 || p.y > cv.height) p.vy *= -1; ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fillStyle = `rgba(142,148,242,${p.a})`; ctx.fill() }); rid = requestAnimationFrame(draw); } draw(); o._rid = rid; }
+        function hideComingSoon() { const o = document.getElementById('coming-soon-overlay'), c = document.getElementById('coming-soon-card'); c.style.transform = 'scale(0.85)'; c.style.opacity = '0'; setTimeout(() => o.style.display = 'none', 400); if (o._rid) cancelAnimationFrame(o._rid); }
+    </script>
+</body>
+
+</html>

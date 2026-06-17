@@ -1,0 +1,451 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jaya Jagannath Genie - Royal 6th Sem Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        body { 
+            font-family: 'Outfit', sans-serif; 
+            margin: 0; overflow: hidden; 
+            background: radial-gradient(circle at 50% 50%, #1e1b4b, #020617, #000000);
+            color: #e2e8f0;
+            display: flex; align-items: center; justify-content: center; min-height: 100vh;
+        }
+        .glow-orb-1 {
+            position: absolute; top: -10%; left: -10%; width: 50vw; height: 50vw;
+            background: radial-gradient(circle, rgba(217,119,6,0.15) 0%, transparent 70%);
+            animation: pulseOrb 8s ease-in-out infinite alternate;
+            z-index: 0; pointer-events: none;
+        }
+        .glow-orb-2 {
+            position: absolute; bottom: -10%; right: -10%; width: 50vw; height: 50vw;
+            background: radial-gradient(circle, rgba(79,70,229,0.15) 0%, transparent 70%);
+            animation: pulseOrb 10s ease-in-out infinite alternate-reverse;
+            z-index: 0; pointer-events: none;
+        }
+        @keyframes pulseOrb {
+            0% { transform: scale(1); opacity: 0.5; }
+            100% { transform: scale(1.2); opacity: 1; }
+        }
+        .genie-avatar {
+            font-size: 6rem;
+            filter: drop-shadow(0 0 25px rgba(251, 191, 36, 0.4));
+            animation: float 3.5s ease-in-out infinite;
+            position: relative; z-index: 10;
+        }
+        @keyframes float {
+            0% { transform: translateY(0px) scale(1); }
+            50% { transform: translateY(-15px) scale(1.05); }
+            100% { transform: translateY(0px) scale(1); }
+        }
+        .glass-bubble {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(251, 191, 36, 0.3); border-radius: 1.5rem; padding: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.8), inset 0 0 20px rgba(251,191,36,0.05);
+            position: relative; color: white; z-index: 10;
+        }
+        .glass-bubble::after {
+            content: ''; position: absolute; bottom: -20px; left: 50%;
+            transform: translateX(-50%); border-width: 20px 20px 0; border-style: solid;
+            border-color: rgba(15,23,42,0.9) transparent transparent transparent;
+            display: block; width: 0; filter: drop-shadow(0 10px 5px rgba(251,191,36,0.2));
+        }
+        .btn-magic {
+            background: linear-gradient(135deg, #f59e0b, #fbbf24, #d97706);
+            background-size: 200% 200%; animation: magicShift 3s ease infinite;
+            border: 1px solid rgba(255,255,255,0.4); color: #451a03;
+            transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
+            box-shadow: 0 10px 25px -5px rgba(245,158,11,0.5);
+            text-shadow: 0 1px 2px rgba(255,255,255,0.3);
+        }
+        .btn-magic:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 15px 30px -5px rgba(245,158,11,0.7); }
+        .btn-magic:active { transform: translateY(1px); }
+        @keyframes magicShift {
+            0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; }
+        }
+        .btn-action { transition: all 0.2s; position: relative; overflow: hidden; z-index: 10; }
+        .btn-action::after {
+            content: ''; position: absolute; top: 50%; left: 50%;
+            width: 300px; height: 300px; background: rgba(255,255,255,0.15); border-radius: 50%;
+            transform: translate(-50%,-50%) scale(0); transition: transform 0.4s ease-out;
+        }
+        .btn-action:active::after { transform: translate(-50%,-50%) scale(1); transition: 0s; }
+        .btn-action:hover { transform: translateY(-2px); }
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        .fade-out { animation: fadeOut 0.3s ease-in forwards; }
+        @keyframes fadeIn { from { opacity:0; transform:translateY(10px) scale(0.98); } to { opacity:1; transform:translateY(0) scale(1); } }
+        @keyframes fadeOut { from { opacity:1; transform:scale(1); } to { opacity:0; transform:scale(0.95); } }
+        .spinner {
+            width: 40px; height: 40px; border: 4px solid rgba(251,191,36,0.2);
+            border-left-color: #fbbf24; border-radius: 50%;
+            animation: spin 1s linear infinite; margin: 0 auto;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="glow-orb-1"></div>
+    <div class="glow-orb-2"></div>
+    <div class="fixed inset-0 pointer-events-none z-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-30"></div>
+
+    <a href="crazy.html" class="fixed top-6 left-6 z-50 bg-slate-900/60 backdrop-blur-md border border-amber-500/30 text-amber-400 hover:text-amber-300 hover:bg-slate-800/80 px-4 py-2 rounded-full font-bold shadow-lg transition-all flex items-center gap-2 cursor-pointer">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+        </svg>
+        Back to Hub
+    </a>
+
+    <div id="game-container" class="w-full max-w-md mx-auto flex flex-col items-center px-4 z-10">
+        <div class="genie-avatar mb-6" id="genie-avatar">🧞‍♂️</div>
+        <div class="glass-bubble w-full text-center mb-10 fade-in" id="speech-bubble">
+            <h1 class="text-3xl font-black bg-clip-text text-transparent bg-gradient-to-r from-amber-300 to-yellow-500 mb-2 drop-shadow-sm">JJDC Genie ✨</h1>
+            <p class="text-lg font-semibold text-slate-300">Choose your game mode!</p>
+        </div>
+        <div id="action-area" class="w-full flex flex-col gap-4 fade-in">
+            <button onclick="startGame('object')" class="btn-action w-full bg-slate-900/80 backdrop-blur-md border border-slate-700 hover:border-slate-500 text-slate-200 font-bold py-4 px-6 rounded-2xl shadow-lg">
+                🔮 Guess an Object
+            </button>
+            <button onclick="startGame('special')" class="btn-magic btn-action w-full font-black text-xl py-5 px-6 rounded-2xl">
+                🎓 I Know You<br><span class="text-sm font-bold opacity-80">(6th Sem Special Edition)</span>
+            </button>
+        </div>
+    </div>
+
+<script>
+
+// ============================================================
+//  SHARED UI
+// ============================================================
+const bubble     = document.getElementById('speech-bubble');
+const actionArea = document.getElementById('action-area');
+const avatar     = document.getElementById('genie-avatar');
+let isProcessing = false;
+
+function transitionUI(titleHTML, textHTML, buttonsHTML, isThinking = false) {
+    bubble.classList.remove('fade-in');
+    actionArea.classList.remove('fade-in');
+    bubble.classList.add('fade-out');
+    actionArea.classList.add('fade-out');
+
+    setTimeout(() => {
+        if (isThinking) {
+            bubble.innerHTML = `<div class="py-4"><div class="spinner mb-4"></div>
+                <h1 class="text-xl font-black text-amber-400 animate-pulse">${titleHTML}</h1></div>`;
+            actionArea.innerHTML = '';
+        } else {
+            bubble.innerHTML = `<h1 class="text-xl font-black text-amber-400 mb-2">${titleHTML}</h1>
+                <p class="text-[1.1rem] font-semibold text-slate-200 leading-snug">${textHTML}</p>`;
+            actionArea.innerHTML = buttonsHTML;
+        }
+        bubble.classList.remove('fade-out');
+        actionArea.classList.remove('fade-out');
+        bubble.classList.add('fade-in');
+        actionArea.classList.add('fade-in');
+        isProcessing = false;   // unlock buttons after every transition
+    }, 300);
+}
+
+// ============================================================
+//  🔮 OBJECT GAME — Pure decision tree, zero network calls
+//  KEY FIX: objAns does NOT call askObjQ() directly.
+//  It calls transitionUI() which resets isProcessing=false,
+//  then inside that callback we trigger the next question.
+// ============================================================
+
+/*
+  TREE FORMAT:
+    Each node: { q, y, n }
+      q  = question string
+      y  = key of next node if YES  (or "GUESS:Text" to reveal answer)
+      n  = key of next node if NO   (or "GUESS:Text" to reveal answer)
+*/
+const OBJ = {
+  start: { q:"Is it a living thing (animal, plant, person)?", y:"living_1", n:"nonliving_1" },
+
+  // ── LIVING ─────────────────────────────────────────────
+  living_1:  { q:"Is it an animal?",                          y:"animal_1",   n:"plant_1" },
+
+  // Plants
+  plant_1:   { q:"Is it a tree (not a small plant/flower)?",  y:"tree_1",     n:"plant_2" },
+  tree_1:    { q:"Does it produce fruit you can eat?",        y:"tree_fruit", n:"tree_nofruit" },
+  tree_fruit:    { q:"Is it a mango tree?",                   y:"GUESS:Mango Tree 🥭",    n:"GUESS:Banana / Coconut Tree 🌴" },
+  tree_nofruit:  { q:"Is it a coconut or palm tree?",         y:"GUESS:Coconut Tree 🌴",  n:"GUESS:Neem / Banyan Tree 🌿" },
+  plant_2:   { q:"Is it a flower?",                           y:"flower_1",   n:"plant_3" },
+  flower_1:  { q:"Is it a rose?",                             y:"GUESS:Rose 🌹",          n:"GUESS:Sunflower / Marigold 🌻" },
+  plant_3:   { q:"Is it a vegetable or herb?",                y:"veg_1",      n:"plant_4" },
+  veg_1:     { q:"Is it green (spinach, broccoli, chilli)?",  y:"GUESS:Green Vegetable 🥦", n:"GUESS:Tomato / Carrot / Potato 🍅" },
+  plant_4:   { q:"Is it a grass, bamboo, or cactus?",         y:"GUESS:Bamboo / Cactus 🎋", n:"GUESS:Tulsi / Aloe Vera 🌿" },
+
+  // Animals
+  animal_1:  { q:"Does it mostly live on land (not water)?",  y:"land_1",     n:"water_1" },
+  water_1:   { q:"Is it a fish?",                             y:"GUESS:Fish 🐟",          n:"GUESS:Octopus / Crab / Duck 🐙" },
+  land_1:    { q:"Is it a pet or domestic animal?",           y:"pet_1",      n:"wild_1" },
+  pet_1:     { q:"Is it a dog or cat?",                       y:"dogcat",     n:"pet_2" },
+  dogcat:    { q:"Is it a dog?",                              y:"GUESS:Dog 🐶",           n:"GUESS:Cat 🐱" },
+  pet_2:     { q:"Does it live in a cage (parrot, hamster)?", y:"cage_1",     n:"pet_3" },
+  cage_1:    { q:"Can it talk / mimic sounds?",               y:"GUESS:Parrot 🦜",        n:"GUESS:Hamster / Rabbit 🐹" },
+  pet_3:     { q:"Is it a cow or buffalo?",                   y:"GUESS:Cow 🐄",           n:"GUESS:Horse / Goat 🐴" },
+  wild_1:    { q:"Is it a big cat (lion, tiger, leopard)?",   y:"bigcat",     n:"wild_2" },
+  bigcat:    { q:"Does it have stripes?",                     y:"GUESS:Tiger 🐯",         n:"GUESS:Lion 🦁" },
+  wild_2:    { q:"Is it an elephant?",                        y:"GUESS:Elephant 🐘",      n:"GUESS:Monkey / Deer / Bear 🐒" },
+
+  // ── NON-LIVING ─────────────────────────────────────────
+  nonliving_1: { q:"Is it a vehicle (carries people or goods)?", y:"vehicle_1", n:"nonvehicle_1" },
+
+  // Vehicles
+  vehicle_1: { q:"Does it travel on roads?",                  y:"road_1",     n:"nonroad_1" },
+  road_1:    { q:"Does it have more than 4 wheels?",          y:"GUESS:Bus / Truck 🚌",   n:"road_2" },
+  road_2:    { q:"Does it have 2 wheels?",                    y:"road_2w",    n:"GUESS:Car / Auto Rickshaw 🚗" },
+  road_2w:   { q:"Does it have an engine / motor?",           y:"GUESS:Motorcycle / Scooter 🏍️", n:"GUESS:Bicycle 🚲" },
+  nonroad_1: { q:"Does it fly in the sky?",                   y:"GUESS:Airplane / Helicopter ✈️", n:"water_v" },
+  water_v:   { q:"Does it travel on water?",                  y:"GUESS:Boat / Ship 🚢",   n:"GUESS:Train / Metro 🚆" },
+
+  // Non-vehicles
+  nonvehicle_1: { q:"Is it used indoors (home, school, office)?", y:"indoor_1", n:"outdoor_1" },
+
+  // Outdoor non-vehicle
+  outdoor_1: { q:"Is it a building or structure?",            y:"GUESS:House / Building / Bridge 🏠", n:"outdoor_2" },
+  outdoor_2: { q:"Is it found in nature (mountain, river, cloud)?", y:"nature_1", n:"GUESS:Cricket Bat / Football / Kite 🏏" },
+  nature_1:  { q:"Is it a body of water?",                    y:"GUESS:River / Ocean / Lake 🌊", n:"GUESS:Mountain / Cloud / Sun ⛰️" },
+
+  // Indoor
+  indoor_1:  { q:"Is it an electronic device or gadget?",     y:"elec_1",     n:"nonelec_1" },
+
+  // Electronics
+  elec_1:    { q:"Can you hold it in one hand?",              y:"elec_handheld", n:"elec_large" },
+  elec_handheld: { q:"Is it a mobile phone?",                 y:"GUESS:Mobile Phone 📱", n:"GUESS:Remote Control / Pen Drive 🎮" },
+  elec_large:{ q:"Does it have a screen?",                    y:"elec_screen", n:"elec_noscreen" },
+  elec_screen:   { q:"Is it a TV?",                           y:"GUESS:Television 📺",    n:"GUESS:Computer / Laptop 💻" },
+  elec_noscreen: { q:"Is it used in the kitchen?",            y:"elec_kitchen", n:"elec_other" },
+  elec_kitchen:  { q:"Does it heat food?",                    y:"GUESS:Microwave / Oven 📦", n:"GUESS:Mixer / Refrigerator 🌀" },
+  elec_other:    { q:"Does it cool or move air (fan/AC)?",    y:"GUESS:Fan / Air Conditioner 🌀", n:"GUESS:Washing Machine / Printer 🫧" },
+
+  // Non-electronic indoor
+  nonelec_1: { q:"Is it furniture (bed, chair, table, shelf)?", y:"furn_1",   n:"nonelec_2" },
+  furn_1:    { q:"Is it used for sleeping or sitting?",        y:"furn_sit",  n:"furn_other" },
+  furn_sit:  { q:"Is it a bed?",                               y:"GUESS:Bed 🛏️",           n:"GUESS:Chair / Sofa 🪑" },
+  furn_other:{ q:"Is it used to store things (shelf, wardrobe)?", y:"GUESS:Wardrobe / Bookshelf 🚪", n:"GUESS:Table / Door 🪵" },
+
+  nonelec_2: { q:"Is it something you write with or on?",     y:"write_1",    n:"nonelec_3" },
+  write_1:   { q:"Do you write ON it (it's a surface)?",      y:"GUESS:Notebook / Whiteboard 📓", n:"GUESS:Pen / Pencil ✏️" },
+
+  nonelec_3: { q:"Is it food or drink?",                      y:"food_1",     n:"nonelec_4" },
+  food_1:    { q:"Is it a fruit?",                            y:"fruit_1",    n:"food_2" },
+  fruit_1:   { q:"Is it yellow or orange coloured?",          y:"GUESS:Mango / Banana / Orange 🥭", n:"GUESS:Apple / Grapes / Watermelon 🍎" },
+  food_2:    { q:"Is it a drink (tea, water, juice)?",        y:"GUESS:Tea / Coffee / Water / Juice ☕", n:"food_3" },
+  food_3:    { q:"Is it a snack (biscuit, chips, chocolate)?",y:"GUESS:Chocolate / Biscuit / Chips 🍫", n:"GUESS:Rice / Dal / Roti / Curry 🍛" },
+
+  nonelec_4: { q:"Is it clothing or something worn on the body?", y:"wear_1", n:"nonelec_5" },
+  wear_1:    { q:"Is it worn on the feet?",                   y:"GUESS:Shoe / Slipper / Sandal 👟", n:"wear_2" },
+  wear_2:    { q:"Is it worn on the head or face?",           y:"GUESS:Cap / Hat / Spectacles 🧢", n:"wear_3" },
+  wear_3:    { q:"Is it jewelry (ring, necklace, bangle)?",   y:"GUESS:Ring / Necklace / Bangle 💍", n:"GUESS:Shirt / Jacket / Saree 👕" },
+
+  nonelec_5: { q:"Is it a bag or container?",                 y:"bag_1",      n:"nonelec_6" },
+  bag_1:     { q:"Do you carry it on your back?",             y:"GUESS:Backpack / School Bag 🎒",  n:"GUESS:Wallet / Purse / Tiffin Box 👛" },
+
+  nonelec_6: { q:"Is it a toy or game (chess, ball, doll)?",  y:"GUESS:Toy / Chess / Carrom / Ball 🎲", n:"nonelec_7" },
+  nonelec_7: { q:"Is it used for personal hygiene (soap, toothbrush, comb)?", y:"GUESS:Toothbrush / Comb / Soap 🪥", n:"nonelec_8" },
+  nonelec_8: { q:"Is it a book or newspaper?",                y:"GUESS:Book / Newspaper 📖",      n:"nonelec_9" },
+  nonelec_9: { q:"Is it a key, lock, or clock?",              y:"GUESS:Key / Lock / Clock 🔑",    n:"GUESS:Candle / Umbrella / Mirror 🕯️" }
+};
+
+let objNode  = "start";
+let objCount = 0;
+
+function startObjectGame() {
+    objNode  = "start";
+    objCount = 0;
+    avatar.textContent = "🔮";
+    transitionUI(
+        "Object Guesser! 🔮",
+        "Think of ANY object in your mind... Don't tell me! 🧠<br>I'll figure it out with Yes / No questions!",
+        `<button onclick="askObjQ()" class="btn-magic btn-action w-full font-black text-lg py-4 px-6 rounded-2xl">I'm Ready! Let's Go!</button>
+         <button onclick="location.reload()" class="btn-action w-full bg-slate-900/80 border border-amber-500/30 text-amber-400 font-bold py-3 rounded-xl shadow-lg mt-2">← Go Back</button>`
+    );
+}
+
+// Called to DISPLAY the current node's question
+// ⚠️ NO isProcessing check here — this is internal, not a button handler
+function askObjQ() {
+    const node = OBJ[objNode];
+    if (!node) { showObjGuess("Something mysterious... 🌌"); return; }
+
+    objCount++;
+    const qTitle = `Question <span class="text-white bg-amber-500 px-2 py-0.5 rounded-md mx-1 shadow-sm">${objCount}</span> 🧐`;
+    transitionUI(qTitle, node.q, `
+        <div class="flex gap-4 w-full">
+            <button onclick="objAns('y')" class="btn-action flex-1 bg-emerald-600/90 border border-emerald-400/50 hover:bg-emerald-500 text-white text-xl font-black py-5 rounded-2xl shadow-[0_8px_20px_rgba(5,150,105,0.4)]">YES</button>
+            <button onclick="objAns('n')" class="btn-action flex-1 bg-rose-600/90 border border-rose-400/50 hover:bg-rose-500 text-white text-xl font-black py-5 rounded-2xl shadow-[0_8px_20px_rgba(225,29,72,0.4)]">NO</button>
+        </div>
+        <button onclick="location.reload()" class="btn-action w-full bg-slate-900/80 border border-slate-700 text-slate-400 font-bold py-3 rounded-xl shadow-lg mt-3">Give Up 🏳️</button>
+    `);
+}
+
+// Called by YES/NO buttons
+function objAns(ans) {
+    if (isProcessing) return;   // stop double-tap on buttons only
+    isProcessing = true;
+
+    const node = OBJ[objNode];
+    if (!node) { showObjGuess("Something mysterious... 🌌"); return; }
+
+    const next = node[ans];     // next is either a key like "animal_1" or "GUESS:Dog 🐶"
+
+    if (!next || next === "") {
+        showObjGuess("Something interesting... 🌟");
+        return;
+    }
+
+    if (next.startsWith("GUESS:")) {
+        // Direct guess — show it
+        // isProcessing will be reset by transitionUI inside showObjGuess
+        showObjGuess(next.replace("GUESS:", "").trim());
+    } else {
+        // Move to next node, then show its question
+        // ⚡ KEY: We use setTimeout so transitionUI's 300ms fade can reset isProcessing FIRST
+        objNode = next;
+        setTimeout(() => { askObjQ(); }, 10);  // tiny delay to let the call stack clear
+    }
+}
+
+function showObjGuess(guess) {
+    avatar.textContent = "🎉";
+    confetti({ particleCount: 120, spread: 80, origin: { y: 0.6 }, colors: ['#fbbf24','#f59e0b','#ffffff','#7c3aed'] });
+    transitionUI(
+        "My Final Answer! 🔮",
+        `Is it...<br><span class='text-4xl font-black bg-clip-text text-transparent bg-gradient-to-r from-amber-300 to-yellow-500 mt-3 block'>${guess}?!</span>`,
+        `<div class="flex gap-4 w-full">
+            <button onclick="objRight()" class="btn-action flex-1 bg-emerald-600/90 border border-emerald-400/50 hover:bg-emerald-500 text-white font-black py-4 rounded-2xl">✅ Yes!</button>
+            <button onclick="objWrong()" class="btn-action flex-1 bg-rose-600/90 border border-rose-400/50 hover:bg-rose-500 text-white font-black py-4 rounded-2xl">❌ Nope!</button>
+        </div>`
+    );
+}
+
+function objRight() {
+    confetti({ particleCount: 250, spread: 100, origin: { y: 0.5 }, colors: ['#fbbf24','#f59e0b','#ffffff','#10b981'] });
+    avatar.textContent = "😎";
+    transitionUI("VICTORY! 🏆", "My magic is unstoppable! The Genie always wins! 🔮✨",
+        `<button onclick="startObjectGame()" class="btn-magic btn-action w-full font-black text-lg py-4 px-6 rounded-2xl">Play Again 🔄</button>
+         <button onclick="location.reload()" class="btn-action w-full bg-slate-900/80 border border-slate-700 text-slate-400 font-bold py-3 rounded-xl shadow-lg mt-2">← Main Menu</button>`);
+}
+function objWrong() {
+    avatar.textContent = "😤";
+    transitionUI("The Genie is Defeated! 😤", "You outsmarted my ancient magic... What were you thinking of? 🤔",
+        `<button onclick="startObjectGame()" class="btn-magic btn-action w-full font-black text-lg py-4 px-6 rounded-2xl">Play Again 🔄</button>
+         <button onclick="location.reload()" class="btn-action w-full bg-slate-900/80 border border-slate-700 text-slate-400 font-bold py-3 rounded-xl shadow-lg mt-2">← Main Menu</button>`);
+}
+
+
+// ============================================================
+//  🎓 TEACHER GAME — unchanged
+// ============================================================
+const randomQuestions = [
+    "Is a good cup of tea or coffee your secret to a great day at college?",
+    "Do you secretly think the 6th semester is one of the most memorable batches?",
+    "Do you feel immensely proud when alumni come back to visit the college?",
+    "Is seeing students succeed your absolute favorite part of the job?",
+    "Do you sometimes smile when students try to make up funny excuses?",
+    "Is maintaining discipline hard work, but totally worth it for the students' future?",
+    "Do you enjoy the lively energy that the students bring to the campus?"
+];
+const tree = {
+    q1:           { text:"Do you hold a top administrative position (Director, Principal, or Vice-Principal)?", yes:"q2_admin",       no:"q2_faculty" },
+    q2_admin:     { text:"Are you the respected Director of Jaya Jagannath Degree College, and is the 6th sem your very first batch?", yes:"res_ganesh", no:"q3_admin" },
+    q3_admin:     { text:"Are you the respected Principal of the college?",    yes:"res_soroj",  no:"q4_admin" },
+    q4_admin:     { text:"Are you the respected Vice Principal of the college?",yes:"res_vimal",  no:"res_unknown" },
+    q2_faculty:   { text:"Did you join the college recently in the year 2025?", yes:"q3_2025",    no:"q3_old" },
+    q3_2025:      { text:"Do you have a background in Data Mining, and are you Aditya Sir's classmate whose very first class was with the current 6th sem BCA batch?", yes:"res_esha", no:"q4_2025_other" },
+    q4_2025_other:{ text:"Did you teach the very first Java class to the 6th semester earlier?", yes:"res_aditya", no:"res_sandiya" },
+    q3_old:       { text:"Did you teach Data Structures to the 6th sem earlier, and Digital Logic to the 1st batch?", yes:"res_lahri", no:"res_unknown" }
+};
+const results = {
+    res_ganesh:  "Everyone's Favorite & Our Visionary Director! 🌟<br><span class='text-4xl font-black bg-clip-text text-transparent bg-gradient-to-r from-amber-300 to-yellow-500 mt-3 block'>Ganesh Sir!</span><br><span class='text-sm text-slate-300 font-bold mt-2 block'>Thank you for your incredible guidance and leadership!</span>",
+    res_vimal:   "Loved and respected by all! ✨<br><span class='text-4xl font-black bg-clip-text text-transparent bg-gradient-to-r from-amber-300 to-yellow-500 mt-3 block'>Vimal Sir!</span><br><span class='text-sm text-slate-300 font-bold mt-2 block'>Thank you for your amazing support!</span>",
+    res_soroj:   "Our Beloved & Respected Principal! 🎓<br><span class='text-4xl font-black bg-clip-text text-transparent bg-gradient-to-r from-amber-300 to-yellow-500 mt-3 block'>Soroj Sir!</span><br><span class='text-sm text-slate-300 font-bold mt-2 block'>Thank you for your constant support and dedication!</span>",
+    res_lahri:   "Everyone's favorite Ma'am! 🌟<br><span class='text-4xl font-black bg-clip-text text-transparent bg-gradient-to-r from-amber-300 to-yellow-500 mt-3 block'>Lahri Ma'am!</span><br><span class='text-sm text-slate-300 font-bold mt-2 block'>Thank you for your wonderful guidance!</span>",
+    res_esha:    "Super talented & Aditya Sir's batchmate! 📚<br><span class='text-4xl font-black bg-clip-text text-transparent bg-gradient-to-r from-amber-300 to-yellow-500 mt-3 block'>Esha Ma'am!</span><br><span class='text-sm text-slate-300 font-bold mt-2 block'>Thank you for teaching the 6th sem!</span>",
+    res_aditya:  "Such a cool & friendly vibe! ☕<br><span class='text-4xl font-black bg-clip-text text-transparent bg-gradient-to-r from-amber-300 to-yellow-500 mt-3 block'>Aditya Sir!</span><br><span class='text-sm text-slate-300 font-bold mt-2 block'>Thank you for the amazing Java classes!</span>",
+    res_sandiya: "Super friendly & awesome practicals! 💻<br><span class='text-4xl font-black bg-clip-text text-transparent bg-gradient-to-r from-amber-300 to-yellow-500 mt-3 block'>Sandiya Ma'am!</span><br><span class='text-sm text-slate-300 font-bold mt-2 block'>Thank you for being so approachable!</span>",
+    res_unknown: "You stumped my magic! 🙏<br><span class='text-3xl text-rose-500 font-black mt-3 block'>I couldn't guess!</span><br><span class='text-sm text-slate-300 font-bold mt-2 block'>Please forgive this humble genie!</span>"
+};
+let currentTreeNode = 'q1';
+let targetResult    = null;
+let questionsAsked  = 0;
+let shuffledRandoms = [];
+
+function startGame(mode) {
+    if (mode === 'object') {
+        startObjectGame();
+    } else {
+        transitionUI("Magical Choice! ✨", "Please tell me, are you a Respected Teacher or a Student?",
+        `<button onclick="startTeacherPath()" class="btn-magic btn-action w-full font-bold py-4 px-6 rounded-2xl mb-3">📚 I am a Teacher</button>
+         <button onclick="startStudentPath()" class="btn-action w-full bg-slate-900/80 backdrop-blur border border-slate-700 hover:border-slate-500 text-slate-200 font-bold py-4 px-6 rounded-2xl shadow-lg">🎒 I am a Student</button>`);
+    }
+}
+
+function startStudentPath() {
+    transitionUI("Students Section! 🎒", "The student paths are currently being enchanted! Check back soon.",
+    `<button onclick="location.reload()" class="btn-action w-full bg-slate-900/80 border border-amber-500/30 text-amber-400 hover:text-amber-300 font-bold py-4 rounded-xl shadow-lg">Go Back</button>`);
+}
+
+function startTeacherPath() {
+    currentTreeNode = 'q1';
+    targetResult    = null;
+    questionsAsked  = 0;
+    shuffledRandoms = [...randomQuestions].sort(() => 0.5 - Math.random());
+    transitionUI("Namaste! 🙏", "Greetings, Respected Sir/Ma'am! ✨ Let the magic begin. Please answer 6 simple questions so I can guess who you are.",
+    `<button onclick="askQuestion()" class="btn-magic btn-action w-full font-black text-lg py-4 px-6 rounded-2xl">Let's Begin!</button>`);
+}
+
+function askQuestion() {
+    if (questionsAsked >= 6) {
+        transitionUI("Reading your mind... 🔮", "", "", true);
+        avatar.textContent = "🧘‍♂️";
+        setTimeout(() => { showFinalResult(); }, 2500);
+        return;
+    }
+    let questionText = "";
+    let isRandom = false;
+    if (questionsAsked === 1 || questionsAsked === 4 || targetResult !== null) {
+        questionText = shuffledRandoms.pop();
+        isRandom = true;
+    } else {
+        questionText = tree[currentTreeNode].text;
+    }
+    const qTitle = `Question <span class="text-white bg-amber-500 px-2 py-0.5 rounded-md mx-1 shadow-sm">${questionsAsked + 1}</span> of 6 🧐`;
+    transitionUI(qTitle, questionText,
+    `<div class="flex gap-4 w-full">
+        <button onclick="handleAnswer('yes', ${isRandom})" class="btn-action flex-1 bg-emerald-600/90 border border-emerald-400/50 hover:bg-emerald-500 text-white text-xl font-black py-5 rounded-2xl shadow-[0_8px_20px_rgba(5,150,105,0.4)]">YES</button>
+        <button onclick="handleAnswer('no', ${isRandom})"  class="btn-action flex-1 bg-rose-600/90 border border-rose-400/50 hover:bg-rose-500 text-white text-xl font-black py-5 rounded-2xl shadow-[0_8px_20px_rgba(225,29,72,0.4)]">NO</button>
+    </div>`);
+}
+
+function handleAnswer(answer, wasRandom) {
+    if (isProcessing) return;
+    isProcessing = true;
+    if (!wasRandom && targetResult === null) {
+        const nextNode = tree[currentTreeNode][answer];
+        if (nextNode && nextNode.startsWith('res_')) { targetResult = nextNode; }
+        else if (nextNode) { currentTreeNode = nextNode; }
+    }
+    questionsAsked++;
+    askQuestion();
+}
+
+function showFinalResult() {
+    avatar.textContent = "🎉";
+    const finalMessage = targetResult ? results[targetResult] : results['res_unknown'];
+    if (targetResult) {
+        confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 }, colors: ['#fbbf24','#f59e0b','#ffffff','#d97706'] });
+    }
+    transitionUI("I KNOW YOU! 🔮", finalMessage,
+    `<button onclick="location.reload()" class="btn-action w-full bg-slate-900/80 border border-amber-500/30 text-amber-400 hover:text-amber-300 font-bold py-4 rounded-xl shadow-lg mt-2">Play Again 🔄</button>`);
+}
+</script>
+</body>
+</html>

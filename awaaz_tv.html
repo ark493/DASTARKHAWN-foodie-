@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Karma - Awaaz TV</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;0,700;1,300&family=Outfit:wght@200;300;400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="profile.css">
+    <link rel="stylesheet" href="home.css">
+    <style>
+        /* Specific Awaaz TV Styles overriding global styles */
+        body,
+        html {
+            background-color: #030303;
+            /* Deep charcoal black */
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+            color: #fff;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        /* Ambient gradient for a cinematic look */
+        .cinematic-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background: radial-gradient(circle at 50% 50%, rgba(30, 30, 35, 0.4) 0%, #000000 80%);
+            pointer-events: none;
+        }
+
+        .dashboard-container {
+            z-index: 2;
+            position: relative;
+            display: flex;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* Main Reel Container */
+        .reels-container {
+            flex: 1;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            margin-left: 72px;
+            /* Offset for sidebar */
+        }
+
+        /* Top Bar */
+        .reel-top-bar {
+            position: absolute;
+            top: 20px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0 40px;
+            z-index: 10;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .reel-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 24px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            color: #fff;
+        }
+
+        /* Top Right Coin */
+        .coin-btn {
+            position: relative;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            transition: transform 0.2s ease;
+        }
+
+        .coin-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .notification-dot {
+            position: absolute;
+            top: 0px;
+            right: 0px;
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent-red, #ff3040);
+            border-radius: 50%;
+            border: 2px solid #000;
+        }
+
+        /* Video Player Wrapper */
+        #reels-feed-container {
+            width: 100%;
+            height: 100vh;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory;
+            scrollbar-width: none;
+            /* Firefox */
+        }
+
+        #reels-feed-container::-webkit-scrollbar {
+            display: none;
+            /* Safari and Chrome */
+        }
+
+        .video-wrapper {
+            position: relative;
+            height: 100vh;
+            /* full height for snap */
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            scroll-snap-align: start;
+            scroll-snap-stop: always;
+        }
+
+        .video-glass-container {
+            position: relative;
+            height: 100vh;
+            /* Match full viewport height rather than a specific box */
+            width: 100%;
+            background: transparent;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .bg-video-blur {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: blur(25px);
+            opacity: 0.5;
+            z-index: 0;
+            transform: scale(1.1);
+        }
+
+        .reel-video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            z-index: 1;
+            position: relative;
+        }
+
+        /* Bottom Gradient for Text Readability */
+        .video-overlay-gradient {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 40%;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 100%);
+            pointer-events: none;
+        }
+
+        /* Caption Area (Bottom Left) */
+        .caption-area {
+            position: absolute;
+            bottom: 24px;
+            left: 20px;
+            right: 80px;
+            /* Leave space for action bar */
+            z-index: 2;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+        }
+
+        .caption-username {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .verified-badge {
+            color: #0095f6;
+            width: 14px;
+            height: 14px;
+        }
+
+        .caption-text {
+            font-size: 14px;
+            font-weight: 300;
+            line-height: 1.4;
+            margin-bottom: 6px;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .dropdown-more {
+            color: rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            font-weight: 400;
+        }
+
+        .caption-hashtags {
+            font-size: 14px;
+            font-weight: 400;
+            color: #e0e0e0;
+            margin-bottom: 10px;
+        }
+
+        .original-audio {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            font-weight: 400;
+            background: rgba(255, 255, 255, 0.15);
+            padding: 6px 12px;
+            border-radius: 20px;
+            width: fit-content;
+            backdrop-filter: blur(4px);
+            cursor: pointer;
+        }
+
+        .audio-icon {
+            animation: spin 4s linear infinite;
+        }
+
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Progress Bar */
+        .progress-bar-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.2);
+            z-index: 3;
+            cursor: pointer;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            background: #fff;
+            width: 0%;
+            /* Will be updated via JS */
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.5);
+        }
+
+        /* Vertical Action Bar (Right Side) */
+        .action-bar {
+            position: absolute;
+            bottom: 30px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+            z-index: 2;
+        }
+
+        .action-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .action-item:hover {
+            transform: scale(1.1);
+        }
+
+        .action-icon {
+            width: 28px;
+            height: 28px;
+            color: #fff;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+        }
+
+        .action-text {
+            font-size: 12px;
+            font-weight: 500;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+        }
+
+        .profile-action {
+            position: relative;
+            margin-bottom: 10px;
+        }
+
+        .profile-action img {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #fff;
+        }
+
+        .follow-btn-small {
+            position: absolute;
+            bottom: -6px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 20px;
+            background: #0095f6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #000;
+            color: #fff;
+            font-weight: bold;
+            font-size: 14px;
+            line-height: 1;
+            padding-bottom: 2px;
+        }
+
+        /* Play/Pause Overlay */
+        .play-pause-overlay {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transition: opacity 0.2s;
+            cursor: pointer;
+            z-index: 5;
+            pointer-events: none;
+            /* Let clicks pass through to video */
+        }
+
+        .play-pause-icon {
+            width: 64px;
+            height: 64px;
+            color: rgba(255, 255, 255, 0.8);
+            filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.5));
+            transform: scale(0.5);
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .video-glass-container.paused .play-pause-overlay {
+            opacity: 1;
+        }
+
+        .video-glass-container.paused .play-pause-icon {
+            transform: scale(1);
+        }
+
+        /* Loading Spinner */
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid #fff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="cinematic-bg"></div>
+    <div class="dashboard-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <video autoplay muted loop playsinline class="logo-video">
+                        <source src="karma.mp4" type="video/mp4">
+                    </video>
+                    <div class="logo-mask"></div>
+                </div>
+            </div>
+            <ul class="nav-links">
+                <li class="nav-item" data-label="Home" onclick="window.location.href='home.html'">
+                    <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                            <polyline points="9 22 9 12 15 12 15 22" />
+                        </svg></div>
+                    <span class="label">Home</span>
+                </li>
+                <li class="nav-item" data-label="Search" onclick="window.location.href='search.html'">
+                    <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8" />
+                            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                        </svg></div>
+                    <span class="label">Search</span>
+                </li>
+                <li class="nav-item active" data-label="Awaaz TV">
+                    <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect width="20" height="15" x="2" y="7" rx="2" ry="2" />
+                            <polyline points="17 2 12 7 7 2" />
+                        </svg></div>
+                    <span class="label">Awaaz TV</span>
+                </li>
+                <li class="nav-item" data-label="Communities" onclick="showComingSoon('Communities', '🤝')">
+                    <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                            <circle cx="9" cy="7" r="4" />
+                            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                        </svg></div>
+                    <span class="label">Communities</span>
+                </li>
+                <li class="nav-item" data-label="Rooms" onclick="showComingSoon('Rooms', '💬')">
+                    <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                        </svg></div>
+                    <span class="label">Rooms</span>
+                </li>
+                <li class="nav-item" data-label="Donations">
+                    <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 12V8H4v4" />
+                            <path d="M2 12h20" />
+                            <path d="M7 12v10" />
+                            <path d="M17 12v10" />
+                            <path d="M2 8a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v4H2Z" />
+                            <path d="m12 12 3-3-3-3-3 3Z" />
+                        </svg></div>
+                    <span class="label">Donations</span>
+                </li>
+                <li class="nav-item" data-label="Profile" onclick="window.location.href='profile.html'">
+                    <div class="icon-box">
+                        <div class="nav-avatar-placeholder" id="navAvatarPlaceholder">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
+                                stroke-width="1.5">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                <circle cx="12" cy="7" r="4" />
+                            </svg>
+                        </div>
+                        <img src="" class="nav-avatar" id="navAvatar" style="display: none;">
+                    </div>
+                    <span class="label">Profile</span>
+                </li>
+                <li class="nav-item" data-label="History">
+                    <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10" />
+                            <polyline points="12 6 12 12 16 14" />
+                        </svg></div>
+                    <span class="label">History</span>
+                </li>
+                <li class="nav-item" data-label="Settings" onclick="window.location.href='settings.html'">
+                    <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="3" />
+                            <path
+                                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                        </svg></div>
+                    <span class="label">Settings</span>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Awaaz TV Reels Content -->
+        <main class="reels-container">
+            <!-- Top Bar -->
+            <div class="reel-top-bar">
+                <div class="reel-title">AWAAZ TV</div>
+            </div>
+
+            <div id="reels-feed-container">
+                <div class="feed-loading"
+                    style="display:flex; height:100vh; align-items:center; justify-content:center; flex-direction:column; gap:20px;">
+                    <div class="spinner"></div>
+                    <p style="color:#fff; font-size:18px;">Loading Awaaz TV...</p>
+                </div>
+        </main>
+
+        <!-- ═══ DEDICATED AWAAZ TV COMMENTS OVERLAY ═══ -->
+        <div id="awaaz-comments-overlay" style="
+            display: none;
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(12px);
+            align-items: flex-end;
+            justify-content: center;
+        ">
+            <div style="
+                background: #111;
+                border-top: 1px solid #333;
+                border-radius: 20px 20px 0 0;
+                width: 100%;
+                max-width: 560px;
+                max-height: 70vh;
+                display: flex;
+                flex-direction: column;
+                padding: 0;
+                overflow: hidden;
+                box-shadow: 0 -10px 40px rgba(0,0,0,0.6);
+            ">
+                <!-- Header -->
+                <div
+                    style="display:flex; justify-content:space-between; align-items:center; padding: 16px 20px; border-bottom: 1px solid #222;">
+                    <span style="font-weight:600; font-size:15px;">Comments</span>
+                    <button id="awaaz-comments-close-btn"
+                        style="background:none; border:none; color:#fff; cursor:pointer; font-size:22px; line-height:1;">&times;</button>
+                </div>
+                <!-- Comments List -->
+                <div id="awaaz-comments-list"
+                    style="flex:1; overflow-y:auto; padding:16px 20px; display:flex; flex-direction:column; gap:14px;">
+                    <div id="awaaz-comments-loading" style="text-align:center; color:#555; padding:20px 0;">Loading
+                        comments...</div>
+                </div>
+                <!-- Input -->
+                <div style="padding: 12px 16px; border-top: 1px solid #222; display:flex; gap:10px;">
+                    <input id="awaaz-comment-input" type="text" placeholder="Add a comment…"
+                        style="flex:1; background:rgba(255,255,255,0.06); border:1px solid #333; border-radius:20px; padding:10px 16px; color:#fff; outline:none; font-size:14px;">
+                    <button id="awaaz-comment-post-btn"
+                        style="background:#ff3040; color:#fff; border:none; border-radius:20px; padding:10px 18px; font-weight:600; cursor:pointer; font-size:14px;">Post</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Restore Sidebar Avatar
+            const navAvatarPlaceholder = document.getElementById('navAvatarPlaceholder');
+            const navAvatar = document.getElementById('navAvatar');
+            const storedAvatar = localStorage.getItem('karma_user_avatar');
+            if (navAvatar && navAvatarPlaceholder && storedAvatar) {
+                navAvatarPlaceholder.style.display = 'none';
+                navAvatar.src = 'http://127.0.0.1:5000' + storedAvatar;
+                navAvatar.style.display = 'block';
+            }
+
+            const feedContainer = document.getElementById('reels-feed-container');
+            let reelVideos = [];
+
+            // Fetch posts
+            fetch('http://127.0.0.1:5000/api/posts')
+                .then(r => r.json())
+                .then(data => {
+                    if (data.ok) {
+                        // Filter for Awaaz category videos
+                        const videos = data.posts.filter(p => p.category === 'awaaz' && p.media_urls && p.media_urls.some(url => url.match(/\.(mp4|webm|ogg)$/i)));
+
+                        feedContainer.innerHTML = '';
+
+                        if (videos.length === 0) {
+                            feedContainer.innerHTML = '<div style="color:#fff; text-align:center; padding-top:40vh; font-size:20px;">Welcome to Creator Hub! Upload your first video to get started.</div>';
+                            return;
+                        }
+
+                        videos.forEach((post, index) => {
+                            const videoUrl = post.media_urls.find(url => url.match(/\.(mp4|webm|ogg)$/i));
+                            if (!videoUrl) return;
+
+                            const avatarSrc = post.author_avatar ? 'http://127.0.0.1:5000' + post.author_avatar : 'https://i.pravatar.cc/150?img=68';
+                            const title = post.author_username;
+                            const likes = post.likes || 0;
+                            const comments = 0; // Backend comment count logic
+                            const caption = post.content || '';
+                            const isLiked = post.is_liked_by_viewer || false;
+
+                            const wrapper = document.createElement('div');
+                            wrapper.className = 'video-wrapper';
+
+                            wrapper.innerHTML = `
+                                <div class="video-glass-container" id="reel-player-wrapper-${index}">
+                                    <!-- Blurred Background Video for uncropped containment -->
+                                    <video class="bg-video-blur" loop muted playsinline>
+                                        <source src="http://127.0.0.1:5000${videoUrl}" type="video/mp4">
+                                    </video>
+                                    
+                                    <!-- Sharp Foreground Video within boundary -->
+                                    <video id="reel-video-${index}" class="reel-video" loop muted playsinline data-index="${index}">
+                                        <source src="http://127.0.0.1:5000${videoUrl}" type="video/mp4">
+                                    </video>
+                                    
+                                    <div class="video-overlay-gradient"></div>
+
+                                    <div class="play-pause-overlay">
+                                        <svg class="play-pause-icon" viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M8 5v14l11-7z" />
+                                        </svg>
+                                    </div>
+
+                                    <div class="action-bar">
+                                        <div class="action-item profile-action">
+                                            <img src="${avatarSrc}" alt="User" style="cursor:pointer;" onclick="window.location.href='public_profile.html?email=${encodeURIComponent(post.author_email)}'">
+                                            <div class="follow-btn-small">+</div>
+                                        </div>
+                                        
+                                        <div class="action-item like-btn" data-post-id="${post.id}">
+                                            <svg class="action-icon" viewBox="0 0 24 24" fill="${isLiked ? '#ff3040' : 'none'}" stroke="${isLiked ? '#ff3040' : 'currentColor'}" stroke-width="2">
+                                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                                            </svg>
+                                            <span class="action-text like-count">${likes}</span>
+                                        </div>
+
+                                        <div class="action-item comment-btn">
+                                            <svg class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                            </svg>
+                                            <span class="action-text">${comments}</span>
+                                        </div>
+
+                                        <div class="action-item share-btn">
+                                            <svg class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                <path d="M22 2L11 13"></path>
+                                                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                                            </svg>
+                                            <span class="action-text">Share</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="caption-area">
+                                        <div class="caption-username">
+                                            @${title}
+                                        </div>
+                                        <div class="caption-text">
+                                            ${caption}
+                                        </div>
+                                        <div class="original-audio">
+                                            <svg class="audio-icon" width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 14.5c-2.49 0-4.5-2.01-4.5-4.5S9.51 7.5 12 7.5s4.5 2.01 4.5 4.5-2.01 4.5-4.5 4.5zm0-7.5c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+                                            </svg>
+                                            @${title} · Original Audio
+                                        </div>
+                                    </div>
+
+                                    <div class="progress-bar-container" id="progress-container-${index}">
+                                        <div class="progress-bar-fill" id="progress-fill-${index}"></div>
+                                    </div>
+                                </div>
+                            `;
+
+                            feedContainer.appendChild(wrapper);
+
+                            const vidElement = wrapper.querySelector('video');
+                            reelVideos.push(vidElement);
+
+                            setupVideoLogic(wrapper.querySelector('.video-glass-container'), vidElement, index);
+                        });
+
+                        // Intersection Observer to auto-play/pause videos based on scroll
+                        setupScrollSnapping();
+
+                    } else {
+                        feedContainer.innerHTML = '<div style="color:#ff3040; text-align:center; padding-top:40vh;">Failed to load videos.</div>';
+                    }
+                })
+                .catch(err => {
+                    feedContainer.innerHTML = '<div style="color:#ff3040; text-align:center; padding-top:40vh;">Backend server offline.</div>';
+                });
+
+            function setupScrollSnapping() {
+                const observerOptions = {
+                    root: feedContainer,
+                    rootMargin: "0px",
+                    threshold: 0.6 // 60% of the video must be visible
+                };
+
+                const callback = (entries, observer) => {
+                    entries.forEach(entry => {
+                        const vids = entry.target.querySelectorAll('video');
+                        if (vids.length === 0) return;
+
+                        if (entry.isIntersecting) {
+                            vids.forEach(vid => {
+                                vid.play().catch(e => console.log('Autoplay prevented:', e));
+                            });
+                            // Unmute ONLY the sharp foreground video
+                            const sharpVid = entry.target.querySelector('video.reel-video');
+                            if (sharpVid) sharpVid.muted = false;
+                        } else {
+                            vids.forEach(vid => {
+                                vid.pause();
+                                vid.currentTime = 0;
+                            });
+                        }
+                    });
+                };
+
+                const observer = new IntersectionObserver(callback, observerOptions);
+                document.querySelectorAll('.video-wrapper').forEach(wrapper => {
+                    observer.observe(wrapper);
+                });
+            }
+
+            function setupVideoLogic(wrapper, video, index) {
+                const progressFill = document.getElementById(`progress-fill-${index}`);
+                const progressContainer = document.getElementById(`progress-container-${index}`);
+
+                // Play/Pause on click
+                wrapper.addEventListener('click', (e) => {
+                    if (e.target.closest('.action-bar') || e.target.closest('.caption-area') || e.target.closest('.progress-bar-container')) {
+                        return;
+                    }
+                    const allVids = wrapper.querySelectorAll('video');
+                    if (video.paused) {
+                        allVids.forEach(v => v.play());
+                        wrapper.classList.remove('paused');
+                    } else {
+                        allVids.forEach(v => v.pause());
+                        wrapper.classList.add('paused');
+                    }
+                });
+
+                video.addEventListener('timeupdate', () => {
+                    if (video.duration) {
+                        const percentage = (video.currentTime / video.duration) * 100;
+                        progressFill.style.width = percentage + '%';
+                    }
+                });
+
+                progressContainer.addEventListener('click', (e) => {
+                    const rect = progressContainer.getBoundingClientRect();
+                    const pos = (e.clientX - rect.left) / rect.width;
+                    video.currentTime = pos * video.duration;
+                });
+
+                // Like Interaction
+                const likeBtn = wrapper.querySelector('.like-btn');
+                const likeIcon = likeBtn.querySelector('.action-icon');
+                const likeCountSpan = likeBtn.querySelector('.like-count');
+                const postId = likeBtn.getAttribute('data-post-id');
+                const userEmail = localStorage.getItem('karma_user_email');
+
+                likeBtn.addEventListener('click', () => {
+                    if (!userEmail) {
+                        alert("Please login to like Awaaz TV posts.");
+                        return;
+                    }
+
+                    fetch(`http://127.0.0.1:5000/api/like`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ post_id: postId, email: userEmail })
+                    })
+                        .then(r => r.json())
+                        .then(data => {
+                            if (data.ok) {
+                                likeCountSpan.textContent = data.like_count;
+                                if (data.liked) {
+                                    likeIcon.setAttribute('fill', '#ff3040');
+                                    likeIcon.setAttribute('stroke', '#ff3040');
+                                    likeIcon.style.transform = 'scale(1.2)';
+                                    setTimeout(() => likeIcon.style.transform = 'scale(1)', 200);
+                                } else {
+                                    likeIcon.setAttribute('fill', 'none');
+                                    likeIcon.setAttribute('stroke', 'currentColor');
+                                }
+                            }
+                        });
+                });
+
+                // Comment interaction - Opens dedicated Awaaz TV overlay
+                const commentBtn = wrapper.querySelector('.comment-btn');
+                const commentCountSpan = commentBtn ? commentBtn.querySelector('.action-text') : null;
+                if (commentBtn) {
+                    commentBtn.addEventListener('click', () => {
+                        openAwaazComments(postId, commentCountSpan);
+                    });
+                }
+
+                // Double-tap to Like gesture on video
+                let lastTap = 0;
+                video.addEventListener('click', (e) => {
+                    const now = Date.now();
+                    if (now - lastTap < 350) {
+                        // Double-tap detected - trigger like
+                        if (!userEmail) return;
+                        // Show heart animation at tap position
+                        const heartEl = document.createElement('div');
+                        heartEl.innerHTML = '❤️';
+                        heartEl.style.cssText = `position:absolute; font-size:60px; pointer-events:none; z-index:10;
+                            left:${e.offsetX - 30}px; top:${e.offsetY - 30}px;
+                            animation: heartPop 0.8s ease forwards;`;
+                        wrapper.querySelector('.video-glass-container').appendChild(heartEl);
+                        setTimeout(() => heartEl.remove(), 800);
+
+                        fetch('http://127.0.0.1:5000/api/like', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ post_id: postId, email: userEmail })
+                        }).then(r => r.json()).then(data => {
+                            if (data.ok) {
+                                likeCountSpan.textContent = data.like_count;
+                                if (data.liked) {
+                                    likeIcon.setAttribute('fill', '#ff3040');
+                                    likeIcon.setAttribute('stroke', '#ff3040');
+                                }
+                            }
+                        });
+                    }
+                    lastTap = now;
+                });
+
+                // Share interaction
+                const shareBtn = wrapper.querySelector('.share-btn');
+                if (shareBtn) {
+                    shareBtn.addEventListener('click', () => {
+                        const url = window.location.origin + window.location.pathname.replace('awaaz_tv.html', 'home.html') + '?post=' + postId;
+                        if (navigator.share) {
+                            navigator.share({
+                                title: 'Awaaz TV',
+                                text: 'Check out this Awaaz TV post on Karma!',
+                                url: url
+                            }).catch(err => console.log('Error sharing', err));
+                        } else {
+                            navigator.clipboard.writeText(url).then(() => {
+                                const icon = shareBtn.querySelector('svg');
+                                icon.style.stroke = '#00ff88';
+                                shareBtn.querySelector('.action-text').textContent = 'Copied!';
+                                setTimeout(() => {
+                                    icon.style.stroke = 'currentColor';
+                                    shareBtn.querySelector('.action-text').textContent = 'Share';
+                                }, 2000);
+                            });
+                        }
+                    });
+                }
+            }
+        });
+        // --- AWAAZ TV COMMENTS OVERLAY (Global) ---
+        let currentCommentPostId = null;
+
+        function openAwaazComments(postId, countSpan) {
+            currentCommentPostId = postId;
+            const overlay = document.getElementById('awaaz-comments-overlay');
+            const list = document.getElementById('awaaz-comments-list');
+            overlay.style.display = 'flex';
+            list.innerHTML = '<div style="text-align:center;color:#555;padding:20px 0;">Loading comments...</div>';
+            fetch(`http://127.0.0.1:5000/api/comments?post_id=${postId}`)
+                .then(r => r.json())
+                .then(data => {
+                    if (data.ok && data.comments && data.comments.length > 0) {
+                        list.innerHTML = data.comments.map(c => `<div style="display:flex;gap:12px;align-items:flex-start;padding:4px 0;"><img src="${c.avatar ? 'http://127.0.0.1:5000' + c.avatar : 'https://i.pravatar.cc/40'}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;flex-shrink:0;"><div><span style="font-weight:600;font-size:13px;color:#eee;">@${c.username || 'User'}</span><p style="font-size:14px;color:#ccc;margin:4px 0 0 0;line-height:1.4;">${c.content}</p></div></div>`).join('');
+                    } else {
+                        list.innerHTML = '<div style="text-align:center;color:#555;padding:30px 0;">No comments yet. Be the first!</div>';
+                    }
+                })
+                .catch(() => { list.innerHTML = '<div style="text-align:center;color:#555;padding:30px 0;">Server offline.</div>'; });
+        }
+
+        document.getElementById('awaaz-comments-close-btn').addEventListener('click', () => {
+            document.getElementById('awaaz-comments-overlay').style.display = 'none';
+        });
+        document.getElementById('awaaz-comment-post-btn').addEventListener('click', () => {
+            const input = document.getElementById('awaaz-comment-input');
+            const text = input.value.trim();
+            const userEmail = localStorage.getItem('karma_user_email');
+            if (!text || !userEmail || !currentCommentPostId) return;
+            fetch('http://127.0.0.1:5000/api/comments', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ post_id: currentCommentPostId, email: userEmail, content: text })
+            }).then(r => r.json()).then(data => {
+                if (data.ok) { document.getElementById('awaaz-comment-input').value = ''; openAwaazComments(currentCommentPostId, null); }
+            });
+        });
+        document.getElementById('awaaz-comments-overlay').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('awaaz-comments-overlay')) document.getElementById('awaaz-comments-overlay').style.display = 'none';
+        });
+    </script>
+    <style>
+        @keyframes heartPop {
+            0% {
+                transform: scale(0);
+                opacity: 1;
+            }
+
+            50% {
+                transform: scale(1.5);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(1.2);
+                opacity: 0;
+            }
+        }
+    </style>
+
+    <!-- ═══ COMING SOON MODAL ═══ -->
+    <div id="coming-soon-overlay" onclick="hideComingSoon()"
+        style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,0.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);align-items:center;justify-content:center;">
+        <div id="coming-soon-card" onclick="event.stopPropagation()"
+            style="position:relative;text-align:center;background:linear-gradient(135deg,rgba(15,15,20,0.95),rgba(8,8,16,0.98));border:1px solid rgba(255,255,255,0.08);border-radius:24px;padding:60px 48px 48px;max-width:420px;width:90%;overflow:hidden;box-shadow:0 40px 80px rgba(0,0,0,0.7),0 0 60px rgba(142,148,242,0.1);transform:scale(0.85);opacity:0;transition:all 0.45s cubic-bezier(0.16,1,0.3,1);">
+            <div
+                style="position:absolute;inset:-40px;border-radius:50%;background:radial-gradient(circle,rgba(142,148,242,0.06) 0%,transparent 70%);animation:csGlow 3s ease-in-out infinite alternate;pointer-events:none;">
+            </div>
+            <canvas id="cs-particles"
+                style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;border-radius:24px;"></canvas>
+            <div id="cs-icon"
+                style="font-size:56px;margin-bottom:16px;display:block;animation:csFloat 2.5s ease-in-out infinite;">🤝
+            </div>
+            <h2 id="cs-title"
+                style="font-size:28px;font-weight:700;color:#fff;margin-bottom:8px;letter-spacing:-0.5px;">Communities
+            </h2>
+            <div
+                style="width:48px;height:3px;background:linear-gradient(90deg,#8E94F2,#6C72D9);border-radius:99px;margin:0 auto 20px;">
+            </div>
+            <p style="font-size:15px;color:rgba(255,255,255,0.5);line-height:1.6;margin-bottom:32px;">This feature is
+                currently being built by our team. We'll notify you as soon as it's live.</p>
+            <div style="display:flex;gap:10px;justify-content:center;margin-bottom:32px;flex-wrap:wrap;">
+                <span
+                    style="background:rgba(142,148,242,0.12);border:1px solid rgba(142,148,242,0.25);color:#8E94F2;padding:6px 14px;border-radius:99px;font-size:12px;font-weight:600;">🔨
+                    In Development</span>
+                <span
+                    style="background:rgba(0,230,118,0.08);border:1px solid rgba(0,230,118,0.2);color:#00e676;padding:6px 14px;border-radius:99px;font-size:12px;font-weight:600;">✦
+                    Coming Soon</span>
+            </div>
+            <button onclick="hideComingSoon()"
+                style="background:linear-gradient(135deg,#8E94F2,#6C72D9);color:#fff;border:none;border-radius:12px;padding:14px 40px;font-size:15px;font-weight:600;cursor:pointer;box-shadow:0 8px 24px rgba(142,148,242,0.3);transition:transform 0.15s;">Got
+                it!</button>
+        </div>
+    </div>
+    <style>
+        @keyframes csGlow {
+            from {
+                opacity: .5;
+                transform: scale(.9)
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1.1)
+            }
+        }
+
+        @keyframes csFloat {
+
+            0%,
+            100% {
+                transform: translateY(0)
+            }
+
+            50% {
+                transform: translateY(-8px)
+            }
+        }
+    </style>
+    <script>
+        function showComingSoon(name, icon) { const o = document.getElementById('coming-soon-overlay'), c = document.getElementById('coming-soon-card'); document.getElementById('cs-title').textContent = name; document.getElementById('cs-icon').textContent = icon; o.style.display = 'flex'; requestAnimationFrame(() => requestAnimationFrame(() => { c.style.transform = 'scale(1)'; c.style.opacity = '1'; })); const cv = document.getElementById('cs-particles'), ctx = cv.getContext('2d'); cv.width = c.offsetWidth || 420; cv.height = c.offsetHeight || 380; const ps = Array.from({ length: 24 }, () => ({ x: Math.random() * cv.width, y: Math.random() * cv.height, r: Math.random() * 2 + .5, vx: (Math.random() - .5) * .6, vy: (Math.random() - .5) * .6, a: Math.random() * .5 + .2 })); let rid; function draw() { ctx.clearRect(0, 0, cv.width, cv.height); ps.forEach(p => { p.x += p.vx; p.y += p.vy; if (p.x < 0 || p.x > cv.width) p.vx *= -1; if (p.y < 0 || p.y > cv.height) p.vy *= -1; ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2); ctx.fillStyle = `rgba(142,148,242,${p.a})`; ctx.fill() }); rid = requestAnimationFrame(draw); } draw(); o._rid = rid; }
+        function hideComingSoon() { const o = document.getElementById('coming-soon-overlay'), c = document.getElementById('coming-soon-card'); c.style.transform = 'scale(0.85)'; c.style.opacity = '0'; setTimeout(() => o.style.display = 'none', 400); if (o._rid) cancelAnimationFrame(o._rid); }
+    </script>
+</body>
+
+</html>

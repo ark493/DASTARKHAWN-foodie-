@@ -1,0 +1,1527 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Meet The Team</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --gold: #C9A96E;
+      --gold-light: #E8D5A3;
+      --dark: #080808;
+      --cream: #F5F0E8;
+      --pink: #fbb9b6;
+      --pink-dark: #f55d56;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: #000;
+      overflow-x: hidden;
+      font-family: 'Syne', sans-serif;
+    }
+
+    #switch-overlay {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(ellipse at center, #0c0700 0%, #000 100%);
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 40px;
+      transition: opacity 0.9s ease;
+    }
+
+    #switch-overlay.fade-out {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .dust { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+    .dust span {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(201,169,110,0.25);
+      animation: dustFloat linear infinite;
+    }
+
+    @keyframes dustFloat {
+      0%   { transform: translateY(110vh) rotate(0deg); opacity: 0; }
+      10%  { opacity: 1; }
+      90%  { opacity: 0.4; }
+      100% { transform: translateY(-10vh) rotate(360deg); opacity: 0; }
+    }
+
+    .bulb-hang {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      animation: sway 4s ease-in-out infinite;
+    }
+
+    @keyframes sway {
+      0%, 100% { transform: rotate(-2.5deg); }
+      50%       { transform: rotate(2.5deg); }
+    }
+
+    .cord {
+      width: 2px;
+      height: 70px;
+      background: linear-gradient(to bottom, #2a2a2a, #666);
+    }
+
+    .bulb-glow {
+      position: relative;
+      width: 110px;
+      height: 110px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .bulb-glow::before {
+      content: '';
+      position: absolute;
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(201,169,110,0.22) 0%, rgba(201,169,110,0.06) 45%, transparent 70%);
+      animation: pulse 2.5s ease-in-out infinite;
+    }
+
+    .bulb-glow::after {
+      content: '';
+      position: absolute;
+      width: 90px;
+      height: 90px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,220,120,0.18) 0%, transparent 70%);
+      animation: pulse 2.5s ease-in-out infinite reverse;
+    }
+
+    @keyframes pulse { 0%, 100% { transform: scale(1); opacity: 0.7; } 50% { transform: scale(1.3); opacity: 1; } }
+
+    .bulb-svg { width: 88px; height: 88px; position: relative; z-index: 1; }
+
+    .switch-panel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      background: linear-gradient(145deg, #181818, #0a0a0a);
+      border: 1px solid #2a2a2a;
+      border-radius: 16px;
+      padding: 28px 36px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.9), inset 0 1px 0 rgba(255,255,255,0.04);
+      position: relative;
+      overflow: visible;
+    }
+
+    .switch-panel::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: 17px;
+      background: linear-gradient(145deg, rgba(201,169,110,0.25), transparent 60%);
+      z-index: -1;
+      animation: panelGlow 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes panelGlow { from { opacity: 0.3; } to { opacity: 0.9; } }
+
+    #light-switch {
+      width: 68px;
+      height: 38px;
+      background: #0e0e0e;
+      border: 1.5px solid #2e2e2e;
+      border-radius: 20px;
+      cursor: pointer;
+      outline: none;
+      position: relative;
+      transition: border-color 0.3s, box-shadow 0.3s, background 0.4s;
+    }
+
+    #light-switch::after {
+      content: '';
+      position: absolute;
+      left: 4px;
+      top: 4px;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #3a3a3a, #1a1a1a);
+      transition: all 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 0 8px rgba(0,0,0,0.5);
+    }
+
+    #light-switch.on {
+      border-color: var(--gold);
+      background: rgba(201,169,110,0.15);
+      box-shadow: 0 0 24px rgba(201,169,110,0.45), 0 0 8px rgba(201,169,110,0.2);
+    }
+
+    #light-switch.on::after {
+      left: 36px;
+      background: linear-gradient(135deg, #FFD97A, #C9A96E);
+      box-shadow: 0 0 12px rgba(201,169,110,0.7);
+    }
+
+    #light-switch:hover {
+      border-color: var(--gold);
+      box-shadow: 0 0 20px rgba(201,169,110,0.25);
+    }
+
+    #light-switch:hover::after {
+      background: linear-gradient(135deg, #C9A96E, #8a6a30);
+    }
+
+    .switch-hint {
+      font-family: 'Syne', sans-serif;
+      font-size: 9px;
+      letter-spacing: 0.45em;
+      text-transform: uppercase;
+      color: #888;
+      animation: hintBlink 2s ease-in-out infinite;
+    }
+
+    @keyframes hintBlink { 0%, 100% { color: #666; } 50% { color: #C9A96E; } }
+
+    #flash {
+      position: fixed;
+      inset: 0;
+      background: #fff;
+      z-index: 9998;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.05s;
+    }
+
+    #content {
+      opacity: 0;
+      transition: opacity 1s ease 0.3s;
+    }
+    #content.on { opacity: 1; }
+
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 500;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 36px;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.9) 0%, transparent 100%);
+      backdrop-filter: blur(10px);
+    }
+
+    .back-btn {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      text-decoration: none;
+      color: var(--cream);
+      font-family: 'Syne', sans-serif;
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      padding: 10px 20px;
+      border: 1px solid rgba(201,169,110,0.25);
+      border-radius: 50px;
+      background: rgba(201,169,110,0.06);
+      transition: all 0.3s;
+    }
+
+    .back-btn svg { width: 13px; height: 13px; stroke: currentColor; fill: none; stroke-width: 2.5; }
+    .back-btn:hover { border-color: var(--gold); color: var(--gold); background: rgba(201,169,110,0.12); }
+
+    .music-player {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(8,8,8,0.85);
+      border: 1px solid rgba(201,169,110,0.18);
+      border-radius: 50px;
+      padding: 6px 16px 6px 6px;
+      backdrop-filter: blur(16px);
+    }
+
+    .play-btn {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      background: var(--gold);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s, background 0.2s;
+      flex-shrink: 0;
+    }
+    .play-btn:hover { transform: scale(1.1); background: var(--gold-light); }
+    .play-btn svg { width: 13px; height: 13px; fill: #000; }
+
+    .track-info { display: flex; flex-direction: column; gap: 4px; }
+
+    .track-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      color: var(--gold);
+      text-transform: uppercase;
+    }
+
+    .progress-bar {
+      width: 90px;
+      height: 2px;
+      background: rgba(201,169,110,0.12);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--gold);
+      border-radius: 2px;
+    }
+
+    .eq { display: flex; align-items: flex-end; gap: 2px; height: 14px; }
+    .eq-b {
+      width: 3px;
+      border-radius: 2px;
+      background: var(--gold);
+      animation: eqAnim 0.6s ease-in-out infinite alternate;
+      animation-play-state: paused;
+    }
+    .eq-b:nth-child(1) { height: 5px;  animation-delay: 0s;    }
+    .eq-b:nth-child(2) { height: 11px; animation-delay: 0.1s;  }
+    .eq-b:nth-child(3) { height: 7px;  animation-delay: 0.2s;  }
+    .eq-b:nth-child(4) { height: 13px; animation-delay: 0.15s; }
+    .eq-b.playing { animation-play-state: running; }
+
+    @keyframes eqAnim { from { transform: scaleY(0.2); } to { transform: scaleY(1); } }
+
+    .hero {
+      width: 100vw;
+      height: 100vh;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 35%;
+      animation: heroZoom 8s ease forwards;
+    }
+
+    @keyframes heroZoom { from { transform: scale(1.06); } to { transform: scale(1); } }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom,
+        rgba(0,0,0,0.45) 0%,
+        rgba(0,0,0,0) 35%,
+        rgba(0,0,0,0) 55%,
+        rgba(0,0,0,0.9) 100%);
+    }
+
+    .hero-text {
+      position: absolute;
+      bottom: 80px;
+      left: 70px;
+      right: 70px;
+    }
+
+    .hero-kicker {
+      display: inline-block;
+      font-family: 'Syne', sans-serif;
+      font-size: 9px;
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      color: var(--gold);
+      border: 1px solid rgba(201,169,110,0.35);
+      padding: 5px 16px;
+      border-radius: 30px;
+      margin-bottom: 20px;
+      opacity: 0;
+      animation: fadeUp 1s 1.2s forwards;
+    }
+
+    .hero-h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(50px, 8vw, 108px);
+      font-weight: 700;
+      color: var(--cream);
+      line-height: 0.95;
+      letter-spacing: -0.02em;
+      opacity: 0;
+      animation: fadeUp 1s 1.5s forwards;
+    }
+
+    .hero-h1 em { font-style: italic; color: var(--gold); }
+
+    .hero-sub {
+      font-size: 13px;
+      letter-spacing: 0.18em;
+      color: rgba(245,240,232,0.55);
+      margin-top: 18px;
+      opacity: 0;
+      animation: fadeUp 1s 1.8s forwards;
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 28px;
+      right: 70px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      opacity: 0;
+      animation: fadeIn 1s 2.5s forwards;
+    }
+
+    .scroll-hint span {
+      font-size: 8px;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: rgba(201,169,110,0.5);
+      writing-mode: vertical-rl;
+    }
+
+    .scroll-line {
+      width: 1px;
+      height: 48px;
+      background: linear-gradient(to bottom, var(--gold), transparent);
+      animation: scrollPulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes scrollPulse { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .team-section {
+      background: #111;
+      padding: 110px 30px 130px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .team-section::before {
+      content: 'TEAM';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Playfair Display', serif;
+      font-size: 280px;
+      font-weight: 900;
+      color: rgba(201,169,110,0.022);
+      white-space: nowrap;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .sec-header {
+      text-align: center;
+      margin-bottom: 72px;
+    }
+
+    .sec-eye {
+      font-size: 9px;
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 12px;
+    }
+
+    .sec-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(36px, 5vw, 64px);
+      color: var(--cream);
+      font-weight: 400;
+    }
+
+    .sec-title em { font-style: italic; color: var(--gold); }
+    .sec-line { width: 50px; height: 1px; background: var(--gold); margin: 20px auto 0; }
+
+    .cards-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 28px;
+      position: relative;
+    }
+
+    .flip-card {
+      width: 220px;
+      height: 290px;
+      perspective: 1100px;
+      flex-shrink: 0;
+    }
+
+    .flip-inner {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.75s cubic-bezier(0.4, 0.2, 0.2, 1);
+    }
+
+    .flip-card:hover .flip-inner { transform: rotateY(180deg); }
+
+    .flip-face {
+      position: absolute;
+      inset: 0;
+      border-radius: 18px;
+      overflow: hidden;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+
+    .flip-front {
+      background: #1a1a1a;
+      border: 1px solid rgba(201,169,110,0.12);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .member-img {
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .member-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      transition: transform 0.6s ease;
+    }
+
+    .flip-card:hover .member-img img { transform: scale(1.04); }
+
+    .member-img-placeholder {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #1a1208, #2d2010);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 60px;
+    }
+
+    .flip-hint {
+      position: absolute;
+      bottom: 9px;
+      right: 9px;
+      background: rgba(0,0,0,0.65);
+      border: 1px solid rgba(201,169,110,0.3);
+      border-radius: 20px;
+      padding: 3px 9px;
+      font-size: 7px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .front-info {
+      padding: 14px 16px;
+      border-top: 1px solid rgba(201,169,110,0.1);
+      background: #1a1a1a;
+    }
+
+    .front-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 16px;
+      color: var(--cream);
+      margin-bottom: 4px;
+    }
+
+    .front-role {
+      font-size: 8px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--gold);
+    }
+
+    .flip-back {
+      transform: rotateY(180deg);
+      background: linear-gradient(145deg, #C9A96E 0%, #E8C97A 55%, #B8934A 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 26px 22px;
+      gap: 10px;
+    }
+
+    .back-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 21px;
+      font-weight: 700;
+      color: #080808;
+      line-height: 1.1;
+    }
+
+    .back-role {
+      font-size: 7.5px;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: rgba(0,0,0,0.5);
+    }
+
+    .back-div { width: 28px; height: 1px; background: rgba(0,0,0,0.25); }
+
+    .back-bio {
+      font-size: 11.5px;
+      line-height: 1.7;
+      color: rgba(0,0,0,0.72);
+    }
+
+    .back-socials {
+      display: flex;
+      gap: 8px;
+    }
+
+    .back-social {
+      width: 27px; height: 27px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.12);
+      border: 1px solid rgba(0,0,0,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      color: rgba(0,0,0,0.6);
+      transition: all 0.2s;
+    }
+
+    .back-social:hover { background: rgba(0,0,0,0.3); color: #000; }
+    .back-social svg { width: 11px; height: 11px; fill: currentColor; }
+
+    .mentor-wrap {
+      position: relative;
+      flex-shrink: 0;
+      margin-top: 16px;
+    }
+
+    .mentor-label {
+      position: absolute;
+      top: -36px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--gold);
+      color: #000;
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      padding: 5px 18px;
+      border-radius: 30px;
+      white-space: nowrap;
+      z-index: 5;
+    }
+
+    .mentor-label::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 4px solid transparent;
+      border-top-color: var(--gold);
+    }
+
+    /* ── MENTOR CARD ── */
+    .card {
+      width: 280px;
+      height: 280px;
+      background: white;
+      border-radius: 32px;
+      padding: 3px;
+      position: relative;
+      box-shadow: #604b4a30 0px 70px 30px -50px;
+      transition: all 0.5s ease-in-out;
+    }
+
+    .card .mail {
+      position: absolute;
+      right: 2rem;
+      top: 1.4rem;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      z-index: 10;
+    }
+
+    .card .mail svg { stroke: #fbb9b6; stroke-width: 3px; }
+    .card .mail svg:hover { stroke: #f55d56; }
+
+    .card .profile-pic {
+      position: absolute;
+      width: calc(100% - 6px);
+      height: calc(100% - 6px);
+      top: 3px;
+      left: 3px;
+      border-radius: 29px;
+      z-index: 1;
+      border: 0px solid #fbb9b6;
+      overflow: hidden;
+      transition: all 0.5s ease-in-out 0.2s, z-index 0.5s ease-in-out 0.2s;
+    }
+
+    /* ── FIX: photo fits card properly, face visible ── */
+    .card .profile-pic img {
+      object-fit: cover;
+      width: 100%;
+      height: 100%;
+      object-position: center 25%;
+      transition: all 0.5s ease-in-out 0s;
+    }
+
+    .card .bottom {
+      position: absolute;
+      bottom: 3px;
+      left: 3px;
+      right: 3px;
+      background: #fbb9b6;
+      top: 80%;
+      border-radius: 29px;
+      z-index: 2;
+      box-shadow: rgba(96, 75, 74, 0.1882352941) 0px 5px 5px 0px inset;
+      overflow: hidden;
+      transition: all 0.5s cubic-bezier(0.645, 0.045, 0.355, 1) 0s;
+    }
+
+    .card .bottom .content {
+      position: absolute;
+      bottom: 0;
+      left: 1.5rem;
+      right: 1.5rem;
+      height: 160px;
+    }
+
+    .card .bottom .content .name {
+      display: block;
+      font-size: 1.2rem;
+      color: white;
+      font-weight: bold;
+      font-family: 'Playfair Display', serif;
+    }
+
+    .card .bottom .content .about-me {
+      display: block;
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.9);
+      margin-top: 0.8rem;
+      line-height: 1.5;
+    }
+
+    .card .bottom .bottom-bottom {
+      position: absolute;
+      bottom: 1rem;
+      left: 1.5rem;
+      right: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .card .bottom .bottom-bottom .social-links-container {
+      display: flex;
+      gap: 1rem;
+    }
+
+    .card .bottom .bottom-bottom .social-links-container svg {
+      height: 18px;
+      fill: white;
+      filter: drop-shadow(0 5px 5px rgba(165,132,130,0.13));
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+
+    .card .bottom .bottom-bottom .social-links-container svg:hover {
+      fill: #f55d56;
+      transform: scale(1.2);
+    }
+
+    .card .bottom .bottom-bottom .button {
+      background: white;
+      color: #fbb9b6;
+      border: none;
+      border-radius: 20px;
+      font-size: 0.6rem;
+      padding: 0.4rem 0.8rem;
+      box-shadow: rgba(165,132,130,0.13) 0px 5px 5px 0px;
+      cursor: pointer;
+      font-family: 'Syne', sans-serif;
+      letter-spacing: 0.08em;
+      transition: all 0.2s;
+    }
+
+    .card .bottom .bottom-bottom .button:hover { background: #f55d56; color: white; }
+
+    .card:hover { border-top-left-radius: 55px; }
+
+    .card:hover .bottom {
+      top: 20%;
+      border-radius: 80px 29px 29px 29px;
+      transition: all 0.5s cubic-bezier(0.645, 0.045, 0.355, 1) 0.2s;
+    }
+
+    .card:hover .profile-pic {
+      width: 100px;
+      height: 100px;
+      aspect-ratio: 1;
+      top: 10px;
+      left: 10px;
+      border-radius: 50%;
+      z-index: 3;
+      border: 7px solid #fbb9b6;
+      box-shadow: rgba(96,75,74,0.19) 0px 5px 5px 0px;
+      transition: all 0.5s ease-in-out, z-index 0.5s ease-in-out 0.1s;
+    }
+
+    .card:hover .profile-pic:hover { transform: scale(1.3); border-radius: 0px; }
+
+    /* ── FIX: no crazy zoom, face stays visible ── */
+    .card:hover .profile-pic img {
+      transform: scale(1.0);
+      object-position: center 25%;
+      transition: all 0.5s ease-in-out 0.5s;
+    }
+
+    .desc-section {
+      background: #F5F0E8;
+      padding: 110px 70px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .desc-section::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(to right, transparent, var(--gold), transparent);
+    }
+
+    .desc-grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .desc-kicker {
+      font-size: 9px;
+      letter-spacing: 0.45em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .desc-kicker::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, var(--gold), transparent);
+    }
+
+    .desc-h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(30px, 4vw, 54px);
+      font-weight: 400;
+      color: #080808;
+      line-height: 1.18;
+      margin-bottom: 22px;
+    }
+
+    .desc-h2 em { font-style: italic; color: var(--gold); }
+
+    .desc-quote {
+      border-left: 3px solid var(--gold);
+      padding-left: 22px;
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+      font-size: 17px;
+      color: #666;
+      line-height: 1.65;
+    }
+
+    .desc-p {
+      font-size: 14px;
+      line-height: 1.95;
+      color: #666;
+      margin-bottom: 22px;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 36px;
+    }
+
+    .stat {
+      padding: 20px;
+      border: 1px solid rgba(201,169,110,0.22);
+      border-radius: 14px;
+      background: rgba(201,169,110,0.05);
+    }
+
+    .stat-n {
+      font-family: 'Playfair Display', serif;
+      font-size: 38px;
+      font-weight: 700;
+      color: var(--gold);
+      line-height: 1;
+      margin-bottom: 5px;
+    }
+
+    .stat-l {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #999;
+    }
+
+    .terminal-section {
+      background: #040404;
+      padding: 100px 30px 110px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 50px;
+    }
+
+    .term-hdr { text-align: center; }
+
+    .term-eye {
+      font-size: 9px;
+      letter-spacing: 0.5em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 12px;
+    }
+
+    .term-ttl {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(28px, 4vw, 52px);
+      color: var(--cream);
+    }
+
+    .term-ttl em { font-style: italic; color: var(--gold); }
+
+    .terminal {
+      width: 100%;
+      max-width: 740px;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid #1a1a1a;
+      box-shadow: 0 0 0 1px #0d0d0d, 0 25px 80px rgba(0,255,65,0.05), 0 0 100px rgba(201,169,110,0.04);
+    }
+
+    .term-bar {
+      background: #181818;
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 1px solid #222;
+    }
+
+    .dot { width: 12px; height: 12px; border-radius: 50%; }
+    .dot.r { background: #FF5F57; }
+    .dot.y { background: #FFBD2E; }
+    .dot.g { background: #28C940; }
+
+    .term-bar-title {
+      flex: 1;
+      text-align: center;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      color: #777;
+      letter-spacing: 0.05em;
+    }
+
+    .term-body {
+      background: #060606;
+      padding: 28px 32px;
+      min-height: 370px;
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+      line-height: 2;
+    }
+
+    .tl {
+      display: block;
+      opacity: 0;
+      transition: opacity 0.12s ease;
+    }
+    .tl.show { opacity: 1; }
+
+    .tl.prompt::before { content: '❯ '; color: #C9A96E; }
+    .tl.g { color: #00FF41; }
+    .tl.gold { color: #C9A96E; }
+    .tl.b { color: #82E0FF; }
+    .tl.p { color: #FF82B2; }
+    .tl.dim { color: #666; }
+    .tl.w { color: #F5F0E8; }
+
+    .cursor {
+      display: inline-block;
+      width: 8px;
+      height: 14px;
+      background: #00FF41;
+      vertical-align: middle;
+      margin-left: 2px;
+      animation: blink 1s step-start infinite;
+    }
+
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+    .footer {
+      background: #000;
+      padding: 36px;
+      text-align: center;
+      border-top: 1px solid #0e0e0e;
+    }
+
+    .footer p {
+      font-size: 10px;
+      letter-spacing: 0.3em;
+      color: #555;
+      text-transform: uppercase;
+    }
+
+    .antigrav-orb {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      animation: floatUp linear infinite;
+    }
+
+    @keyframes floatUp {
+      0%   { transform: translateY(0px); opacity: 0; }
+      8%   { opacity: 1; }
+      92%  { opacity: 0.5; }
+      100% { transform: translateY(-80vh); opacity: 0; }
+    }
+
+    @keyframes levitate {
+      0%, 100% { transform: translateY(0px); }
+      50%       { transform: translateY(-10px); }
+    }
+
+    @keyframes levitateMentor {
+      0%, 100% { transform: translateY(0px); }
+      50%       { transform: translateY(-14px); }
+    }
+
+    .flip-card { animation: levitate 4s ease-in-out infinite; }
+    .flip-card:nth-child(1) { animation-delay: 0s; }
+    .flip-card:nth-child(2) { animation-delay: 0.8s; }
+    .flip-card:nth-child(4) { animation-delay: 1.6s; }
+    .flip-card:nth-child(5) { animation-delay: 2.4s; }
+    .flip-card:hover { animation-play-state: paused; }
+
+    .mentor-wrap { animation: levitateMentor 3.5s ease-in-out infinite; }
+    .mentor-wrap:nth-of-type(1) { animation-delay: 0.4s; }
+    .mentor-wrap:nth-of-type(2) { animation-delay: 1.2s; }
+    .mentor-wrap:hover { animation-play-state: paused; }
+
+    .card.card-teal .mail svg { stroke: #6ecfcf; }
+    .card.card-teal .mail svg:hover { stroke: #2aa8a8; }
+    .card.card-teal .bottom { background: #6ecfcf; box-shadow: rgba(40,100,100,0.18) 0px 5px 5px 0px inset; }
+    .card.card-teal .bottom .bottom-bottom .button { color: #2aa8a8; }
+    .card.card-teal .bottom .bottom-bottom .button:hover { background: #2aa8a8; color: white; }
+    .card.card-teal .bottom .bottom-bottom .social-links-container svg:hover { fill: #2aa8a8; }
+    .card.card-teal:hover { border-top-right-radius: 55px; border-top-left-radius: 32px; }
+    .card.card-teal:hover .bottom { border-radius: 29px 80px 29px 29px; }
+    .card.card-teal:hover .profile-pic { border-color: #6ecfcf; box-shadow: rgba(40,130,130,0.19) 0px 5px 5px 0px; }
+    .card.card-teal { box-shadow: #3a7a7a20 0px 70px 30px -50px; }
+
+    .mentor-label.teal { background: #6ecfcf; color: #0a3030; }
+    .mentor-label.teal::after { border-top-color: #6ecfcf; }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.85s ease, transform 0.85s ease;
+    }
+    .reveal.on { opacity: 1; transform: translateY(0); }
+
+    @media (max-width: 900px) {
+      nav { padding: 14px 18px; }
+      .hero-text { left: 22px; right: 22px; bottom: 50px; }
+      .scroll-hint { right: 22px; }
+      .desc-grid { grid-template-columns: 1fr; gap: 40px; }
+      .desc-section { padding: 70px 22px; }
+      .team-section { padding: 70px 16px 100px; }
+      .flip-card { width: 195px; height: 260px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="switch-overlay">
+    <div class="dust" id="dust"></div>
+
+    <div class="bulb-hang">
+      <div class="cord"></div>
+      <div class="bulb-glow">
+        <svg class="bulb-svg" viewBox="0 0 80 80" fill="none">
+          <line x1="40" y1="3"  x2="40" y2="12"  stroke="#E8C97A" stroke-width="2" stroke-linecap="round" opacity="0.8"/>
+          <line x1="62" y1="10" x2="57" y2="17"  stroke="#E8C97A" stroke-width="2" stroke-linecap="round" opacity="0.75"/>
+          <line x1="74" y1="29" x2="66" y2="33"  stroke="#E8C97A" stroke-width="2" stroke-linecap="round" opacity="0.75"/>
+          <line x1="18" y1="10" x2="23" y2="17"  stroke="#E8C97A" stroke-width="2" stroke-linecap="round" opacity="0.75"/>
+          <line x1="6"  y1="29" x2="14" y2="33"  stroke="#E8C97A" stroke-width="2" stroke-linecap="round" opacity="0.75"/>
+          <line x1="68" y1="52" x2="62" y2="48"  stroke="#E8C97A" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+          <line x1="12" y1="52" x2="18" y2="48"  stroke="#E8C97A" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+          <ellipse cx="40" cy="36" rx="16" ry="18" fill="rgba(255,220,100,0.09)"/>
+          <path d="M28 55C28 55 22 47 22 38C22 27 30 20 40 20C50 20 58 27 58 38C58 47 52 55 52 55Z"
+                stroke="#C9A96E" stroke-width="1.8" fill="rgba(201,169,110,0.18)"/>
+          <ellipse cx="40" cy="38" rx="10" ry="12" fill="rgba(255,220,100,0.13)"/>
+          <path d="M34 50L34 42Q37 37 40 42Q43 47 46 42L46 50"
+                stroke="#FFD97A" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.95"/>
+          <rect x="31" y="55" width="18" height="4" rx="1.5" fill="#555"/>
+          <rect x="31" y="61" width="18" height="4" rx="1.5" fill="#444"/>
+          <rect x="31" y="55" width="18" height="1" rx="0.5" fill="rgba(255,255,255,0.08)"/>
+        </svg>
+      </div>
+    </div>
+
+    <div class="switch-panel">
+      <button id="light-switch" aria-label="Switch on the lights"></button>
+      <span class="switch-hint">Switch on the lights</span>
+    </div>
+  </div>
+
+  <div id="flash"></div>
+
+  <div id="content">
+
+    <nav>
+      <a href="index.html" class="back-btn">
+        <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+        Back
+      </a>
+
+      <div class="music-player">
+        <button class="play-btn" id="playBtn" aria-label="Toggle music">
+          <svg id="iconPlay"  viewBox="0 0 24 24"><polygon points="5,3 19,12 5,21"/></svg>
+          <svg id="iconPause" viewBox="0 0 24 24" style="display:none">
+            <rect x="6" y="4" width="4" height="16"/>
+            <rect x="14" y="4" width="4" height="16"/>
+          </svg>
+        </button>
+        <div class="track-info">
+          <span class="track-name">Team Introduction</span>
+          <div class="progress-bar">
+            <div class="progress-fill" id="pFill"></div>
+          </div>
+        </div>
+        <div class="eq" id="eq">
+          <div class="eq-b"></div>
+          <div class="eq-b"></div>
+          <div class="eq-b"></div>
+          <div class="eq-b"></div>
+        </div>
+      </div>
+    </nav>
+
+    <section class="hero">
+      <img src="5.jpeg" alt="Team" />
+      <div class="hero-overlay"></div>
+      <div class="hero-text">
+        <span class="hero-kicker">Est. 2024 — Our Team</span>
+        <h1 class="hero-h1">The <em>Minds</em><br>Behind<br>the Vision</h1>
+        <p class="hero-sub">A collective of creators, builders &amp; innovators</p>
+      </div>
+      <div class="scroll-hint">
+        <div class="scroll-line"></div>
+        <span>Scroll</span>
+      </div>
+    </section>
+
+    <section class="team-section" id="teamSection">
+      <div class="sec-header reveal">
+        <p class="sec-eye">Our People</p>
+        <h2 class="sec-title">Meet the <em>Team</em></h2>
+        <div class="sec-line"></div>
+      </div>
+
+      <div class="cards-row">
+
+        <!-- Member 1 -->
+        <div class="flip-card reveal">
+          <div class="flip-inner">
+            <div class="flip-face flip-front">
+              <div class="member-img">
+                <img src="Team1.jpeg" alt="Alex" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+                <div class="member-img-placeholder" style="display:none">🧑‍💻</div>
+                <span class="flip-hint">Hover ↻</span>
+              </div>
+              <div class="front-info">
+                <p class="front-name">ALAZIZUR RAHMAN KHAN</p>
+                <p class="front-role">Frontend Developer</p>
+              </div>
+            </div>
+            <div class="flip-face flip-back">
+              <p class="back-name">ALAZIZUR RAHMAN KHAN</p>
+              <p class="back-role">Frontend Developer</p>
+              <div class="back-div"></div>
+              <p class="back-bio">Crafting beautiful interfaces with clean code. Passionate about pixel-perfect designs that delight users every click.</p>
+              <div class="back-socials">
+                <a href="#" class="back-social"><svg viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.44 9.8 8.21 11.39.6.11.82-.26.82-.57v-2.24c-3.02.56-3.8-.74-4.04-1.41-.14-.35-.72-1.41-1.23-1.7-.42-.22-1.02-.77-.01-.79.94-.01 1.62.87 1.84 1.23 1.08 1.82 2.81 1.3 3.5.99.1-.78.42-1.3.76-1.6-2.67-.3-5.46-1.34-5.46-5.93 0-1.3.46-2.38 1.23-3.22-.12-.3-.54-1.53.12-3.18 0 0 1-.31 3.3 1.23.96-.27 1.98-.4 3-.4s2.04.13 3 .4c2.3-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.77.84 1.23 1.91 1.23 3.22 0 4.6-2.81 5.63-5.48 5.93.44.38.81 1.1.81 2.22v3.29c0 .32.22.7.83.57C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg></a>
+                <a href="#" class="back-social"><svg viewBox="0 0 24 24"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.44-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43c-1.14 0-2.06-.93-2.06-2.07 0-1.14.92-2.06 2.06-2.06 1.14 0 2.06.92 2.06 2.06 0 1.14-.92 2.07-2.06 2.07zm1.78 13.02H3.55V9h3.57v11.45zM22.23 0H1.77C.79 0 0 .77 0 1.73v20.54C0 23.23.79 24 1.77 24h20.46C23.2 24 24 23.23 24 22.27V1.73C24 .77 23.2 0 22.22 0h.01z"/></svg></a>
+                <a href="#" class="back-social"><svg viewBox="0 0 24 24"><path d="M17.47 14.38c-.29-.14-1.7-.84-1.96-.93s-.46-.14-.65.14-.74.93-.91 1.12-.34.21-.63.07a7.93 7.93 0 0 1-2.34-1.44 8.84 8.84 0 0 1-1.62-2c-.17-.29 0-.45.13-.59s.29-.34.43-.51a2 2 0 0 0 .29-.48.54.54 0 0 0 0-.51c-.07-.14-.65-1.56-.89-2.14s-.47-.48-.65-.49h-.55a1.07 1.07 0 0 0-.77.36 3.24 3.24 0 0 0-1 2.4 5.63 5.63 0 0 0 1.17 3c.14.19 2 3.09 4.89 4.21a16.31 16.31 0 0 0 1.63.6 3.93 3.93 0 0 0 1.8.11c.55-.08 1.7-.69 1.94-1.37a2.38 2.38 0 0 0 .17-1.37c-.07-.11-.26-.18-.55-.32zM12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 0 1-4.35-1.28l-.31-.19-3.2.84.85-3.11-.2-.32A8 8 0 1 1 12 20z"/></svg></a>
+                <a href="#" class="back-social"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg></a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Member 2 -->
+        <div class="flip-card reveal" style="transition-delay:0.1s">
+          <div class="flip-inner">
+            <div class="flip-face flip-front">
+              <div class="member-img">
+                <img src="Team2.jpeg" alt="Priya" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+                <div class="member-img-placeholder" style="display:none">👩‍🎨</div>
+                <span class="flip-hint">Hover ↻</span>
+              </div>
+              <div class="front-info">
+                <p class="front-name">K.VARDHAN ACHARY</p>
+                <p class="front-role">UI/UX Designer</p>
+              </div>
+            </div>
+            <div class="flip-face flip-back">
+              <p class="back-name">K.VARDHAN ACHARY</p>
+              <p class="back-role">UI/UX Designer</p>
+              <div class="back-div"></div>
+              <p class="back-bio">Turning complex problems into elegant solutions. Design is where logic meets emotion — that's her playground.</p>
+              <div class="back-socials">
+                <a href="#" class="back-social"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none"/><path d="M8.56 2.75c4.37 6.03 6.02 9.42 8.03 17.72m2.54-15.38c-3.72 4.35-8.94 5.66-16.88 5.85m19.5 1.9c-3.5-.93-6.63-.82-8.94 0-2.58.92-5.01 2.86-7.44 6.32" stroke="currentColor" stroke-width="2" fill="none"/></svg></a>
+                <a href="#" class="back-social"><svg viewBox="0 0 24 24"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.44-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43c-1.14 0-2.06-.93-2.06-2.07 0-1.14.92-2.06 2.06-2.06 1.14 0 2.06.92 2.06 2.06 0 1.14-.92 2.07-2.06 2.07zm1.78 13.02H3.55V9h3.57v11.45z"/></svg></a>
+                <a href="#" class="back-social"><svg viewBox="0 0 24 24"><path d="M17.47 14.38c-.29-.14-1.7-.84-1.96-.93s-.46-.14-.65.14-.74.93-.91 1.12-.34.21-.63.07a7.93 7.93 0 0 1-2.34-1.44 8.84 8.84 0 0 1-1.62-2c-.17-.29 0-.45.13-.59s.29-.34.43-.51a2 2 0 0 0 .29-.48.54.54 0 0 0 0-.51c-.07-.14-.65-1.56-.89-2.14s-.47-.48-.65-.49h-.55a1.07 1.07 0 0 0-.77.36 3.24 3.24 0 0 0-1 2.4 5.63 5.63 0 0 0 1.17 3c.14.19 2 3.09 4.89 4.21a16.31 16.31 0 0 0 1.63.6 3.93 3.93 0 0 0 1.8.11c.55-.08 1.7-.69 1.94-1.37a2.38 2.38 0 0 0 .17-1.37c-.07-.11-.26-.18-.55-.32zM12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 0 1-4.35-1.28l-.31-.19-3.2.84.85-3.11-.2-.32A8 8 0 1 1 12 20z"/></svg></a>
+                <a href="#" class="back-social"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg></a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mentor Card 1 (pink) -->
+        <div class="mentor-wrap reveal" style="transition-delay:0.2s">
+          <div class="mentor-label">✦ Our Mentor ✦</div>
+          <div class="card">
+            <button class="mail">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+              </svg>
+            </button>
+            <div class="profile-pic">
+              <img src="men.jpeg" alt="Mentor" onerror="this.style.background='linear-gradient(135deg,#f8ece9,#fcd0ce)';this.style.display='none'" />
+            </div>
+            <div class="bottom">
+              <div class="content">
+                <span class="name">LAHARI VYSYARAJU</span>
+                <span class="about-me">Lead Mentor &amp; Supervisor. Expert in full-stack development &amp; system architecture, guiding us every step.</span>
+              </div>
+              <div class="bottom-bottom">
+                <div class="social-links-container">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.44 9.8 8.21 11.39.6.11.82-.26.82-.57v-2.24c-3.02.56-3.8-.74-4.04-1.41-.14-.35-.72-1.41-1.23-1.7-.42-.22-1.02-.77-.01-.79.94-.01 1.62.87 1.84 1.23 1.08 1.82 2.81 1.3 3.5.99.1-.78.42-1.3.76-1.6-2.67-.3-5.46-1.34-5.46-5.93 0-1.3.46-2.38 1.23-3.22-.12-.3-.54-1.53.12-3.18 0 0 1-.31 3.3 1.23.96-.27 1.98-.4 3-.4s2.04.13 3 .4c2.3-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.77.84 1.23 1.91 1.23 3.22 0 4.6-2.81 5.63-5.48 5.93.44.38.81 1.1.81 2.22v3.29c0 .32.22.7.83.57C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48z"/></svg>
+                </div>
+                <button class="button">Contact</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mentor Card 2 (teal) -->
+        <div class="mentor-wrap reveal" style="transition-delay:0.25s">
+          <div class="mentor-label teal">✦ Our Mentor ✦</div>
+          <div class="card card-teal">
+            <button class="mail">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+              </svg>
+            </button>
+            <div class="profile-pic">
+              <img src="men2.jpeg" alt="Mentor 2" onerror="this.style.background='linear-gradient(135deg,#e0f5f5,#b3e8e8)';this.style.display='none'" />
+            </div>
+            <div class="bottom">
+              <div class="content">
+                <span class="name">MENTOR NAME</span>
+                <span class="about-me">Associate Mentor. Specialist in AI/ML systems and research, inspiring us to think beyond boundaries.</span>
+              </div>
+              <div class="bottom-bottom">
+                <div class="social-links-container">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.44 9.8 8.21 11.39.6.11.82-.26.82-.57v-2.24c-3.02.56-3.8-.74-4.04-1.41-.14-.35-.72-1.41-1.23-1.7-.42-.22-1.02-.77-.01-.79.94-.01 1.62.87 1.84 1.23 1.08 1.82 2.81 1.3 3.5.99.1-.78.42-1.3.76-1.6-2.67-.3-5.46-1.34-5.46-5.93 0-1.3.46-2.38 1.23-3.22-.12-.3-.54-1.53.12-3.18 0 0 1-.31 3.3 1.23.96-.27 1.98-.4 3-.4s2.04.13 3 .4c2.3-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.77.84 1.23 1.91 1.23 3.22 0 4.6-2.81 5.63-5.48 5.93.44.38.81 1.1.81 2.22v3.29c0 .32.22.7.83.57C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M389.2 48h70.6L305.6 224.2 487 464H345L233.7 318.6 106.5 464H35.8L200.7 275.5 26.8 48H172.4L272.9 180.9 389.2 48z"/></svg>
+                </div>
+                <button class="button">Contact</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Member 3 -->
+        <div class="flip-card reveal" style="transition-delay:0.3s">
+          <div class="flip-inner">
+            <div class="flip-face flip-front">
+              <div class="member-img">
+                <img src="Team3.jpeg" alt="Rayan" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+                <div class="member-img-placeholder" style="display:none">👨‍🔬</div>
+                <span class="flip-hint">Hover ↻</span>
+              </div>
+              <div class="front-info">
+                <p class="front-name">SAISANTOSH PANIGRAHI</p>
+                <p class="front-role">Backend Engineer</p>
+              </div>
+            </div>
+            <div class="flip-face flip-back">
+              <p class="back-name">SAISANTOSH PANIGRAHI</p>
+              <p class="back-role">Backend Engineer</p>
+              <div class="back-div"></div>
+              <p class="back-bio">Architect of systems that scale. Passionate about APIs, databases, and making the backend invisible — in a good way.</p>
+              <div class="back-socials">
+                <a href="#" class="back-social"><svg viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.44 9.8 8.21 11.39.6.11.82-.26.82-.57v-2.24c-3.02.56-3.8-.74-4.04-1.41-.14-.35-.72-1.41-1.23-1.7-.42-.22-1.02-.77-.01-.79.94-.01 1.62.87 1.84 1.23 1.08 1.82 2.81 1.3 3.5.99.1-.78.42-1.3.76-1.6-2.67-.3-5.46-1.34-5.46-5.93 0-1.3.46-2.38 1.23-3.22-.12-.3-.54-1.53.12-3.18 0 0 1-.31 3.3 1.23.96-.27 1.98-.4 3-.4s2.04.13 3 .4c2.3-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.77.84 1.23 1.91 1.23 3.22 0 4.6-2.81 5.63-5.48 5.93.44.38.81 1.1.81 2.22v3.29c0 .32.22.7.83.57C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg></a>
+                <a href="#" class="back-social"><svg viewBox="0 0 24 24"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.44-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43c-1.14 0-2.06-.93-2.06-2.07 0-1.14.92-2.06 2.06-2.06 1.14 0 2.06.92 2.06 2.06 0 1.14-.92 2.07-2.06 2.07zm1.78 13.02H3.55V9h3.57v11.45z"/></svg></a>
+                <a href="#" class="back-social"><svg viewBox="0 0 24 24"><path d="M17.47 14.38c-.29-.14-1.7-.84-1.96-.93s-.46-.14-.65.14-.74.93-.91 1.12-.34.21-.63.07a7.93 7.93 0 0 1-2.34-1.44 8.84 8.84 0 0 1-1.62-2c-.17-.29 0-.45.13-.59s.29-.34.43-.51a2 2 0 0 0 .29-.48.54.54 0 0 0 0-.51c-.07-.14-.65-1.56-.89-2.14s-.47-.48-.65-.49h-.55a1.07 1.07 0 0 0-.77.36 3.24 3.24 0 0 0-1 2.4 5.63 5.63 0 0 0 1.17 3c.14.19 2 3.09 4.89 4.21a16.31 16.31 0 0 0 1.63.6 3.93 3.93 0 0 0 1.8.11c.55-.08 1.7-.69 1.94-1.37a2.38 2.38 0 0 0 .17-1.37c-.07-.11-.26-.18-.55-.32zM12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 0 1-4.35-1.28l-.31-.19-3.2.84.85-3.11-.2-.32A8 8 0 1 1 12 20z"/></svg></a>
+                <a href="#" class="back-social"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg></a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Member 4 -->
+        <div class="flip-card reveal" style="transition-delay:0.4s">
+          <div class="flip-inner">
+            <div class="flip-face flip-front">
+              <div class="member-img">
+                <img src="Team4.jpeg" alt="Layla" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+                <div class="member-img-placeholder" style="display:none">👩‍💻</div>
+                <span class="flip-hint">Hover ↻</span>
+              </div>
+              <div class="front-info">
+                <p class="front-name">SUSANTA HARIJAN</p>
+                <p class="front-role">DevOps &amp; QA</p>
+              </div>
+            </div>
+            <div class="flip-face flip-back">
+              <p class="back-name">SUSANTA HARIJAN</p>
+              <p class="back-role">DevOps &amp; QA</p>
+              <div class="back-div"></div>
+              <p class="back-bio">Making sure nothing breaks at 3AM. Masters CI/CD pipelines, testing strategies, and team sanity equally well.</p>
+              <div class="back-socials">
+                <a href="#" class="back-social"><svg viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.44 9.8 8.21 11.39.6.11.82-.26.82-.57v-2.24c-3.02.56-3.8-.74-4.04-1.41-.14-.35-.72-1.41-1.23-1.7-.42-.22-1.02-.77-.01-.79.94-.01 1.62.87 1.84 1.23 1.08 1.82 2.81 1.3 3.5.99.1-.78.42-1.3.76-1.6-2.67-.3-5.46-1.34-5.46-5.93 0-1.3.46-2.38 1.23-3.22-.12-.3-.54-1.53.12-3.18 0 0 1-.31 3.3 1.23.96-.27 1.98-.4 3-.4s2.04.13 3 .4c2.3-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.77.84 1.23 1.91 1.23 3.22 0 4.6-2.81 5.63-5.48 5.93.44.38.81 1.1.81 2.22v3.29c0 .32.22.7.83.57C20.57 21.8 24 17.3 24 12c0-6.63-5.37-12-12-12z"/></svg></a>
+                <a href="#" class="back-social"><svg viewBox="0 0 24 24"><path d="M20.45 20.45h-3.55v-5.57c0-1.33-.03-3.04-1.85-3.04-1.85 0-2.14 1.44-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43c-1.14 0-2.06-.93-2.06-2.07 0-1.14.92-2.06 2.06-2.06 1.14 0 2.06.92 2.06 2.06 0 1.14-.92 2.07-2.06 2.07zm1.78 13.02H3.55V9h3.57v11.45z"/></svg></a>
+                <a href="#" class="back-social"><svg viewBox="0 0 24 24"><path d="M17.47 14.38c-.29-.14-1.7-.84-1.96-.93s-.46-.14-.65.14-.74.93-.91 1.12-.34.21-.63.07a7.93 7.93 0 0 1-2.34-1.44 8.84 8.84 0 0 1-1.62-2c-.17-.29 0-.45.13-.59s.29-.34.43-.51a2 2 0 0 0 .29-.48.54.54 0 0 0 0-.51c-.07-.14-.65-1.56-.89-2.14s-.47-.48-.65-.49h-.55a1.07 1.07 0 0 0-.77.36 3.24 3.24 0 0 0-1 2.4 5.63 5.63 0 0 0 1.17 3c.14.19 2 3.09 4.89 4.21a16.31 16.31 0 0 0 1.63.6 3.93 3.93 0 0 0 1.8.11c.55-.08 1.7-.69 1.94-1.37a2.38 2.38 0 0 0 .17-1.37c-.07-.11-.26-.18-.55-.32zM12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 0 1-4.35-1.28l-.31-.19-3.2.84.85-3.11-.2-.32A8 8 0 1 1 12 20z"/></svg></a>
+                <a href="#" class="back-social"><svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg></a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section class="desc-section">
+      <div class="desc-grid">
+        <div class="reveal">
+          <p class="desc-kicker">Who We Are</p>
+          <h2 class="desc-h2">Built with <em>passion</em>,<br>driven by purpose.</h2>
+          <blockquote class="desc-quote">
+            "Great things are never done by one person — they're done by a team who share a vision and dare to pursue it."
+          </blockquote>
+        </div>
+        <div class="reveal" style="transition-delay:0.2s">
+          <p class="desc-p">We are a multidisciplinary team of students united by one obsession: building technology that genuinely matters. From the first line of code to final deployment, every decision is intentional, every detail considered.</p>
+          <p class="desc-p">Guided by our mentor, we've embraced challenges, learned from failures, and discovered that the best solutions emerge from diverse perspectives, deep collaboration, and a lot of late-night debugging sessions.</p>
+          <div class="stat-grid">
+            <div class="stat"><div class="stat-n">4</div><div class="stat-l">Team Members</div></div>
+            <div class="stat"><div class="stat-n">1</div><div class="stat-l">Expert Mentor</div></div>
+            <div class="stat"><div class="stat-n">∞</div><div class="stat-l">Lines of Code</div></div>
+            <div class="stat"><div class="stat-n">100%</div><div class="stat-l">Commitment</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="terminal-section">
+      <div class="term-hdr reveal">
+        <p class="term-eye">Signing Off</p>
+        <h2 class="term-ttl">A <em>Thank You</em> from the Team</h2>
+      </div>
+
+      <div class="terminal reveal" style="transition-delay:0.2s">
+        <div class="term-bar">
+          <div class="dot r"></div>
+          <div class="dot y"></div>
+          <div class="dot g"></div>
+          <span class="term-bar-title">team@studio — bash</span>
+        </div>
+        <div class="term-body" id="termBody"></div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <p>© 2026 Our Team — Crafted with ♥ &amp; Caffeine</p>
+    </footer>
+
+  </div>
+
+  <audio id="bgAudio" src="team.mp3" loop preload="auto"></audio>
+
+  <script>
+    const dustContainer = document.getElementById('dust');
+    for (let i = 0; i < 28; i++) {
+      const s = document.createElement('span');
+      const size = 1 + Math.random() * 3;
+      s.style.cssText = `left:${Math.random()*100}%;width:${size}px;height:${size}px;opacity:${0.1+Math.random()*0.35};animation-duration:${5+Math.random()*9}s;animation-delay:${Math.random()*8}s;`;
+      dustContainer.appendChild(s);
+    }
+
+    const teamSection = document.getElementById('teamSection');
+    const orbColors = ['rgba(201,169,110,0.07)','rgba(110,207,207,0.07)','rgba(251,185,182,0.07)','rgba(130,200,255,0.06)'];
+    for (let i = 0; i < 18; i++) {
+      const orb = document.createElement('div');
+      const size = 20 + Math.random() * 80;
+      orb.className = 'antigrav-orb';
+      orb.style.cssText = `left:${Math.random()*100}%;bottom:-${size}px;width:${size}px;height:${size}px;background:radial-gradient(circle,${orbColors[Math.floor(Math.random()*orbColors.length)]} 0%,transparent 70%);animation-duration:${8+Math.random()*14}s;animation-delay:${Math.random()*10}s;`;
+      teamSection.appendChild(orb);
+    }
+
+    const overlay    = document.getElementById('switch-overlay');
+    const flash      = document.getElementById('flash');
+    const content    = document.getElementById('content');
+    const bgAudio    = document.getElementById('bgAudio');
+    const playBtn    = document.getElementById('playBtn');
+    const iconPlay   = document.getElementById('iconPlay');
+    const iconPause  = document.getElementById('iconPause');
+    const eqBars     = document.querySelectorAll('.eq-b');
+    const pFill      = document.getElementById('pFill');
+    const lightSwitch = document.getElementById('light-switch');
+
+    let lightsOn = false;
+    let playing = false;
+
+    lightSwitch.addEventListener('click', () => {
+      if (lightsOn) return;
+      lightsOn = true;
+      lightSwitch.classList.add('on');
+      setTimeout(() => {
+        flash.style.opacity = '1';
+        setTimeout(() => { flash.style.transition = 'opacity 0.7s ease'; flash.style.opacity = '0'; }, 60);
+        setTimeout(() => {
+          overlay.classList.add('fade-out');
+          setTimeout(() => { overlay.style.display = 'none'; }, 1000);
+        }, 100);
+        setTimeout(() => { content.classList.add('on'); }, 350);
+        setTimeout(() => { startMusic(); }, 600);
+      }, 200);
+    });
+
+    function startMusic() {
+      bgAudio.volume = 0.65;
+      bgAudio.play().then(() => setPlaying(true)).catch(() => setPlaying(false));
+    }
+
+    function setPlaying(state) {
+      playing = state;
+      iconPlay.style.display  = state ? 'none' : 'block';
+      iconPause.style.display = state ? 'block' : 'none';
+      eqBars.forEach(b => b.classList.toggle('playing', state));
+    }
+
+    playBtn.addEventListener('click', () => {
+      if (playing) { bgAudio.pause(); setPlaying(false); }
+      else { bgAudio.play().then(() => setPlaying(true)); }
+    });
+
+    bgAudio.addEventListener('timeupdate', () => {
+      if (bgAudio.duration) pFill.style.width = (bgAudio.currentTime / bgAudio.duration * 100) + '%';
+    });
+
+    const revealObserver = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('on'); revealObserver.unobserve(e.target); } });
+    }, { threshold: 0.14 });
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+    const lines = [
+      { text: 'run team_intro --mode=grateful', cls: 'prompt dim' },
+      { text: '' },
+      { text: '╔═══════════════════════════════════════════╗', cls: 'gold' },
+      { text: '║    T H A N K   Y O U   ✦   M E S S A G E  ║', cls: 'gold' },
+      { text: '╚═══════════════════════════════════════════╝', cls: 'gold' },
+      { text: '' },
+      { text: 'To everyone who visited — thank you sincerely.', cls: 'w' },
+      { text: 'This page is our small piece of the internet.  🙏', cls: 'w' },
+      { text: '' },
+      { text: '── REACH OUT ───────────────────────────────', cls: 'dim' },
+      { text: '' },
+      { text: '  ✉  alex@ourteam.studio', cls: 'b' },
+      { text: '  ✉  priya@ourteam.studio', cls: 'b' },
+      { text: '  ✉  rayan@ourteam.studio', cls: 'b' },
+      { text: '  ✉  layla@ourteam.studio', cls: 'b' },
+      { text: '  ✉  mentor@ourteam.studio', cls: 'b' },
+      { text: '' },
+      { text: '── SOCIAL MEDIA ────────────────────────────', cls: 'dim' },
+      { text: '' },
+      { text: '  ⟡  github.com/ourteam', cls: 'p' },
+      { text: '  ⟡  twitter.com/ourteam_studio', cls: 'p' },
+      { text: '  ⟡  linkedin.com/company/ourteam', cls: 'p' },
+      { text: '  ⟡  instagram.com/ourteam.studio', cls: 'p' },
+      { text: '' },
+      { text: '── PROJECT ─────────────────────────────────', cls: 'dim' },
+      { text: '' },
+      { text: '  ⟡  github.com/ourteam/main-project', cls: 'g' },
+      { text: '' },
+      { text: 'exit 0  # with gratitude & good vibes  ✨', cls: 'prompt dim' },
+      { text: '' },
+    ];
+
+    const termBody = document.getElementById('termBody');
+    let termDone = false;
+
+    const termObserver = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting && !termDone) { termDone = true; runTerminal(); termObserver.unobserve(e.target); } });
+    }, { threshold: 0.25 });
+    termObserver.observe(termBody);
+
+    function runTerminal() {
+      lines.forEach((line, i) => {
+        setTimeout(() => {
+          const span = document.createElement('span');
+          span.className = 'tl ' + (line.cls || '');
+          span.textContent = line.text || '\u00A0';
+          if (i === lines.length - 1) { const cur = document.createElement('span'); cur.className = 'cursor'; span.appendChild(cur); }
+          termBody.appendChild(span);
+          requestAnimationFrame(() => requestAnimationFrame(() => span.classList.add('show')));
+          termBody.scrollTop = termBody.scrollHeight;
+        }, i * 75);
+      });
+    }
+  </script>
+
+</body>
+</html>

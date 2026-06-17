@@ -1,0 +1,244 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Dastarkhwan Pro</title>
+    
+    <!-- Dependencies -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="hun2.css">
+</head>
+<body class="bg-[#f8fafc] min-h-screen text-slate-900 font-['Outfit']">
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="fixed top-8 left-1/2 -translate-x-1/2 z-[200] flex flex-col gap-3 pointer-events-none"></div>
+
+    <!-- Header & Search -->
+    <nav class="sticky top-0 z-50 glass-header border-b border-slate-100">
+        <div class="max-w-7xl mx-auto px-6 py-4 flex flex-col gap-4">
+            <div class="flex justify-between items-center">
+                <div class="animate-fade-in">
+                    <h1 id="userGreeting" class="text-3xl font-[900] tracking-tighter uppercase italic text-emerald-600">Dastarkhwan.</h1>
+                    <p id="timeGreeting" class="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1 italic">Fetching your vibe...</p>
+                </div>
+                <div class="flex gap-3">
+                    <a href="index.html" class="w-12 h-12 rounded-full bg-slate-900 text-white flex items-center justify-center hover:bg-emerald-600 transition-all shadow-lg hover:rotate-12">
+                        <i class="fa-solid fa-power-off text-sm"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Filter Bar -->
+            <div class="flex flex-col md:flex-row gap-4 items-center">
+                <div class="relative flex-1 w-full group">
+                    <i class="fa-solid fa-magnifying-glass absolute left-5 top-1/2 -translate-y-1/2 text-slate-400 transition group-focus-within:text-emerald-500"></i>
+                    <input type="text" id="masterSearch" placeholder="Search registered kitchens or areas..." 
+                           class="w-full bg-slate-100 border-none rounded-[2rem] py-4 pl-14 pr-6 outline-none focus:ring-4 focus:ring-emerald-500/10 font-bold text-sm transition-all shadow-inner">
+                </div>
+                
+                <div class="bg-slate-100 px-6 py-3 rounded-[2rem] flex items-center gap-4 w-full md:w-auto shadow-inner border border-transparent hover:border-emerald-200 transition">
+                    <i class="fa-solid fa-star text-orange-400 text-xs"></i>
+                    <input type="range" id="masterRating" min="1" max="5" step="0.5" value="1" class="custom-slider">
+                    <span id="ratingVal" class="text-xs font-black text-emerald-600 w-8">1.0</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Category Stories -->
+    <div class="max-w-7xl mx-auto px-6 py-8 overflow-x-auto flex gap-10 scrollbar-hide">
+        <div class="category-story active" onclick="setCategory('all', this)">
+            <div class="bubble"><i class="fa-solid fa-border-all"></i></div>
+            <span>All</span>
+        </div>
+        <div class="category-story" onclick="setCategory('veg', this)">
+            <div class="bubble text-green-500"><i class="fa-solid fa-carrot"></i></div>
+            <span>Veg</span>
+        </div>
+        <div class="category-story" onclick="setCategory('nonveg', this)">
+            <div class="bubble text-red-500"><i class="fa-solid fa-drumstick-bite"></i></div>
+            <span>Non-Veg</span>
+        </div>
+        <div class="category-story" onclick="setCategory('tiffin', this)">
+            <div class="bubble text-orange-500"><i class="fa-solid fa-box-open"></i></div>
+            <span>Tiffins</span>
+        </div>
+        <div class="category-story" onclick="setCategory('fastfood', this)">
+            <div class="bubble text-blue-500"><i class="fa-solid fa-burger"></i></div>
+            <span>Fast Food</span>
+        </div>
+        <div class="category-story" onclick="setCategory('satvik', this)">
+            <div class="bubble text-emerald-600"><i class="fa-solid fa-seedling"></i></div>
+            <span>Satvik</span>
+        </div>
+    </div>
+
+    <!-- Bento Content -->
+    <main class="max-w-7xl mx-auto px-6 pb-20">
+        <h3 id="collectionTitle" class="text-[10px] font-black uppercase tracking-[0.4em] text-slate-400 mb-8 italic">Featured Discoveries</h3>
+        
+        <div id="loader" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <div class="skeleton h-72 rounded-[3rem] md:col-span-2 md:row-span-2"></div>
+            <div class="skeleton h-72 rounded-[3rem]"></div>
+            <div class="skeleton h-72 rounded-[3rem]"></div>
+        </div>
+
+        <div id="bentoGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 hidden"></div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-100 py-16 text-center">
+        <h2 class="text-2xl font-black italic text-emerald-600 uppercase tracking-tighter mb-2">Dastarkhwan</h2>
+        <p class="text-slate-500 font-black uppercase tracking-[0.5em] text-[10px] italic px-6 leading-relaxed">
+            Dil se khao, dil se khilao. <br>
+            <span class="opacity-40 text-[8px]">Where every plate tells a story.</span>
+        </p>
+    </footer>
+
+    <!-- ========== MENU MODAL ========== -->
+    <div id="menuModal" class="menu-modal">
+        <div class="menu-glass">
+            <div class="menu-header">
+                <h3 id="menuHotelName">Menu</h3>
+                <button class="close-btn" onclick="closeMenuModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="menuList" class="menu-list"></div>
+        </div>
+    </div>
+
+    <!-- ========== COMMENT MODAL ========== -->
+    <div id="commentModal" class="comment-modal">
+        <div class="comment-glass">
+            <div class="comment-header">
+                <h3>Comments</h3>
+                <button class="close-btn" onclick="closeCommentModal()"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div id="commentList" class="comment-list"></div>
+            <div class="comment-input-area">
+                <input type="text" id="commentInput" placeholder="Add a comment...">
+                <button onclick="postComment()">Post</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== RATING MODAL ========== -->
+    <div id="ratingModal" class="rating-modal">
+        <div class="rating-glass">
+            <h3 class="text-2xl font-black uppercase tracking-tighter">Rate this kitchen</h3>
+            <div class="rating-current" id="currentRatingDisplay">Current: ⭐ 5.0</div>
+            <div class="rating-stars" id="ratingStarsModal">
+                <i class="fa-solid fa-star" data-rating="1"></i>
+                <i class="fa-solid fa-star" data-rating="2"></i>
+                <i class="fa-solid fa-star" data-rating="3"></i>
+                <i class="fa-solid fa-star" data-rating="4"></i>
+                <i class="fa-solid fa-star" data-rating="5"></i>
+            </div>
+            <button class="rating-submit" onclick="submitRating()">Submit Rating</button>
+            <button class="rating-submit" style="background: #e2e8f0; color: #475569; margin-top: 12px;" onclick="closeRatingModal()">Cancel</button>
+        </div>
+    </div>
+
+    <!-- INTERACTION OVERLAY -->
+    <div id="overlay" class="fixed inset-0 bg-black/95 z-[100] hidden flex flex-col md:flex-row backdrop-blur-3xl overflow-hidden">
+        <!-- EXIT BUTTON -->
+        <button onclick="closeOverlay()" class="absolute top-8 right-8 z-[120] w-14 h-14 rounded-full bg-white text-slate-900 border-4 border-white/20 shadow-2xl flex items-center justify-center hover:bg-red-500 hover:text-white transition-all scale-110">
+            <i class="fa-solid fa-xmark text-2xl"></i>
+        </button>
+
+        <!-- Left: Camera/Visuals (FIXED) -->
+        <div class="flex-1 relative flex flex-col items-center justify-center p-6 bg-black">
+            <div id="camFrame" class="relative w-full h-full max-w-2xl rounded-[3rem] overflow-hidden border-2 border-white/5 bg-slate-900">
+                <!-- Camera Prompt -->
+                <div id="camPrompt" class="absolute inset-0 z-20 flex flex-col items-center justify-center bg-slate-900/60 backdrop-blur-md text-center p-10">
+                    <p id="memCount" class="absolute top-8 bg-emerald-500 text-white px-4 py-1 rounded-full text-[9px] font-black uppercase tracking-widest shadow-lg">0 / 3 Memories</p>
+                    <h3 class="text-3xl font-black text-white uppercase mb-8">Add Memories</h3>
+                    <div class="flex gap-4">
+                        <button onclick="triggerFile()" class="px-8 py-3 bg-white rounded-xl text-slate-900 font-black uppercase text-[10px]">Gallery</button>
+                        <button onclick="openCamera()" class="px-8 py-3 bg-emerald-500 rounded-xl text-white font-black uppercase text-[10px]">Camera</button>
+                    </div>
+                </div>
+                <!-- Video Feed (FIXED: explicit size for proper display) -->
+                <video id="vFeed" autoplay playsinline class="w-full h-full object-cover transform -scale-x-100 hidden" style="min-height: 300px;"></video>
+                <!-- Timer Overlay -->
+                <div id="timer" class="absolute inset-0 flex items-center justify-center text-[100px] font-black text-white hidden">3</div>
+                <!-- Smile Overlay -->
+                <div id="smile" class="absolute inset-0 flex items-center justify-center text-4xl font-black text-emerald-400 uppercase hidden">Cheese! 😄</div>
+                <!-- Filter Bar (FIXED: alignment & position) -->
+                <div id="filterBar" class="filter-bar hidden">
+                    <button class="filter-btn active" onclick="setFilter('normal'); event.stopPropagation();">Normal</button>
+                    <button class="filter-btn" onclick="setFilter('vintage'); event.stopPropagation();">Vintage</button>
+                    <button class="filter-btn" onclick="setFilter('mono'); event.stopPropagation();">Mono</button>
+                    <button class="filter-btn" onclick="setFilter('warm'); event.stopPropagation();">Warm</button>
+                </div>
+                <!-- Caption Overlay -->
+                <div id="captionOverlay" class="caption-overlay">
+                    <input type="text" id="captionInput" class="caption-input" placeholder="Write a caption..." maxlength="200">
+                    <div class="caption-actions">
+                        <button class="caption-cancel" onclick="cancelCaption()">Cancel</button>
+                        <button class="caption-save" onclick="saveMemoryWithCaption()">Save Memory</button>
+                    </div>
+                </div>
+                <!-- Camera UI -->
+                <div id="camUI" class="absolute bottom-8 inset-x-0 hidden flex flex-col items-center gap-6">
+                    <button onclick="startCountdown()" class="w-16 h-16 rounded-full border-4 border-white bg-white/20 shadow-2xl transition active:scale-90"></button>
+                    <button onclick="resetCam()" class="text-white/40 text-[9px] font-black uppercase underline">Cancel</button>
+                </div>
+            </div>
+            <input type="file" id="fileInp" hidden multiple accept="image/*" onchange="handleFile(this)">
+        </div>
+
+        <!-- Right: Detail Info -->
+        <div class="w-full md:w-[480px] bg-white p-10 flex flex-col h-full overflow-y-auto">
+            <h2 id="ovName" class="text-5xl font-[900] text-slate-900 tracking-tighter uppercase leading-[0.85]">Hotel</h2>
+            <p id="ovLoc" class="text-emerald-500 font-bold mt-2 uppercase text-xs tracking-widest">Location</p>
+
+            <!-- TABS -->
+            <div class="flex bg-slate-100 p-1 rounded-3xl my-8">
+                <button onclick="switchTab('menu')" id="tMenu" class="flex-1 py-3 rounded-2xl text-[10px] font-black uppercase bg-white shadow-sm">Menu</button>
+                <button onclick="switchTab('rev')" id="tRev" class="flex-1 py-3 rounded-2xl text-[10px] font-black uppercase text-slate-400">Social</button>
+                <button onclick="switchTab('mem')" id="tMem" class="flex-1 py-3 rounded-2xl text-[10px] font-black uppercase text-slate-400">Memories</button>
+            </div>
+
+            <!-- Menu Section -->
+            <div id="secMenu" class="space-y-3 flex-1"></div>
+            <!-- Social Section -->
+            <div id="secRev" class="hidden flex-1 flex flex-col">
+                <div id="revList" class="flex-1 space-y-4 mb-6"></div>
+                <div class="bg-slate-50 p-6 rounded-[2.5rem] border border-slate-100">
+                    <div class="flex justify-between mb-4 text-3xl text-slate-200" id="starBox">
+                        <i class="fa-solid fa-star cursor-pointer" onclick="updateRating(1)"></i>
+                        <i class="fa-solid fa-star cursor-pointer" onclick="updateRating(2)"></i>
+                        <i class="fa-solid fa-star cursor-pointer" onclick="updateRating(3)"></i>
+                        <i class="fa-solid fa-star cursor-pointer" onclick="updateRating(4)"></i>
+                        <i class="fa-solid fa-star cursor-pointer" onclick="updateRating(5)"></i>
+                    </div>
+                    <textarea id="revMsg" placeholder="Share the taste..." class="w-full bg-transparent border-none outline-none text-sm font-medium h-20 resize-none mb-4"></textarea>
+                    <button onclick="postReview()" class="w-full py-4 bg-slate-900 text-white rounded-2xl font-black uppercase text-[10px]">Post Memory</button>
+                </div>
+            </div>
+            <!-- Memories Section (Triptych Cards) -->
+            <div id="secMem" class="hidden flex-1 overflow-y-auto memories-grid"></div>
+
+            <!-- Memory Previews (Max 3) -->
+            <div class="border-t pt-8 mt-6">
+                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-4">Previews (Max 3)</p>
+                <div id="memPreviews" class="grid grid-cols-3 gap-3"></div>
+            </div>
+        </div>
+    </div>
+
+    <canvas id="capCanvas" class="hidden"></canvas>
+
+    <script>
+        const API_URL = "http://127.0.0.1:5000";
+        const USER_NAME = localStorage.getItem('dastarkhwan_user') || "Foodie";
+    </script>
+    <script src="hun2.js"></script>
+</body>
+</html>

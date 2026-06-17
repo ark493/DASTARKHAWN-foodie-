@@ -1,0 +1,572 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRAZY HUB · where logic takes a day off</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(145deg, #1f1a6a 0%, #681a9a 45%, #b84a94 100%);
+            font-family: 'Segoe UI', 'Poppins', system-ui, sans-serif;
+            overflow-x: hidden;
+            position: relative;
+            color: #fff;
+        }
+
+        /* floating abstract blobs */
+        .blob {
+            position: fixed;
+            width: 550px;
+            height: 550px;
+            background: radial-gradient(circle at 30% 30%, rgba(255, 210, 255, 0.3) 0%, rgba(160, 100, 250, 0.15) 70%);
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: 0;
+            pointer-events: none;
+            animation: floatBlob 24s infinite alternate ease-in-out;
+        }
+        .blob1 { top: -200px; left: -250px; }
+        .blob2 { bottom: -180px; right: -220px; width: 650px; height: 650px; animation-duration: 28s; }
+        .blob3 { top: 40%; right: 5%; width: 450px; height: 450px; background: radial-gradient(circle, rgba(220, 140, 255, 0.25), transparent); animation-duration: 20s; }
+
+        @keyframes floatBlob {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(60px, -50px) scale(1.1); }
+        }
+
+        /* particles */
+        .particle {
+            position: fixed;
+            width: 6px;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.6);
+            border-radius: 50%;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.9);
+            pointer-events: none;
+            z-index: 1;
+            animation: particleFloat 12s infinite alternate;
+        }
+        @keyframes particleFloat {
+            0% { transform: translateY(0) translateX(0); opacity: 0.3; }
+            100% { transform: translateY(-100px) translateX(50px); opacity: 1; }
+        }
+
+        /* main content */
+        .content {
+            position: relative;
+            z-index: 10;
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 2rem 2rem 3rem;
+        }
+
+        /* back button */
+        .back-btn {
+            position: fixed;
+            top: 24px;
+            left: 24px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 60px;
+            padding: 10px 28px;
+            color: #fff;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            z-index: 100;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .back-btn:hover {
+            transform: scale(1.05);
+            background: rgba(255, 255, 255, 0.25);
+            box-shadow: 0 0 30px rgba(255,255,255,0.4);
+        }
+
+        /* hero */
+        .hero {
+            text-align: center;
+            margin: 40px 0 30px;
+            animation: fadeGlow 1.8s ease-out;
+        }
+        @keyframes fadeGlow {
+            0% { opacity: 0; filter: blur(12px); }
+            100% { opacity: 1; filter: blur(0); }
+        }
+        .hero h1 {
+            font-size: 5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, #fff8, #ffffff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 60px rgba(255,255,240,0.9);
+            letter-spacing: 4px;
+            margin-bottom: 8px;
+            display: inline-block;
+            animation: glowPulse 3s infinite alternate;
+        }
+        @keyframes glowPulse {
+            0% { text-shadow: 0 0 20px #fffa, 0 0 40px #c878ff; }
+            100% { text-shadow: 0 0 50px #fff, 0 0 90px #ffb0f0; }
+        }
+        .hero p {
+            font-size: 1.6rem;
+            color: rgba(255,255,255,0.95);
+            font-weight: 400;
+            text-shadow: 0 2px 15px rgba(0,0,0,0.5);
+            backdrop-filter: blur(2px);
+        }
+
+        /* cards grid – improved alignment */
+        .game-grid {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+            margin-top: 30px;
+        }
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            width: 100%;
+        }
+        .row-1 .card {
+            flex: 0 1 260px;
+            min-width: 240px;
+        }
+        /* refined vertical staggering */
+        .row-1 .card:nth-child(1) { transform: translateY(-20px); }
+        .row-1 .card:nth-child(2) { transform: translateY(10px); }
+        .row-1 .card:nth-child(3) { transform: translateY(-5px); }
+
+        .row-2 .card {
+            flex: 0 1 320px;
+            min-width: 280px;
+        }
+        .row-2 .card:first-child { transform: translateY(-12px) scale(1.05); }
+        .row-2 .card:last-child { transform: translateY(15px) scale(1.05); }
+
+        /* card style – premium glass */
+        .card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 2px solid rgba(255, 255, 255, 0.25);
+            border-radius: 44px;
+            padding: 32px 24px;
+            box-shadow: 0 30px 50px rgba(0,0,0,0.5), 0 0 0 2px rgba(255,255,255,0.2) inset;
+            transition: all 0.35s cubic-bezier(0.2,0.9,0.3,1.2);
+            color: #fff;
+            text-align: center;
+            cursor: pointer;
+        }
+        .card:hover {
+            transform: scale(1.08) rotate(0.8deg);
+            box-shadow: 0 40px 70px rgba(0,0,0,0.7), 0 0 0 4px rgba(255,255,255,0.3) inset;
+        }
+        /* per‑card tinted borders */
+        .card:nth-child(1) { border-color: rgba(255, 154, 158, 0.6); }
+        .card:nth-child(2) { border-color: rgba(161, 140, 209, 0.6); }
+        .card:nth-child(3) { border-color: rgba(166, 193, 238, 0.6); }
+        .card:nth-child(4) { border-color: rgba(252, 182, 159, 0.6); }
+        .card:nth-child(5) { border-color: rgba(161, 196, 253, 0.6); }
+        .card:nth-child(6) { border-color: rgba(200, 160, 255, 0.6); }
+
+        .card-emoji {
+            font-size: 4rem;
+            margin-bottom: 18px;
+            filter: drop-shadow(0 12px 18px #00000077);
+        }
+        .card h3 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .card p {
+            font-size: 1.05rem;
+            opacity: 0.9;
+            font-style: italic;
+        }
+
+        /* ---------- Bo-chan character – polished ---------- */
+        .bochan {
+            position: fixed;
+            top: 25px;
+            right: 25px;
+            width: 170px;
+            height: 230px;
+            z-index: 200;
+            filter: drop-shadow(0 25px 35px #000000cc);
+            animation: float 4.5s infinite alternate ease-in-out;
+            transform-origin: center;
+            pointer-events: none;
+        }
+        @keyframes float {
+            0% { transform: translateY(0) scale(1); }
+            100% { transform: translateY(-16px) scale(1.02); }
+        }
+
+        /* face container */
+        .face {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin: 0 auto;
+            background: radial-gradient(circle at 40% 40%, #ffdec2, #f9c9a2);
+            border-radius: 50%;
+            box-shadow: 0 12px 0 #b2754e, 0 25px 35px #00000099, inset -8px -10px 18px #b2754eaa, inset 8px 8px 22px #fff9;
+            transition: all 0.25s;
+            z-index: 2;
+        }
+
+        /* hair – more detailed */
+        .hair {
+            position: absolute;
+            top: -16px;
+            left: 20px;
+            width: 110px;
+            height: 60px;
+            background: #4a2a1a;
+            border-radius: 70% 70% 40% 40%;
+            box-shadow: 0 12px 0 #2a150a;
+            transform: rotate(2deg);
+            z-index: 3;
+        }
+        .hair::before, .hair::after {
+            content: '';
+            position: absolute;
+            width: 36px;
+            height: 36px;
+            background: #4a2a1a;
+            border-radius: 50%;
+            top: -14px;
+        }
+        .hair::before { left: 10px; }
+        .hair::after { right: 10px; }
+
+        /* small forehead highlight */
+        .highlight {
+            position: absolute;
+            top: 12px;
+            left: 35px;
+            width: 45px;
+            height: 22px;
+            background: radial-gradient(circle, #fff9, transparent);
+            border-radius: 50%;
+            filter: blur(5px);
+            z-index: 4;
+        }
+
+        /* eyebrows */
+        .eyebrows {
+            position: absolute;
+            top: 38px;
+            left: 22px;
+            right: 22px;
+            display: flex;
+            justify-content: space-between;
+            z-index: 5;
+        }
+        .eyebrow {
+            width: 32px;
+            height: 7px;
+            background: #2a1a0a;
+            border-radius: 10px;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px #00000044;
+        }
+
+        /* eyes */
+        .eyes {
+            position: absolute;
+            top: 58px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            justify-content: space-around;
+            z-index: 5;
+        }
+        .eye {
+            width: 32px;
+            height: 32px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 0 3px #6b4226, inset -4px -4px 10px #aaa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .pupil {
+            width: 18px;
+            height: 18px;
+            background: #000;
+            border-radius: 50%;
+            transition: transform 0.1s ease;
+            box-shadow: 0 0 8px #fff9;
+        }
+
+        /* nose (tiny) */
+        .nose {
+            position: absolute;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 8px;
+            height: 10px;
+            background: #b2754e;
+            border-radius: 40%;
+            box-shadow: 0 2px 4px #00000055;
+            z-index: 5;
+        }
+
+        /* mouth */
+        .mouth {
+            position: absolute;
+            bottom: 32px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 44px;
+            height: 16px;
+            background: #d84a4a;
+            border-radius: 0 0 30px 30px;
+            transition: all 0.2s;
+            box-shadow: 0 6px 0 #8b2a2a;
+            z-index: 5;
+        }
+
+        /* cheeks */
+        .cheek {
+            position: absolute;
+            bottom: 48px;
+            width: 22px;
+            height: 14px;
+            background: #ffb6c1;
+            border-radius: 50%;
+            filter: blur(5px);
+            opacity: 0.7;
+            transition: all 0.2s;
+            z-index: 4;
+        }
+        .cheek.left { left: 15px; }
+        .cheek.right { right: 15px; }
+
+        /* shirt */
+        .shirt {
+            position: absolute;
+            top: 138px;
+            left: 30px;
+            width: 90px;
+            height: 55px;
+            background: #ffcc66;
+            border-radius: 25px 25px 50px 50px;
+            box-shadow: 0 12px 0 #d49b3a;
+            z-index: 1;
+        }
+
+        /* expression classes – refined */
+        .face.happy .mouth { width: 50px; height: 24px; border-radius: 0 0 40px 40px; background: #ff6b6b; }
+        .face.happy .eyebrow { transform: rotate(6deg) translateY(-5px); }
+
+        .face.scared .mouth { width: 34px; height: 34px; border-radius: 50%; background: #ff9999; bottom: 28px; }
+        .face.scared .eyebrow { transform: translateY(-10px) rotate(14deg); }
+        .face.scared .eye { transform: scale(1.15); }
+
+        .face.confused .eyebrow:first-child { transform: translateY(-6px) rotate(20deg); }
+        .face.confused .eyebrow:last-child { transform: translateY(6px) rotate(-15deg); }
+        .face.confused .mouth { width: 40px; height: 8px; border-radius: 20px; background: #b84a4a; transform: translateX(-50%) rotate(8deg); }
+
+        .face.laughing .mouth { width: 60px; height: 38px; border-radius: 0 0 70px 70px; background: #ff4d4d; bottom: 26px; }
+        .face.laughing .eye { transform: scale(0.9); }
+        .face.laughing .cheek { opacity: 1; filter: blur(7px); width: 28px; height: 18px; }
+
+        /* responsive adjustments */
+        @media (max-width: 900px) {
+            .row-1 .card, .row-2 .card { transform: none !important; flex: 0 1 280px; }
+            .bochan { width: 140px; height: 200px; top: 10px; right: 10px; }
+            .hero h1 { font-size: 3.8rem; }
+        }
+        @media (max-width: 600px) {
+            .row-1, .row-2 { flex-direction: column; align-items: center; }
+            .card { width: 85%; }
+            .back-btn { font-size: 0.9rem; padding: 8px 18px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- floating abstract blobs -->
+    <div class="blob blob1"></div>
+    <div class="blob blob2"></div>
+    <div class="blob blob3"></div>
+
+    <!-- particles (js generated) -->
+    <div id="particles"></div>
+
+    <!-- back button -->
+    <a href="index.html" class="back-btn">← Leaving already?</a>
+
+    <!-- Bo-chan character (pure CSS) -->
+    <div class="bochan" id="bochan">
+        <div class="face" id="face">
+            <div class="hair"></div>
+            <div class="highlight"></div>
+            <div class="eyebrows">
+                <div class="eyebrow"></div>
+                <div class="eyebrow"></div>
+            </div>
+            <div class="eyes">
+                <div class="eye"><div class="pupil" id="pupil-left"></div></div>
+                <div class="eye"><div class="pupil" id="pupil-right"></div></div>
+            </div>
+            <div class="nose"></div>
+            <div class="cheek left"></div>
+            <div class="cheek right"></div>
+            <div class="mouth" id="mouth"></div>
+        </div>
+        <div class="shirt"></div>
+    </div>
+
+    <div class="content">
+        <div class="hero">
+            <h1>CRAZY HUB</h1>
+            <p>Where logic takes a day off.</p>
+        </div>
+
+        <!-- game cards (staggered layout) - FIXED LINKS -->
+        <div class="game-grid">
+            <div class="row row-1">
+                <div class="card" data-url="chappal.html" data-expression="happy">
+                    <div class="card-emoji">🩴</div>
+                    <h3>Chappal Attack</h3>
+                    <p>Run before maa finds you.</p>
+                </div>
+                <div class="card" data-url="pinao.html" data-expression="confused">
+                    <div class="card-emoji">🎹</div>
+                    <h3>Piano</h3>
+                    <p>Tap keys. Drop beats.</p>
+                </div>
+                <div class="card" data-url="cam.html" data-expression="scared">
+                    <div class="card-emoji">🔮</div>
+                    <h3>Palm Reading</h3>
+                    <p>BY KUPPLI BABA</p>
+                </div>
+            </div>
+            <div class="row row-2">
+                <div class="card" data-url="gen.html" data-expression="confused">
+                    <div class="card-emoji">⚥</div>
+                    <h3>Gender Detector</h3>
+                    <p>AI thinks it knows you.</p>
+                </div>
+                <div class="card" data-url="rizzler-bot/rizzler.html" data-expression="laughing">
+                    <div class="card-emoji">🤖</div>
+                    <h3>Silly Bot</h3>
+                    <p>Talk nonsense. Get nonsense.</p>
+                </div>
+                <!-- ── SURGICAL ADD ── -->
+                <div class="card" data-url="Akinator!.html" data-expression="scared">
+                    <div class="card-emoji">🧞‍♂️</div>
+                    <h3>Akinator</h3>
+                    <p>I already know who you are.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // ----- generate particles (40 floating dots) -----
+            const particleContainer = document.getElementById('particles');
+            for (let i = 0; i < 40; i++) {
+                const p = document.createElement('div');
+                p.className = 'particle';
+                const size = Math.random() * 8 + 3;
+                p.style.width = size + 'px';
+                p.style.height = size + 'px';
+                p.style.left = Math.random() * 100 + '%';
+                p.style.top = Math.random() * 100 + '%';
+                p.style.animationDelay = Math.random() * 10 + 's';
+                p.style.animationDuration = (Math.random() * 14 + 12) + 's';
+                particleContainer.appendChild(p);
+            }
+
+            // ----- eye tracking (pupils follow mouse) -----
+            const pupils = document.querySelectorAll('.pupil');
+            const bochan = document.getElementById('bochan');
+            document.addEventListener('mousemove', (e) => {
+                const rect = bochan.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                let dx = e.clientX - centerX;
+                let dy = e.clientY - centerY;
+                const maxMove = 6;
+                const dist = Math.sqrt(dx*dx + dy*dy);
+                if (dist > maxMove) {
+                    dx = dx * maxMove / dist;
+                    dy = dy * maxMove / dist;
+                }
+                pupils.forEach(pupil => {
+                    pupil.style.transform = `translate(${dx}px, ${dy}px)`;
+                });
+            });
+
+            // ----- face expression management -----
+            const face = document.getElementById('face');
+            const expressionClasses = ['normal', 'happy', 'scared', 'confused', 'laughing'];
+            function setExpression(expr) {
+                face.classList.remove(...expressionClasses);
+                if (expr !== 'normal') face.classList.add(expr);
+            }
+
+            // card hover listeners
+            const cards = document.querySelectorAll('.card');
+            cards.forEach(card => {
+                const expr = card.dataset.expression || 'normal';
+                card.addEventListener('mouseenter', () => setExpression(expr));
+                card.addEventListener('mouseleave', () => setExpression('normal'));
+            });
+
+            // card click navigation
+            cards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const url = card.dataset.url;
+                    if (url) window.location.href = url;
+                });
+            });
+
+            // periodic blink
+            function blink() {
+                const eyes = document.querySelectorAll('.eye');
+                eyes.forEach(eye => {
+                    eye.style.transition = 'height 0.1s, background 0.1s';
+                    eye.style.height = '4px';
+                    eye.style.background = '#fff';
+                });
+                setTimeout(() => {
+                    eyes.forEach(eye => {
+                        eye.style.height = '32px';
+                        eye.style.background = '#fff';
+                        eye.style.transition = '';
+                    });
+                }, 140);
+            }
+            setInterval(blink, 4200);
+        })();
+    </script>
+</body>
+</html>

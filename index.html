@@ -1,0 +1,769 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dastarkhwan - One Nation. One Plate.</title>
+    
+    <!-- Tailwind & Fonts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800;900&family=Playfair+Display:ital,wght@1,900&display=swap" rel="stylesheet">
+    
+    <!-- GSAP -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    
+    <!-- External CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        /* Additional loader styles (from Uiverse) */
+        .crazy-loader {
+            width: fit-content;
+            font-size: 17px;
+            font-family: monospace;
+            line-height: 1.4;
+            font-weight: bold;
+            padding: 30px 2px 50px;
+            background: linear-gradient(#000 0 0) 0 0/100% 100% content-box padding-box no-repeat;
+            position: relative;
+            overflow: hidden;
+            animation: l10-0 2s infinite cubic-bezier(1, 175, 0.5, 175);
+            margin: 0 auto;
+        }
+        .crazy-loader::before {
+            content: "Loading";
+            display: inline-block;
+            animation: l10-2 2s infinite;
+        }
+        .crazy-loader::after {
+            content: "";
+            position: absolute;
+            width: 34px;
+            height: 28px;
+            top: 110%;
+            left: calc(50% - 16px);
+            background: 
+                linear-gradient(90deg, #0000 12px, #f92033 0 22px, #0000 0 26px, #fdc98d 0 32px, #0000) bottom 26px left 50%,
+                linear-gradient(90deg, #0000 10px, #f92033 0 28px, #fdc98d 0 32px, #0000 0) bottom 24px left 50%,
+                linear-gradient(90deg, #0000 10px, #643700 0 16px, #fdc98d 0 20px, #000 0 22px, #fdc98d 0 24px, #000 0 26px, #f92033 0 32px, #0000 0) bottom 22px left 50%,
+                linear-gradient(90deg, #0000 8px, #643700 0 10px, #fdc98d 0 12px, #643700 0 14px, #fdc98d 0 20px, #000 0 22px, #fdc98d 0 28px, #f92033 0 32px, #0000 0) bottom 20px left 50%,
+                linear-gradient(90deg, #0000 8px, #643700 0 10px, #fdc98d 0 12px, #643700 0 16px, #fdc98d 0 22px, #000 0 24px, #fdc98d 0 30px, #f92033 0 32px, #0000 0) bottom 18px left 50%,
+                linear-gradient(90deg, #0000 8px, #643700 0 12px, #fdc98d 0 20px, #000 0 28px, #f92033 0 30px, #0000 0) bottom 16px left 50%,
+                linear-gradient(90deg, #0000 12px, #fdc98d 0 26px, #f92033 0 30px, #0000 0) bottom 14px left 50%,
+                linear-gradient(90deg, #fdc98d 6px, #f92033 0 14px, #222a87 0 16px, #f92033 0 22px, #222a87 0 24px, #f92033 0 28px, #0000 0 32px, #643700 0) bottom 12px left 50%,
+                linear-gradient(90deg, #fdc98d 6px, #f92033 0 16px, #222a87 0 18px, #f92033 0 24px, #f92033 0 26px, #0000 0 30px, #643700 0) bottom 10px left 50%,
+                linear-gradient(90deg, #0000 10px, #f92033 0 16px, #222a87 0 24px, #feee49 0 26px, #222a87 0 30px, #643700 0) bottom 8px left 50%,
+                linear-gradient(90deg, #0000 12px, #222a87 0 18px, #feee49 0 20px, #222a87 0 30px, #643700 0) bottom 6px left 50%,
+                linear-gradient(90deg, #0000 8px, #643700 0 12px, #222a87 0 30px, #643700 0) bottom 4px left 50%,
+                linear-gradient(90deg, #0000 6px, #643700 0 14px, #222a87 0 26px, #0000 0) bottom 2px left 50%,
+                linear-gradient(90deg, #0000 6px, #643700 0 10px, #0000 0) bottom 0px left 50%;
+            background-size: 34px 2px;
+            background-repeat: no-repeat;
+            animation: inherit;
+            animation-name: l10-1;
+        }
+        @keyframes l10-0 { 0%,30% { background-position: 0 0px; } 50%,100% { background-position: 0 -0.1px; } }
+        @keyframes l10-1 { 50%,100% { top: 109.5%; } }
+        @keyframes l10-2 { 0%,30% { transform: translateY(0); } 80%,100% { transform: translateY(-260%); } }
+
+        /* New loader for memories hub (love/death/robots) */
+        .memories-loader {
+            display: flex;
+            position: relative;
+            justify-items: center;
+            align-items: center;
+            gap: 1rem;
+            height: 55px;
+            width: 200px;
+            overflow: hidden;
+            margin: 0 auto;
+        }
+
+        .memories-loader .container {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            height: 200px;
+            position: relative;
+            align-items: center;
+        }
+
+        .memories-loader .carousel {
+            display: flex;
+            gap: 1rem;
+            flex-direction: column;
+            position: absolute;
+            width: 100%;
+            transform-origin: center;
+            animation-delay: 2s;
+        }
+
+        .memories-loader .container:nth-child(3) {
+            justify-content: flex-start;
+            justify-items: flex-start;
+            animation: scroll-up 4s infinite ease-in-out;
+            animation-delay: 3s;
+        }
+
+        .memories-loader .container:nth-child(2) {
+            justify-content: flex-end;
+            justify-items: flex-end;
+            animation: scroll-down 4s infinite ease-in-out;
+            animation-delay: 3s;
+        }
+
+        .memories-loader .container:nth-child(1) {
+            justify-content: flex-end;
+            justify-items: flex-end;
+            animation: scroll-down 3s infinite ease-in-out;
+            animation-delay: 3s;
+        }
+
+        .memories-loader .love {
+            background: red;
+            display: flex;
+            width: 30px;
+            height: 30px;
+            position: relative;
+            align-items: center;
+            justify-content: center;
+            left: 8px;
+            margin: 0.8rem 4px;
+            transform: rotate(45deg);
+            animation-delay: 2s;
+        }
+
+        .memories-loader .love::before, .memories-loader .love::after {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: red;
+        }
+
+        .memories-loader .love::before {
+            left: -16px;
+        }
+
+        .memories-loader .love::after {
+            top: -16px;
+        }
+
+        .memories-loader .death {
+            display: flex;
+            width: 100%;
+            height: 55px;
+            position: relative;
+            align-items: center;
+            justify-content: center;
+            animation: rotation 3s infinite ease-in-out;
+            animation-delay: 1s;
+        }
+
+        .memories-loader .death:after {
+            content: '';
+            height: 63px;
+            position: absolute;
+            border-left: 12px solid red;
+            transform: rotate(45deg);
+            border-radius: 8px;
+            top: -4px;
+        }
+
+        .memories-loader .death:before {
+            content: '';
+            height: 60px;
+            position: absolute;
+            border-left: 12px solid red;
+            transform: rotate(-45deg);
+        }
+
+        .memories-loader:hover {
+            animation: none;
+        }
+
+        .memories-loader .robots {
+            display: flex;
+            width: 100%;
+            height: 55px;
+            justify-content: space-between;
+            background-color: #ff0000;
+            border-radius: 0 8px 8px;
+            padding: 8px;
+            animation-delay: 5s;
+        }
+
+        .memories-loader .robots::after {
+            content: '';
+            width: 12px;
+            height: 12px;
+            top: 0;
+            left: 0;
+            background-color: #ffffff;
+            border-radius: 50%;
+            animation-delay: 2s;
+            animation: blink 0.5s 2 forwards;
+        }
+
+        .memories-loader .robots::before {
+            content: '';
+            width: 12px;
+            height: 12px;
+            top: 0;
+            left: 0;
+            background-color: #ffffff;
+            border-radius: 50%;
+            animation-delay: 2s;
+            animation: blink 0.5s 2 forwards;
+        }
+
+        @keyframes scroll-up {
+            0% { transform: translateY(0); filter: blur(0); }
+            30% { transform: translateY(-150%); filter: blur(10px); }
+            60% { transform: translateY(0); filter: blur(0px); }
+        }
+
+        @keyframes scroll-down {
+            0% { transform: translateY(0); filter: blur(0); }
+            30% { transform: translateY(150%); filter: blur(10px); }
+            60% { transform: translateY(0); filter: blur(0px); }
+        }
+
+        @keyframes rotation {
+            20%, 100% { transform: rotate(180deg); }
+        }
+
+        @keyframes blink {
+            0% { height: 0; }
+            20% { height: 12px; }
+            100% { height: 12px; }
+        }
+
+        /* --- NEW VALORANT BUTTON STYLE (Uiverse.io by faizanullah1999) --- */
+        .primary-button {
+            font-family: 'Outfit', sans-serif;
+            color: white;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: bold;
+            letter-spacing: 0.05rem;
+            border: 1px solid #0E1822;
+            padding: 0.8rem 2.1rem;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 531.28 200'%3E%3Cdefs%3E%3Cstyle%3E .shape %7B fill: %23FF4655 /* fill: %230E1822; */ %7D %3C/style%3E%3C/defs%3E%3Cg id='Layer_2' data-name='Layer 2'%3E%3Cg id='Layer_1-2' data-name='Layer 1'%3E%3Cpolygon class='shape' points='415.81 200 0 200 115.47 0 531.28 0 415.81 200' /%3E%3C/g%3E%3C/g%3E%3C/svg%3E%0A");
+            background-color: #0E1822;
+            background-size: 200%;
+            background-position: 200%;
+            background-repeat: no-repeat;
+            transition: 0.3s ease-in-out;
+            transition-property: background-position, border, color;
+            position: relative;
+            z-index: 1;
+        }
+
+        .primary-button:hover {
+            border: 1px solid #FF4655;
+            color: white;
+            background-position: 40%;
+        }
+
+        .primary-button:before {
+            content: "";
+            position: absolute;
+            background-color: #0E1822;
+            width: 0.2rem;
+            height: 0.2rem;
+            top: -1px;
+            left: -1px;
+            transition: background-color 0.15s ease-in-out;
+        }
+
+        .primary-button:hover:before {
+            background-color: white;
+        }
+
+        .primary-button:hover:after {
+            background-color: white;
+        }
+
+        .primary-button:after {
+            content: "";
+            position: absolute;
+            background-color: #FF4655;
+            width: 0.3rem;
+            height: 0.3rem;
+            bottom: -1px;
+            right: -1px;
+            transition: background-color 0.15s ease-in-out;
+        }
+
+        .button-borders {
+            position: relative;
+            width: fit-content;
+            height: fit-content;
+        }
+
+        .button-borders:before {
+            content: "";
+            position: absolute;
+            width: calc(100% + 0.5em);
+            height: 50%;
+            left: -0.3em;
+            top: -0.3em;
+            border: 1px solid #0E1822;
+            border-bottom: 0px;
+        }
+
+        .button-borders:after {
+            content: "";
+            position: absolute;
+            width: calc(100% + 0.5em);
+            height: 50%;
+            left: -0.3em;
+            bottom: -0.3em;
+            border: 1px solid #0E1822;
+            border-top: 0px;
+            z-index: 0;
+        }
+
+        .shape {
+            fill: #0E1822;
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden">
+
+    <!-- Layer 0: Balloon Canvas Background -->
+    <canvas id="balloonCanvas"></canvas>
+
+    <!-- Layer 1: Background Video -->
+    <video id="bg-video" autoplay loop muted playsinline>
+        <source src="background.mp4" type="video/mp4">
+    </video>
+
+    <!-- Layer 100: Live Ticker Pill -->
+    <div class="ticker-wrapper">
+        <div class="ticker-pill backdrop-blur-xl">
+            <div class="ticker-badge">
+                <i class="fa-solid fa-bolt-lightning text-[8px] animate-pulse"></i>
+                <span>LIVE</span>
+            </div>
+            <div class="ticker-mask">
+                <div class="ticker-content" id="liveTickerText">Dastarkhwan Mission is Active! ❤️ Serving Swad across India.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Right Controls: Adjusted spacing and position -->
+    <div class="fixed top-6 right-10 z-[100] flex flex-row items-center gap-6">
+        
+        <!-- NEW VALORANT BUTTON STYLE (Left) -->
+       <div class="button-borders">
+    <button class="primary-button" onclick="window.location.href='team.html'"> CLICK ME 😜</button>
+</div>
+        <!-- Language Controls (Right) -->
+        <div class="relative">
+            <button class="lang-btn shadow-lg w-10 h-10 rounded-full bg-white flex items-center justify-center text-gray-800 hover:bg-gray-50 transition-colors" onclick="document.getElementById('langDrop').classList.toggle('show')">
+                <i class="fa-solid fa-language text-xl"></i> 
+            </button>
+            <div class="lang-drop shadow-2xl backdrop-blur-2xl" id="langDrop">
+                <div class="lang-opt" onclick="setLang('en')">English</div>
+                <div class="lang-opt" onclick="setLang('hi')">हिन्दी</div>
+                <div class="lang-opt" onclick="setLang('or')">ଓଡ଼ିଆ</div>
+                <div class="lang-opt" onclick="setLang('te')">తెలుగు</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Redirection Loaders -->
+    <div id="loading-overlay" class="loader-screen">
+        <lottie-player src="loader.json" background="transparent" speed="1" style="width: 250px; height: 250px;" loop autoplay></lottie-player>
+        <div class="loader-text text-emerald-800 font-black">Serving Happiness...</div>
+    </div>
+
+    <div id="hotel-loader" class="loader-screen">
+        <lottie-player src="chef.json" background="transparent" speed="1" style="width: 250px; height: 250px;" loop autoplay></lottie-player>
+        <div class="loader-text text-orange-800 font-black">Opening the Kitchen...</div>
+    </div>
+
+    <!-- Crazy Hub Loader (custom) -->
+    <div id="crazy-loader-overlay" class="loader-screen" style="display: none;">
+        <div class="crazy-loader"></div>
+    </div>
+
+    <!-- Memories Hub Loader (new) -->
+    <div id="memories-loader-overlay" class="loader-screen" style="display: none;">
+        <div class="memories-loader">
+            <div class="container">
+                <div class="carousel">
+                    <div class="love"></div>
+                    <div class="love"></div>
+                    <div class="love"></div>
+                    <div class="love"></div>
+                    <div class="love"></div>
+                    <div class="love"></div>
+                    <div class="love"></div>
+                </div> 
+            </div>
+            <div class="container">
+                <div class="carousel">
+                    <div class="death"></div>
+                    <div class="death"></div>
+                    <div class="death"></div>
+                    <div class="death"></div>
+                    <div class="death"></div>
+                    <div class="death"></div>
+                    <div class="death"></div>
+                </div> 
+            </div>
+            <div class="container">
+                <div class="carousel">
+                    <div class="robots"></div>
+                    <div class="robots"></div>
+                    <div class="robots"></div>
+                    <div class="robots"></div>
+                    <div class="robots"></div>
+                    <div class="robots"></div>
+                    <div class="robots"></div>
+                </div> 
+            </div>
+        </div>
+    </div>
+
+    <!-- Hub Modal -->
+    <div class="modal-overlay" id="hubModal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeHubModal()">
+                <i class="fa-solid fa-times"></i>
+            </button>
+            <div class="modal-title">Choose Your Hub</div>
+            <div class="modal-options">
+                <button class="modal-btn modal-btn-memories" onclick="navigateToMemories()">
+                    <i class="fa-solid fa-camera-retro"></i>
+                    Memories Hub
+                </button>
+                <button class="modal-btn modal-btn-crazy" onclick="navigateToCrazy()">
+                    <i class="fa-solid fa-fire"></i>
+                    Crazy Hub
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Layer 50: Main UI -->
+    <div class="main-wrapper py-10 px-6">
+        <div class="premium-glass-card p-10 md:p-16">
+            
+            <div class="text-center mb-12">
+                <h1 class="brand-logo text-6xl md:text-8xl tracking-tighter italic" id="t-logo">DASTARKHWAN</h1>
+                <p class="text-[10px] md:text-xs font-black text-slate-400 tracking-[0.5em] uppercase mt-6" id="t-tagline">EK DESH.EK THALI.SAB KE DASTARKHWAN.</p>
+            </div>
+
+            <!-- Heritage Rings -->
+            <div class="heritage-rings mb-12">
+                <div class="god-item">
+                    <div class="ring-border saffron shadow-lg"><img src="om.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3592/3592070.png'"></div>
+                    <h3 class="ring-label" id="t-namaste">NAMASTE</h3>
+                </div>
+                <div class="god-item">
+                    <div class="ring-border emerald shadow-lg"><img src="allah.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/1000/1000100.png'"></div>
+                    <h3 class="ring-label" id="t-salam">ASSALAMUALAIKUMA</h3>
+                </div>
+                <div class="god-item">
+                    <div class="ring-border brass shadow-lg"><img src="jesus.png" onerror="this.src='https://cdn-icons-png.flaticon.com/512/2854/2854581.png'"></div>
+                    <h3 class="ring-label" id="t-halle">HALLELUJAH</h3>
+                </div>
+            </div>
+
+            <!-- Bento Button Stack -->
+            <div class="grid gap-4">
+                <button onclick="handleHungryClick()" class="bento-btn primary-bento group overflow-hidden btn-special">
+                    <div class="flex items-center gap-6 relative z-10">
+                        <div class="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center text-3xl group-hover:rotate-12 transition">🍛</div>
+                        <span id="t-hungry" class="text-2xl font-black uppercase">I am Hungry</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-right opacity-40 group-hover:translate-x-2 transition-all"></i>
+                    <div class="hover-glow"></div>
+                </button>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <button onclick="handleHotelClick()" class="bento-btn secondary-bento group btn-special">
+                        <i class="fa-solid fa-utensils text-2xl text-orange-500 mb-2 group-hover:scale-125 transition"></i>
+                        <span id="t-hotel" class="text-[10px] font-black uppercase tracking-widest">REGISTER HOTEL</span>
+                    </button>
+                    <button onclick="openHubModal()" class="bento-btn secondary-bento group btn-special">
+                        <i class="fa-solid fa-camera-retro text-2xl text-emerald-600 mb-2 group-hover:rotate-12 transition"></i>
+                        <span id="t-memory" class="text-[10px] font-black uppercase tracking-widest">MEMORIES & CRAZY HUB</span>
+                    </button>
+                </div>
+
+                <!-- ========= KARMA BUTTON – 8 FLOWERS, FLEX LAYOUT, ALL BUGS FIXED ========= -->
+                <a href="karma.html" class="bento-btn karma-bento group" id="karmaButton">
+                    
+                    <!-- SVG Garden Container – FLEXBOX, even spacing -->
+                    <div class="garden-container-small" id="karmaGarden">
+                        <!-- SVG Definitions (gradients) -->
+                        <svg width="0" height="0">
+                            <defs>
+                                <linearGradient id="stemGradientSmall" x1="0%" y1="100%" x2="0%" y2="0%">
+                                    <stop offset="0%" stop-color="#2d4a2e"/>
+                                    <stop offset="50%" stop-color="#3d5a3e"/>
+                                    <stop offset="100%" stop-color="#4d6a4e"/>
+                                </linearGradient>
+                                <radialGradient id="tulipGradientSmall" cx="50%" cy="50%">
+                                    <stop offset="0%" stop-color="#FF85C1"/>
+                                    <stop offset="60%" stop-color="#FF1493"/>
+                                    <stop offset="100%" stop-color="#E91E8C"/>
+                                </radialGradient>
+                                <radialGradient id="roseGradientSmall1" cx="40%" cy="40%">
+                                    <stop offset="0%" stop-color="#FFD0E5"/>
+                                    <stop offset="100%" stop-color="#FF85C1"/>
+                                </radialGradient>
+                                <radialGradient id="roseGradientSmall2" cx="50%" cy="50%">
+                                    <stop offset="0%" stop-color="#FFA5D2"/>
+                                    <stop offset="100%" stop-color="#FF6BA8"/>
+                                </radialGradient>
+                                <radialGradient id="roseGradientSmall3" cx="60%" cy="60%">
+                                    <stop offset="0%" stop-color="#FFBBDA"/>
+                                    <stop offset="100%" stop-color="#E94B8B"/>
+                                </radialGradient>
+                                <radialGradient id="daisyPetalGradientSmall" cx="50%" cy="50%">
+                                    <stop offset="0%" stop-color="#FFFFFF"/>
+                                    <stop offset="80%" stop-color="#FFFEF7"/>
+                                    <stop offset="100%" stop-color="#FFF8E1"/>
+                                </radialGradient>
+                                <radialGradient id="daisyCenterGradientSmall" cx="30%" cy="30%">
+                                    <stop offset="0%" stop-color="#FFF176"/>
+                                    <stop offset="100%" stop-color="#FFB300"/>
+                                </radialGradient>
+                                <radialGradient id="poppyGradientSmall" cx="40%" cy="40%">
+                                    <stop offset="0%" stop-color="#FF9370"/>
+                                    <stop offset="50%" stop-color="#FF6347"/>
+                                    <stop offset="100%" stop-color="#E8583E"/>
+                                </radialGradient>
+                                <radialGradient id="poppyCenterGradientSmall" cx="50%" cy="50%">
+                                    <stop offset="0%" stop-color="#2d1810"/>
+                                    <stop offset="100%" stop-color="#1a0f08"/>
+                                </radialGradient>
+                                <linearGradient id="leafGradientSmall" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#90D494"/>
+                                    <stop offset="50%" stop-color="#7BC47F"/>
+                                    <stop offset="100%" stop-color="#66BB6A"/>
+                                </linearGradient>
+                                <radialGradient id="sunflowerPetalGradient" cx="50%" cy="50%">
+                                    <stop offset="0%" stop-color="#FFD966"/>
+                                    <stop offset="100%" stop-color="#FFB300"/>
+                                </radialGradient>
+                                <radialGradient id="sunflowerCenterGradient" cx="50%" cy="50%">
+                                    <stop offset="0%" stop-color="#8B4513"/>
+                                    <stop offset="100%" stop-color="#5D3A1A"/>
+                                </radialGradient>
+                                <radialGradient id="bluebellPetalGradient" cx="50%" cy="50%">
+                                    <stop offset="0%" stop-color="#A7C7E7"/>
+                                    <stop offset="100%" stop-color="#6A93B0"/>
+                                </radialGradient>
+                                <radialGradient id="bluebellCenterGradient" cx="50%" cy="50%">
+                                    <stop offset="0%" stop-color="#F4EBD0"/>
+                                    <stop offset="100%" stop-color="#D4B483"/>
+                                </radialGradient>
+                                <radialGradient id="cherryPetalGradient" cx="50%" cy="50%">
+                                    <stop offset="0%" stop-color="#FFB7C5"/>
+                                    <stop offset="100%" stop-color="#FF8E9F"/>
+                                </radialGradient>
+                                <radialGradient id="cherryCenterGradient" cx="50%" cy="50%">
+                                    <stop offset="0%" stop-color="#8B3A3A"/>
+                                    <stop offset="100%" stop-color="#5A1E1E"/>
+                                </radialGradient>
+                                <radialGradient id="lilyPetalGradient" cx="50%" cy="50%">
+                                    <stop offset="0%" stop-color="#FFFDD0"/>
+                                    <stop offset="100%" stop-color="#FFE4B5"/>
+                                </radialGradient>
+                                <radialGradient id="lilyCenterGradient" cx="50%" cy="50%">
+                                    <stop offset="0%" stop-color="#FF8C00"/>
+                                    <stop offset="100%" stop-color="#CC7000"/>
+                                </radialGradient>
+                            </defs>
+                        </svg>
+
+                        <!-- 1. Tulip -->
+                        <svg id="tulipSmall" class="flower-svg" viewBox="0 0 30 48">
+                            <path class="stem" d="M 15 48 Q 15 32, 15 24 Q 15 16, 15 10" stroke-dasharray="38" stroke-dashoffset="38"/>
+                            <g class="flower-group" transform="translate(15,10)">
+                                <ellipse cx="0" cy="0" rx="6" ry="10" fill="url(#tulipGradientSmall)"/>
+                                <ellipse cx="-4" cy="1" rx="5" ry="8" transform="rotate(-25)" fill="url(#tulipGradientSmall)"/>
+                                <ellipse cx="4" cy="1" rx="5" ry="8" transform="rotate(25)" fill="url(#tulipGradientSmall)"/>
+                                <ellipse cx="0" cy="1" rx="4" ry="7" fill="#FF1493" opacity="0.9"/>
+                                <ellipse cx="0" cy="4" rx="2" ry="2.5" fill="#2C2415"/>
+                                <line x1="0" y1="4" x2="0" y2="0" stroke="#FFE135" stroke-width="0.8"/>
+                                <circle cx="0" cy="0" r="1" fill="#FFE135"/>
+                            </g>
+                            <ellipse cx="11" cy="34" rx="3" ry="6" transform="rotate(-20 11 34)" class="leaf" fill="url(#leafGradientSmall)"/>
+                        </svg>
+
+                        <!-- 2. Rose -->
+                        <svg id="roseSmall" class="flower-svg" viewBox="0 0 32 48">
+                            <path class="stem" d="M 16 48 C 14 38, 16 28, 16 18 Q 16 14, 16 10" stroke-dasharray="38" stroke-dashoffset="38"/>
+                            <g class="flower-group" transform="translate(16,10)">
+                                <ellipse cx="-3" cy="0" rx="4" ry="5" transform="rotate(-20)" fill="url(#roseGradientSmall1)"/>
+                                <ellipse cx="3" cy="0" rx="4" ry="5" transform="rotate(20)" fill="url(#roseGradientSmall1)"/>
+                                <ellipse cx="0" cy="2" rx="5" ry="4" fill="url(#roseGradientSmall2)"/>
+                                <ellipse cx="0" cy="0" rx="3" ry="3.5" fill="url(#roseGradientSmall3)"/>
+                                <ellipse cx="0" cy="0" rx="2" ry="2" fill="#C71585"/>
+                                <circle cx="-0.5" cy="-1" r="1" fill="#FFB7C5" opacity="0.7"/>
+                            </g>
+                            <ellipse cx="12" cy="36" rx="3" ry="6" transform="rotate(15 12 36)" class="leaf" fill="url(#leafGradientSmall)"/>
+                            <ellipse cx="20" cy="38" rx="2.5" ry="5" transform="rotate(-10 20 38)" class="leaf" fill="url(#leafGradientSmall)"/>
+                        </svg>
+
+                        <!-- 3. Daisy -->
+                        <svg id="daisySmall" class="flower-svg" viewBox="0 0 30 48">
+                            <path class="stem" d="M 15 48 C 15 36, 16 26, 15 16 Q 15 12, 15 8" stroke-dasharray="40" stroke-dashoffset="40"/>
+                            <g class="flower-group" transform="translate(15,8)">
+                                <ellipse cx="0" cy="-5" rx="2" ry="5" fill="url(#daisyPetalGradientSmall)" transform="rotate(0)"/>
+                                <ellipse cx="3" cy="-4" rx="2" ry="5" fill="url(#daisyPetalGradientSmall)" transform="rotate(30)"/>
+                                <ellipse cx="5" cy="-2" rx="2" ry="5" fill="url(#daisyPetalGradientSmall)" transform="rotate(60)"/>
+                                <ellipse cx="5.5" cy="0" rx="2" ry="5" fill="url(#daisyPetalGradientSmall)" transform="rotate(90)"/>
+                                <ellipse cx="4" cy="3" rx="2" ry="5" fill="url(#daisyPetalGradientSmall)" transform="rotate(120)"/>
+                                <ellipse cx="2" cy="5" rx="2" ry="5" fill="url(#daisyPetalGradientSmall)" transform="rotate(150)"/>
+                                <ellipse cx="0" cy="5.5" rx="2" ry="5" fill="url(#daisyPetalGradientSmall)" transform="rotate(180)"/>
+                                <ellipse cx="-3" cy="4" rx="2" ry="5" fill="url(#daisyPetalGradientSmall)" transform="rotate(210)"/>
+                                <ellipse cx="-5" cy="2" rx="2" ry="5" fill="url(#daisyPetalGradientSmall)" transform="rotate(240)"/>
+                                <ellipse cx="-5.5" cy="0" rx="2" ry="5" fill="url(#daisyPetalGradientSmall)" transform="rotate(270)"/>
+                                <ellipse cx="-4" cy="-3" rx="2" ry="5" fill="url(#daisyPetalGradientSmall)" transform="rotate(300)"/>
+                                <ellipse cx="-2" cy="-5" rx="2" ry="5" fill="url(#daisyPetalGradientSmall)" transform="rotate(330)"/>
+                                <circle cx="0" cy="0" r="3.5" fill="url(#daisyCenterGradientSmall)"/>
+                                <circle cx="0" cy="0" r="2" fill="#CC9900" opacity="0.6"/>
+                            </g>
+                            <ellipse cx="19" cy="32" rx="3" ry="5" transform="rotate(20 19 32)" class="leaf" fill="url(#leafGradientSmall)"/>
+                        </svg>
+
+                        <!-- 4. Poppy -->
+                        <svg id="poppySmall" class="flower-svg" viewBox="0 0 32 48">
+                            <path class="stem" d="M 16 48 Q 17 34, 16 22 C 16 16, 16 12, 16 9" stroke-dasharray="39" stroke-dashoffset="39"/>
+                            <g class="flower-group" transform="translate(16,9)">
+                                <path d="M0,-7 Q-3,-8 -5,-7 Q-7,-5 -6,-2 Q-4,-1 0,0 Z" fill="url(#poppyGradientSmall)"/>
+                                <path d="M0,-7 Q3,-8 5,-7 Q7,-5 6,-2 Q4,-1 0,0 Z" fill="url(#poppyGradientSmall)"/>
+                                <path d="M-7,0 Q-8,-3 -7,-5 Q-5,-7 -2,-6 Q-1,-4 0,0 Z" fill="url(#poppyGradientSmall)"/>
+                                <path d="M7,0 Q8,-3 7,-5 Q5,-7 2,-6 Q1,-4 0,0 Z" fill="url(#poppyGradientSmall)"/>
+                                <ellipse cx="-3" cy="-3" rx="1" ry="2" transform="rotate(-30)" fill="#330000" opacity="0.4"/>
+                                <ellipse cx="3" cy="-3" rx="1" ry="2" transform="rotate(30)" fill="#330000" opacity="0.4"/>
+                                <circle cx="0" cy="-1.5" r="3" fill="url(#poppyCenterGradientSmall)"/>
+                                <circle cx="-1.5" cy="-2" r="0.6" fill="#1a0f08"/>
+                                <circle cx="1.5" cy="-2" r="0.6" fill="#1a0f08"/>
+                                <circle cx="0" cy="-3" r="0.6" fill="#1a0f08"/>
+                            </g>
+                            <ellipse cx="11" cy="34" rx="3" ry="5" transform="rotate(-20 11 34)" class="leaf" fill="url(#leafGradientSmall)"/>
+                        </svg>
+
+                        <!-- 5. Sunflower -->
+                        <svg id="sunflowerSmall" class="flower-svg" viewBox="0 0 32 48">
+                            <path class="stem" d="M 16 48 Q 16 32, 16 18 Q 16 14, 16 10" stroke-dasharray="38" stroke-dashoffset="38"/>
+                            <g class="flower-group" transform="translate(16,10)">
+                                <ellipse cx="0" cy="-6" rx="3.5" ry="6" fill="url(#sunflowerPetalGradient)" transform="rotate(0)"/>
+                                <ellipse cx="5" cy="-3" rx="3.5" ry="6" fill="url(#sunflowerPetalGradient)" transform="rotate(45)"/>
+                                <ellipse cx="6" cy="2" rx="3.5" ry="6" fill="url(#sunflowerPetalGradient)" transform="rotate(90)"/>
+                                <ellipse cx="3" cy="6" rx="3.5" ry="6" fill="url(#sunflowerPetalGradient)" transform="rotate(135)"/>
+                                <ellipse cx="-3" cy="6" rx="3.5" ry="6" fill="url(#sunflowerPetalGradient)" transform="rotate(180)"/>
+                                <ellipse cx="-6" cy="2" rx="3.5" ry="6" fill="url(#sunflowerPetalGradient)" transform="rotate(225)"/>
+                                <ellipse cx="-5" cy="-3" rx="3.5" ry="6" fill="url(#sunflowerPetalGradient)" transform="rotate(270)"/>
+                                <ellipse cx="0" cy="-6" rx="3.5" ry="6" fill="url(#sunflowerPetalGradient)" transform="rotate(315)"/>
+                                <circle cx="0" cy="0" r="5" fill="url(#sunflowerCenterGradient)"/>
+                                <circle cx="0" cy="0" r="2.5" fill="#4A2C1A"/>
+                            </g>
+                            <ellipse cx="12" cy="34" rx="3" ry="6" transform="rotate(-15 12 34)" class="leaf" fill="url(#leafGradientSmall)"/>
+                            <ellipse cx="20" cy="36" rx="3" ry="5" transform="rotate(20 20 36)" class="leaf" fill="url(#leafGradientSmall)"/>
+                        </svg>
+
+                        <!-- 6. Bluebell -->
+                        <svg id="bluebellSmall" class="flower-svg" viewBox="0 0 30 48">
+                            <path class="stem" d="M 15 48 Q 15 34, 15 22 Q 15 16, 15 12" stroke-dasharray="36" stroke-dashoffset="36"/>
+                            <g class="flower-group" transform="translate(15,12)">
+                                <ellipse cx="0" cy="-2" rx="4" ry="7" fill="url(#bluebellPetalGradient)"/>
+                                <ellipse cx="0" cy="2" rx="3.5" ry="6" fill="url(#bluebellPetalGradient)"/>
+                                <ellipse cx="0" cy="6" rx="3" ry="5" fill="url(#bluebellPetalGradient)"/>
+                                <circle cx="0" cy="-1" r="1.8" fill="url(#bluebellCenterGradient)"/>
+                            </g>
+                            <ellipse cx="11" cy="34" rx="3" ry="6" transform="rotate(-15 11 34)" class="leaf" fill="url(#leafGradientSmall)"/>
+                            <ellipse cx="19" cy="36" rx="2.5" ry="5" transform="rotate(10 19 36)" class="leaf" fill="url(#leafGradientSmall)"/>
+                        </svg>
+
+                        <!-- 7. Cherry Blossom -->
+                        <svg id="cherrySmall" class="flower-svg" viewBox="0 0 30 48">
+                            <path class="stem" d="M 15 48 Q 15 34, 15 22 Q 15 16, 15 10" stroke-dasharray="38" stroke-dashoffset="38"/>
+                            <g class="flower-group" transform="translate(15,10)">
+                                <circle cx="-3" cy="-2" r="4" fill="url(#cherryPetalGradient)"/>
+                                <circle cx="3" cy="-2" r="4" fill="url(#cherryPetalGradient)"/>
+                                <circle cx="0" cy="2" r="4" fill="url(#cherryPetalGradient)"/>
+                                <circle cx="-3" cy="4" r="3.5" fill="url(#cherryPetalGradient)"/>
+                                <circle cx="3" cy="4" r="3.5" fill="url(#cherryPetalGradient)"/>
+                                <circle cx="0" cy="0" r="3" fill="url(#cherryCenterGradient)"/>
+                                <circle cx="-1" cy="-1" r="0.8" fill="#FFE4E1"/>
+                                <circle cx="1" cy="-1" r="0.8" fill="#FFE4E1"/>
+                            </g>
+                            <ellipse cx="11" cy="34" rx="3" ry="6" transform="rotate(-15 11 34)" class="leaf" fill="url(#leafGradientSmall)"/>
+                            <ellipse cx="19" cy="36" rx="2.5" ry="5" transform="rotate(20 19 36)" class="leaf" fill="url(#leafGradientSmall)"/>
+                        </svg>
+
+                        <!-- 8. Lily -->
+                        <svg id="lilySmall" class="flower-svg" viewBox="0 0 30 48">
+                            <path class="stem" d="M 15 48 Q 15 32, 15 20 Q 15 14, 15 9" stroke-dasharray="39" stroke-dashoffset="39"/>
+                            <g class="flower-group" transform="translate(15,9)">
+                                <ellipse cx="0" cy="-4" rx="3" ry="8" fill="url(#lilyPetalGradient)" transform="rotate(-20)"/>
+                                <ellipse cx="0" cy="-4" rx="3" ry="8" fill="url(#lilyPetalGradient)" transform="rotate(20)"/>
+                                <ellipse cx="0" cy="0" rx="3" ry="7" fill="url(#lilyPetalGradient)"/>
+                                <ellipse cx="0" cy="0" rx="2" ry="5" fill="#FFF8E7"/>
+                                <circle cx="0" cy="-2" r="2" fill="url(#lilyCenterGradient)"/>
+                                <circle cx="-1" cy="-3" r="0.6" fill="#FFA500"/>
+                                <circle cx="1" cy="-3" r="0.6" fill="#FFA500"/>
+                            </g>
+                            <ellipse cx="11" cy="34" rx="3" ry="6" transform="rotate(-15 11 34)" class="leaf" fill="url(#leafGradientSmall)"/>
+                            <ellipse cx="19" cy="35" rx="2.5" ry="5" transform="rotate(25 19 35)" class="leaf" fill="url(#leafGradientSmall)"/>
+                        </svg>
+                    </div>
+
+                    <div class="flex items-center gap-4 relative z-10">
+                        <i class="fa-solid fa-hands-holding-circle text-2xl text-emerald-700 group-hover:scale-110 transition"></i> 
+                        <span id="t-karma" class="text-[10px] font-black uppercase tracking-widest ml-4">karma</span>
+                    </div>
+                </a>
+            </div>
+            
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script>
+        // Override navigateToCrazy to show custom loader (already present)
+        function navigateToCrazy() {
+            closeHubModal(); // close modal
+            const loader = document.getElementById('crazy-loader-overlay');
+            if (loader) {
+                loader.style.display = 'flex'; // show loader (uses .loader-screen flex)
+            }
+            setTimeout(() => {
+                window.location.href = 'crazy.html';
+            }, 3000); // 3 seconds delay - more time to enjoy the loader!
+        }
+
+        // New navigateToMemories function with its own loader
+        function navigateToMemories() {
+            closeHubModal(); // close modal
+            const loader = document.getElementById('memories-loader-overlay');
+            if (loader) {
+                loader.style.display = 'flex';
+            }
+            setTimeout(() => {
+                window.location.href = 'memories.html'; // adjust target page if needed
+            }, 3000); // 3 seconds delay - more time to enjoy the loader!
+        }
+
+        // Ensure closeHubModal exists (should be defined elsewhere, but define if not)
+        function closeHubModal() {
+            const modal = document.getElementById('hubModal');
+            if (modal) modal.style.display = 'none';
+        }
+    </script>
+</body>
+</html>

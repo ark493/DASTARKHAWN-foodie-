@@ -1,0 +1,928 @@
+/* ────────────────────────────────────────────────────────────
+   KARMA MINIMALIST HOME FEED STYLES
+   ──────────────────────────────────────────────────────────── */
+
+:root {
+    --bg-black: #000000;
+    --border-color: #1a1a1a;
+    --text-primary: #f5f5f5;
+    --text-secondary: #a8a8a8;
+    --accent-blue: #0095f6;
+    --accent-red: #ff3040;
+    --accent-green: #00e676;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Outfit', sans-serif;
+}
+
+body {
+    background-color: var(--bg-black);
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+.noise {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.04;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='f'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23f)'/%3E%3C/svg%3E");
+}
+
+/* ── Top Navigation Bar ── */
+.top-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 60px;
+    background: rgba(0, 0, 0, 0.85);
+    /* Slightly more transparent pure black for stronger blur effect */
+    backdrop-filter: blur(20px);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+}
+
+.top-nav-content {
+    width: 100%;
+    max-width: 470px;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 16px;
+}
+
+.logo-text {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: #fff;
+    cursor: pointer;
+}
+
+.coin-container {
+    position: fixed;
+    top: 12px;
+    right: 16px;
+    z-index: 9999;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+}
+
+.notification-dot {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    width: 8px;
+    height: 8px;
+    background-color: var(--accent-red);
+    border-radius: 50%;
+    border: 2px solid var(--bg-black);
+}
+
+/* ── Main Layout ── */
+.home-container {
+    display: flex;
+    justify-content: center;
+    padding-top: 60px;
+    /* Offset for fixed header */
+    width: 100%;
+}
+
+.feed-column {
+    width: 100%;
+    max-width: 470px;
+    /* Optimal IG width */
+    margin: 0 auto;
+}
+
+/* ── Followers Strip (WhatsApp-style status cards) ── */
+.followers-strip-wrapper {
+    padding: 14px 0 18px;
+    margin-bottom: 8px;
+    display: none;
+    /* shown by JS */
+}
+
+.followers-strip {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding: 0 16px;
+    scrollbar-width: none;
+}
+
+.followers-strip::-webkit-scrollbar {
+    display: none;
+}
+
+.follower-item {
+    flex-shrink: 0;
+    width: 100px;
+    background: #0a0a0a;
+    /* Darker card background */
+    border: 1px solid #141414;
+    /* Subtle border for separation */
+    border-radius: 14px;
+    overflow: hidden;
+    cursor: pointer;
+    position: relative;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    /* Soft deep shadow */
+}
+
+/* Text note at the top of the card */
+.follower-status-note {
+    font-size: 10px;
+    color: #e0e0e0;
+    padding: 8px 8px 4px;
+    text-align: left;
+    width: 100%;
+    line-height: 1.35;
+    min-height: 38px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Avatar area below text */
+.follower-avatar-wrap {
+    width: 100%;
+    height: 88px;
+    position: relative;
+    overflow: hidden;
+}
+
+.follower-avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.follower-avatar-ph {
+    width: 100%;
+    height: 100%;
+    background: #141414;
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    font-weight: 700;
+    color: #8E94F2;
+}
+
+/* Small name label at the bottom */
+.follower-name {
+    font-size: 10px;
+    color: var(--text-secondary);
+    padding: 5px 8px 7px;
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* ── Follow button inline in post header ── */
+.ig-header-right-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn-follow {
+    background: transparent;
+    border: 1px solid var(--accent-blue);
+    color: var(--accent-blue);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+}
+
+.btn-follow:hover {
+    background: var(--accent-blue);
+    color: #000;
+}
+
+.btn-follow.following {
+    border-color: #555;
+    color: var(--text-secondary);
+}
+
+.btn-follow.following:hover {
+    background: #262626;
+    color: var(--text-primary);
+}
+
+.three-dot {
+    color: var(--text-primary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+/* ── Comment Section ── */
+.comment-section {
+    margin-top: 12px;
+    border-top: 1px solid #1a1a1a;
+    padding-top: 10px;
+}
+
+.comment-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 10px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.comment-item {
+    display: flex;
+    gap: 8px;
+    font-size: 14px;
+    line-height: 1.4;
+}
+
+.comment-author {
+    font-weight: 600;
+    color: var(--text-primary);
+    flex-shrink: 0;
+}
+
+.comment-text {
+    color: #ccc;
+}
+
+.comment-input-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.comment-input {
+    flex: 1;
+    background: #0a0a0a;
+    border: 1px solid #1a1a1a;
+    border-radius: 20px;
+    color: var(--text-primary);
+    font-size: 13px;
+    padding: 8px 14px;
+    outline: none;
+    font-family: inherit;
+}
+
+.comment-input::placeholder {
+    color: #555;
+}
+
+.comment-input:focus {
+    border-color: #555;
+}
+
+.comment-post-btn {
+    background: none;
+    border: none;
+    color: var(--accent-blue);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0 4px;
+    transition: opacity 0.2s;
+}
+
+.comment-post-btn:hover {
+    opacity: 0.7;
+}
+
+.comment-post-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+
+/* ── Feed Loading ── */
+#posts-container {
+    padding-bottom: 80px;
+    /* Space at bottom of feed */
+}
+
+.feed-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 50px 0;
+    color: #888;
+}
+
+.spinner {
+    width: 30px;
+    height: 30px;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    border-top-color: var(--accent-blue);
+    animation: spin 1s ease-in-out infinite;
+    margin-bottom: 10px;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ── Exact IG Post Card Geometry ── */
+.post-card {
+    background: transparent;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 16px;
+    margin-bottom: 8px;
+}
+
+.post-card:last-child {
+    border-bottom: none;
+}
+
+.ig-post-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 16px;
+    /* Padding only on edges */
+}
+
+.ig-header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.post-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.post-avatar-placeholder {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #141414;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.ig-post-author {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    display: block;
+}
+
+.post-meta-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.ig-post-location {
+    font-size: 11px;
+    color: var(--text-secondary);
+}
+
+/* This is the 'x hours ago' note at the bottom of the footer */
+.ig-post-time {
+    font-size: 11px;
+    color: #888;
+    margin-top: 8px;
+    letter-spacing: 0.3px;
+}
+
+.ig-header-right {
+    color: var(--text-primary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+/* ── Media Bounds ── */
+.post-media {
+    width: 100%;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 4px 0 12px 0;
+}
+
+.post-media img,
+.post-media video {
+    width: 100%;
+    max-height: 580px;
+    /* Constrain max height so it fits nicely on screen */
+    object-fit: cover;
+    /* Cover ensures no black bars, nice clean square-ish crop */
+}
+
+/* ── Action Bar / Icon Placement ── */
+.ig-post-footer {
+    padding: 0 16px;
+}
+
+.ig-action-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.ig-actions-left {
+    display: flex;
+    gap: 16px;
+}
+
+.action-btn {
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    transition: transform 0.1s;
+}
+
+.action-btn:hover {
+    color: #888;
+}
+
+.action-btn:active {
+    transform: scale(0.95);
+}
+
+.action-btn svg {
+    width: 24px;
+    height: 24px;
+    stroke-width: 2;
+}
+
+.action-btn.inspire.liked svg {
+    stroke: var(--accent-red);
+    fill: var(--accent-red);
+}
+
+.action-btn.bookmark.saved svg {
+    fill: var(--text-primary);
+}
+
+/* ── Comments & Captions ── */
+.ig-likes-count {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: var(--text-primary);
+}
+
+.ig-caption {
+    font-size: 14px;
+    line-height: 18px;
+    margin-bottom: 6px;
+    color: var(--text-primary);
+}
+
+.ig-caption-author {
+    font-weight: 600;
+    margin-right: 4px;
+}
+
+.ig-view-comments {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 8px;
+    cursor: pointer;
+}
+
+.post-text-body {
+    padding: 20px 16px;
+    font-size: 18px;
+    font-weight: 300;
+    line-height: 1.6;
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    margin: 4px 0 12px 0;
+}
+
+/* ── Toast (Reused logic) ── */
+.toast {
+    position: fixed;
+    top: 30px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-20px);
+    background: rgba(20, 20, 25, 0.9);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50px;
+    padding: 12px 24px 12px 16px;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    z-index: 100000;
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+}
+
+.toast-icon {
+    width: 32px;
+    height: 32px;
+    background: var(--accent-blue);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+}
+
+.toast-content h4 {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 2px;
+}
+
+.toast-content p {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+/* ── Bottom Navigation Bar (standalone home.html) ── */
+.home-bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 58px;
+    background: rgba(0, 0, 0, 0.85);
+    /* Matches top-nav blur */
+    backdrop-filter: blur(20px);
+    border-top: 1px solid #141414;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    z-index: 1000;
+}
+
+.bnav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    text-decoration: none;
+    color: #666;
+    font-size: 10px;
+    letter-spacing: 0.5px;
+    padding: 6px 24px;
+    transition: color 0.15s;
+}
+
+.bnav-item.active {
+    color: #fff;
+}
+
+.bnav-item:hover {
+    color: #fff;
+}
+
+#posts-container {
+    padding-bottom: 80px;
+    /* Space so content isn't hidden behind bottom nav */
+}
+
+/* ██████████ IG DESKTOP POST MODAL ██████████ */
+
+.post-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 20000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    opacity: 0;
+    transition: opacity 0.25s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.post-modal-overlay.show {
+    display: flex;
+    opacity: 1;
+}
+
+.post-modal-container {
+    width: 95%;
+    max-width: 1200px;
+    height: 90vh;
+    max-height: 900px;
+    display: flex;
+    flex-direction: row;
+    background: #000;
+    border: 1px solid #1a1a1a;
+    border-radius: 4px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+    transform: scale(0.95);
+    transition: transform 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.post-modal-overlay.show .post-modal-container {
+    transform: scale(1);
+}
+
+.post-modal-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: none;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    z-index: 20001;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.post-modal-close:hover {
+    opacity: 1;
+}
+
+/* Left: Media Panel */
+.post-modal-media-wrap {
+    flex: 1;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border-right: 1px solid #1a1a1a;
+}
+
+.post-modal-media-wrap img,
+.post-modal-media-wrap video {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+/* Right: Comments Panel */
+.post-modal-right {
+    width: 350px;
+    min-width: 350px;
+    display: flex;
+    flex-direction: column;
+    background: #0a0a0a;
+}
+
+.post-modal-header {
+    display: flex;
+    align-items: center;
+    padding: 14px 16px;
+    border-bottom: 1px solid #1a1a1a;
+    gap: 12px;
+}
+
+.modal-header-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.modal-header-ph {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #141414;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.modal-header-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-header-username {
+    font-size: 14px;
+    font-weight: 600;
+    color: #fff;
+}
+
+.modal-header-location {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 2px;
+}
+
+/* Scrollable Comments area */
+.post-modal-comments {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+}
+
+/* Hide scrollbar for clean look */
+.post-modal-comments::-webkit-scrollbar {
+    width: 0px;
+}
+
+.modal-caption {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.modal-comment {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.modal-comment-text {
+    font-size: 14px;
+    line-height: 1.4;
+    word-break: break-word;
+}
+
+.modal-comment-time {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 4px;
+}
+
+/* Sticky Footer (Actions & Input) */
+.post-modal-footer {
+    padding: 14px 16px;
+    border-top: 1px solid #1a1a1a;
+    background: #0a0a0a;
+}
+
+/* Double Tap Heart Animation */
+.double-tap-heart {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    color: var(--accent-red);
+    opacity: 0;
+    z-index: 10;
+    pointer-events: none;
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.5));
+}
+
+@keyframes heartBurst {
+    0% {
+        transform: translate(-50%, -50%) scale(0);
+        opacity: 0;
+    }
+
+    15% {
+        transform: translate(-50%, -50%) scale(1.2);
+        opacity: 1;
+    }
+
+    30% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+
+    80% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translate(-50%, -50%) scale(0.8);
+        opacity: 0;
+    }
+}
+
+.heart-animate {
+    animation: heartBurst 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+/* Ripple effect behind heart */
+.heart-ripple {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 100px;
+    height: 100px;
+    background: radial-gradient(circle, rgba(255, 48, 64, 0.4) 0%, rgba(255, 48, 64, 0) 70%);
+    border-radius: 50%;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 9;
+}
+
+@keyframes rippleBurst {
+    0% {
+        transform: translate(-50%, -50%) scale(0.5);
+        opacity: 1;
+    }
+
+    100% {
+        transform: translate(-50%, -50%) scale(2.5);
+        opacity: 0;
+    }
+}
+
+.ripple-animate {
+    animation: rippleBurst 0.8s ease-out forwards;
+}
+
+/* Feed Video Comment Slide-in Panel */
+.feed-column {
+    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.feed-column.shifted-left {
+    transform: translateX(-150px);
+    /* Shift feed left when comments open */
+}
+
+.inline-comment-panel {
+    position: fixed;
+    top: 60px;
+    /* Below top nav */
+    right: -400px;
+    /* Hidden offscreen */
+    width: 350px;
+    height: calc(100vh - 60px);
+    background: #0a0a0a;
+    border-left: 1px solid #1a1a1a;
+    z-index: 900;
+    display: flex;
+    flex-direction: column;
+    transition: right 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+    box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+}
+
+.inline-comment-panel.open {
+    right: 0;
+}
+
+.inline-comment-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px;
+    border-bottom: 1px solid #1a1a1a;
+    font-weight: 600;
+}
+
+.inline-comment-close {
+    background: none;
+    border: none;
+    color: var(--text-primary);
+    cursor: pointer;
+}

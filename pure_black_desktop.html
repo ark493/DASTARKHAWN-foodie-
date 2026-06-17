@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pure Black Desktop Layout</title>
+    <style>
+        /* ─── BASE RESET & SETUP ─── */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: #000000;
+            /* Pure black background */
+            color: #ffffff;
+            height: 100vh;
+            overflow: hidden;
+            /* Prevent body scroll, handle scroll in columns */
+            display: flex;
+            justify-content: center;
+            /* Center the whole app container on ultra-wide screens */
+        }
+
+        /* ─── MAIN DESKTOP LAYOUT ─── */
+        .app-container {
+            display: flex;
+            width: 100%;
+            max-width: 1400px;
+            /* Max width for neat desktop scaling */
+            height: 100vh;
+        }
+
+        /* ─── LEFT SIDEBAR (Navigation) ─── */
+        .sidebar-left {
+            width: 280px;
+            padding: 32px 24px;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            margin-bottom: 48px;
+            color: #fff;
+        }
+
+        .nav-menu {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .nav-item {
+            font-size: 16px;
+            font-weight: 500;
+            padding: 12px 16px;
+            border-radius: 8px;
+            color: #a0a0a0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: #ffffff;
+        }
+
+        /* ─── MIDDLE CONTENT AREA (Feed/Main) ─── */
+        .main-content {
+            flex: 1;
+            /* Takes up remaining space */
+            max-width: 700px;
+            /* Keep text readable */
+            padding: 0 40px;
+            overflow-y: auto;
+            /* Scrollable feed */
+            scroll-behavior: smooth;
+        }
+
+        /* Hide scrollbar for a cleaner look */
+        .main-content::-webkit-scrollbar {
+            display: none;
+        }
+
+        .main-content {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .header {
+            position: sticky;
+            top: 0;
+            background-color: rgba(0, 0, 0, 0.85);
+            /* Pure black with slight transparency for blur */
+            backdrop-filter: blur(12px);
+            padding: 24px 0;
+            font-size: 20px;
+            font-weight: 700;
+            z-index: 10;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            margin-bottom: 24px;
+        }
+
+        .content-card {
+            background-color: #0d0d0d;
+            /* Slightly lighter than black to stand out */
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .card-text {
+            font-size: 14px;
+            color: #999;
+            line-height: 1.6;
+        }
+
+        /* ─── RIGHT SIDEBAR (Widgets/Suggestions) ─── */
+        .sidebar-right {
+            width: 320px;
+            padding: 32px 24px;
+            border-left: 1px solid rgba(255, 255, 255, 0.1);
+            overflow-y: auto;
+        }
+
+        .widget {
+            background-color: #0a0a0a;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .widget-title {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #fff;
+        }
+
+        .widget-list-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .widget-list-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .circle-ph {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #222;
+        }
+
+        .item-info h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #eee;
+        }
+
+        .item-info p {
+            font-size: 12px;
+            color: #777;
+            margin-top: 4px;
+        }
+
+        /* Responsive handling for smaller desktop windows */
+        @media (max-width: 1024px) {
+            .sidebar-right {
+                display: none;
+            }
+
+            /* Hide right panel on smaller screens */
+        }
+
+        @media (max-width: 768px) {
+            .sidebar-left {
+                width: 80px;
+                padding: 24px 12px;
+            }
+
+            .nav-item span {
+                display: none;
+            }
+
+            /* Icon only */
+            .logo {
+                font-size: 12px;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="app-container">
+
+        <!-- LEFT SIDEBAR -->
+        <aside class="sidebar-left">
+            <div class="logo">LOGO.</div>
+            <ul class="nav-menu">
+                <li class="nav-item active">
+                    <span style="font-size: 20px;">🏠</span> <span>Home</span>
+                </li>
+                <li class="nav-item">
+                    <span style="font-size: 20px;">🔍</span> <span>Explore</span>
+                </li>
+                <li class="nav-item">
+                    <span style="font-size: 20px;">🔔</span> <span>Notifications</span>
+                </li>
+                <li class="nav-item">
+                    <span style="font-size: 20px;">✉️</span> <span>Messages</span>
+                </li>
+                <li class="nav-item">
+                    <span style="font-size: 20px;">👤</span> <span>Profile</span>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="main-content">
+            <div class="header">Home Feed</div>
+
+            <!-- Content Cards -->
+            <div class="content-card">
+                <h3 class="card-title">Welcome to the void</h3>
+                <p class="card-text">This is a pure black, desktop-optimized layout. It uses a three-column structure
+                    which is highly popular in modern web applications, dashboards, and social platforms.</p>
+            </div>
+
+            <div class="content-card">
+                <h3 class="card-title">High Contrast & Clean</h3>
+                <p class="card-text">Using #000000 provides the highest level of contrast for OLED screens while saving
+                    battery power. The elements layered on top use subtle grays (#0a0a0a, #0d0d0d) and faint borders
+                    (rgba 255,255,255, 0.1) to create depth without relying on shadows.</p>
+            </div>
+
+            <div class="content-card">
+                <div style="width: 100%; height: 200px; background: #1a1a1a; border-radius: 8px; margin-bottom: 16px;">
+                </div>
+                <h3 class="card-title">Media Ready</h3>
+                <p class="card-text">The layout is constrained to standard desktop widths (max 1400px), ensuring that
+                    text lines never become too long to read comfortably, while keeping everything perfectly centered on
+                    ultra-wide monitors.</p>
+            </div>
+
+            <div class="content-card">
+                <h3 class="card-title">Scroll down for more</h3>
+                <p class="card-text">Notice how the header sticks to the top with a subtle blur effect as you scroll the
+                    main content area, while the left and right sidebars remain perfectly locked in place.</p>
+            </div>
+            <div class="content-card">
+                <h3 class="card-title">Bottom of feed</h3>
+                <p class="card-text">End of content.</p>
+            </div>
+        </main>
+
+        <!-- RIGHT SIDEBAR -->
+        <aside class="sidebar-right">
+            <div class="widget">
+                <h3 class="widget-title">Trending Topics</h3>
+                <div class="widget-list-item">
+                    <div class="item-info">
+                        <h4>#WebDesign</h4>
+                        <p>12.5k Posts</p>
+                    </div>
+                </div>
+                <div class="widget-list-item">
+                    <div class="item-info">
+                        <h4>#DarkTheme</h4>
+                        <p>8,204 Posts</p>
+                    </div>
+                </div>
+                <div class="widget-list-item">
+                    <div class="item-info">
+                        <h4>#UIUX</h4>
+                        <p>5,102 Posts</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="widget">
+                <h3 class="widget-title">Suggested For You</h3>
+                <div class="widget-list-item">
+                    <div class="circle-ph"></div>
+                    <div class="item-info">
+                        <h4>John Doe</h4>
+                        <p>@johndoesdesign</p>
+                    </div>
+                </div>
+                <div class="widget-list-item">
+                    <div class="circle-ph"></div>
+                    <div class="item-info">
+                        <h4>Jane Smith</h4>
+                        <p>@jane_codes</p>
+                    </div>
+                </div>
+                <div class="widget-list-item">
+                    <div class="circle-ph"></div>
+                    <div class="item-info">
+                        <h4>Tech Daily</h4>
+                        <p>@techdaily</p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Karma - Settings</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;0,700;1,300&display=swap"
+        rel="stylesheet">
+
+    <!-- Using the same core stylesheets -->
+    <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="profile.css">
+
+    <style>
+        body,
+        html {
+            background-color: #000;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            font-family: 'Outfit', sans-serif;
+            overflow: hidden;
+        }
+
+        .dashboard-container {
+            display: flex;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* Ambient Background strictly for Settings to make it feel premium */
+        .settings-bg {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            background: radial-gradient(circle at top right, rgba(40, 40, 40, 0.4) 0%, #000 80%),
+                radial-gradient(circle at bottom left, rgba(20, 20, 20, 0.6) 0%, #000 80%);
+            pointer-events: none;
+        }
+
+        /* Settings Content Area */
+        .settings-content {
+            flex: 1;
+            margin-left: 72px;
+            /* Sidebar width + gap */
+            padding: 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .settings-card {
+            background: rgba(22, 22, 22, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 50px;
+            width: 100%;
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .settings-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 32px;
+            font-weight: 600;
+            margin-bottom: 40px;
+            letter-spacing: 1px;
+            color: #fff;
+        }
+
+        /* Dynamic Food Button */
+        .btn-food {
+            background: linear-gradient(135deg, #FF6B6B, #FF8E53);
+            color: #fff;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 99px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn-food:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.5);
+        }
+
+        /* Logout Button */
+        .btn-logout {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #ff4d4d;
+            padding: 16px 32px;
+            border-radius: 99px;
+            font-family: 'Outfit', sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.2s ease;
+        }
+
+        .btn-logout:hover {
+            background: rgba(255, 77, 77, 0.1);
+            border-color: rgba(255, 77, 77, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* Utility */
+        .user-info {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        .user-info img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .user-info div {
+            text-align: left;
+        }
+
+        .user-info .name {
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .user-info .email {
+            font-size: 14px;
+            color: #888;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="settings-bg"></div>
+    <div class="dashboard-container">
+        <!-- ███ GLOBAL SIDEBAR ███ -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <video autoplay muted loop playsinline class="logo-video">
+                        <source src="karma.mp4" type="video/mp4">
+                    </video>
+                    <div class="logo-mask"></div>
+                </div>
+            </div>
+            <ul class="nav-links">
+                <li class="nav-item" data-label="Home" onclick="window.location.href='home.html'">
+                    <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                            <polyline points="9 22 9 12 15 12 15 22" />
+                        </svg></div>
+                    <span class="label">Home</span>
+                </li>
+                <li class="nav-item" data-label="Search" onclick="window.location.href='search.html'">
+                    <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8" />
+                            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                        </svg></div>
+                    <span class="label">Search</span>
+                </li>
+                <li class="nav-item" data-label="Awaaz TV" onclick="window.location.href='awaaz_tv.html'">
+                    <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect width="20" height="15" x="2" y="7" rx="2" ry="2" />
+                            <polyline points="17 2 12 7 7 2" />
+                        </svg></div>
+                    <span class="label">Awaaz TV</span>
+                </li>
+                <!-- Additional Icons hidden for brevity/focus, showing core ones -->
+                <li class="nav-item" data-label="Profile" onclick="window.location.href='profile.html'">
+                    <div class="icon-box">
+                        <div class="nav-avatar-placeholder" id="navAvatarPlaceholder">
+                            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
+                                stroke-width="1.5">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                <circle cx="12" cy="7" r="4" />
+                            </svg>
+                        </div>
+                        <img src="" class="nav-avatar" id="navAvatar" style="display: none;">
+                    </div>
+                    <span class="label">Profile</span>
+                </li>
+                <li class="nav-item active" data-label="Settings">
+                    <div class="icon-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="3" />
+                            <path
+                                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                        </svg></div>
+                    <span class="label">Settings</span>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Settings Main Content -->
+        <main class="settings-content">
+            <div class="settings-card">
+                <div class="settings-title">Preferences</div>
+
+                <div class="user-info" id="settingsUserInfo">
+                    <img src="" id="settingsUserAvatar" style="display:none;" alt="User">
+                    <div>
+                        <div class="name" id="settingsUserName">Loading...</div>
+                        <div class="email" id="settingsUserEmail">...</div>
+                    </div>
+                </div>
+
+                <button class="btn-food" id="dynamicFoodBtn">
+                    Loading...
+                </button>
+
+                <button class="btn-logout" id="logoutBtn">
+                    Log out of Karma
+                </button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            /* ══════════════════════════════════════════════
+               RESTORE USER INFO
+            ══════════════════════════════════════════════ */
+            const userEmail = localStorage.getItem('karma_user_email') || 'Not logged in';
+            const storedAvatar = localStorage.getItem('karma_user_avatar');
+            const storedName = localStorage.getItem('karma_user_name') || localStorage.getItem('karma_user_username') || 'Karma Citizen';
+
+            document.getElementById('settingsUserEmail').textContent = userEmail;
+            document.getElementById('settingsUserName').textContent = storedName;
+
+            // Sidebar Avatar
+            const navAvatarPlaceholder = document.getElementById('navAvatarPlaceholder');
+            const navAvatar = document.getElementById('navAvatar');
+            const settingsUserAvatar = document.getElementById('settingsUserAvatar');
+
+            if (storedAvatar) {
+                const fullUrl = 'http://127.0.0.1:5000' + storedAvatar;
+                if (navAvatarPlaceholder) navAvatarPlaceholder.style.display = 'none';
+                if (navAvatar) {
+                    navAvatar.src = fullUrl;
+                    navAvatar.style.display = 'block';
+                }
+                settingsUserAvatar.src = fullUrl;
+                settingsUserAvatar.style.display = 'block';
+            } else {
+                settingsUserAvatar.src = 'https://i.pravatar.cc/150?img=68'; // Fallback
+                settingsUserAvatar.style.display = 'block';
+            }
+
+            /* ══════════════════════════════════════════════
+               DYNAMIC FOOD BUTTON LOGIC
+            ══════════════════════════════════════════════ */
+            const foodPhrases = [
+                "Bhuk lagi bhuk lagi!",
+                "Aaj khana me kiya hai?",
+                "Kuch meetha ho jaye?",
+                "I'm starving, let's eat!",
+                "Craving something spicy?",
+                "Time for a snack break",
+                "Explore local recipes"
+            ];
+
+            const foodBtn = document.getElementById('dynamicFoodBtn');
+            // Select a random phrase
+            const randomPhrase = foodPhrases[Math.floor(Math.random() * foodPhrases.length)];
+            foodBtn.textContent = '🍕 ' + randomPhrase;
+
+            // Navigate to index.html (the food app)
+            foodBtn.addEventListener('click', () => {
+                window.location.href = 'index.html';
+            });
+
+            /* ══════════════════════════════════════════════
+               LOGOUT LOGIC
+            ══════════════════════════════════════════════ */
+            const logoutBtn = document.getElementById('logoutBtn');
+            logoutBtn.addEventListener('click', () => {
+                // Clear all authentication artifacts
+                localStorage.removeItem('karma_user_email');
+                localStorage.removeItem('karma_user_avatar');
+                localStorage.removeItem('karma_user_name');
+                localStorage.removeItem('karma_user_username');
+
+                // Redirect back to biometrics app / origin
+                window.location.href = 'Karma.html';
+            });
+        });
+    </script>
+</body>
+
+</html>

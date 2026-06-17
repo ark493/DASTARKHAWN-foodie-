@@ -1,0 +1,639 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Palm Reading AI Scanner</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handtrack.js/0.0.5/handtrack.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a0033 50%, #0d1b2a 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Back button (added) */
+        .back-to-hub {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(20, 20, 40, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid #00ffff;
+            border-radius: 30px;
+            padding: 8px 18px;
+            color: #00ffff;
+            font-family: 'Segoe UI', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            z-index: 100;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+        }
+        .back-to-hub:hover {
+            background: rgba(0, 255, 255, 0.2);
+            border-color: #ff00ff;
+            color: #ff00ff;
+            box-shadow: 0 0 30px rgba(255, 0, 255, 0.5);
+        }
+
+        /* Particle Background */
+        .particle-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: radial-gradient(circle, #00ffff, #ff00ff);
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: float 15s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0) translateX(0);
+                opacity: 0;
+            }
+            50% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-100vh) translateX(50px);
+                opacity: 0;
+            }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .glass-container {
+            background: rgba(20, 20, 40, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 255, 255, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 0 50px rgba(0, 255, 255, 0.2);
+            animation: glow-pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes glow-pulse {
+            0%, 100% {
+                box-shadow: 0 0 50px rgba(0, 255, 255, 0.2);
+            }
+            50% {
+                box-shadow: 0 0 70px rgba(0, 255, 255, 0.4);
+            }
+        }
+
+        .title {
+            text-align: center;
+            color: #00ffff;
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            text-shadow: 0 0 20px rgba(0, 255, 255, 0.8);
+            letter-spacing: 2px;
+        }
+
+        /* Scanner Box */
+        .scanner-box {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 4/3;
+            border: 2px solid #00ffff;
+            border-radius: 15px;
+            overflow: hidden;
+            background: #000;
+            margin-bottom: 30px;
+            box-shadow: inset 0 0 30px rgba(0, 255, 255, 0.3);
+        }
+
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            image-rendering: auto;
+            image-rendering: crisp-edges;
+            image-rendering: -webkit-optimize-contrast;
+        }
+
+        #camera {
+            transform: scaleX(-1);
+        }
+
+        #resultVideo {
+            display: none;
+        }
+
+
+
+        /* Scanning Line */
+        .scan-line {
+            position: absolute;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #00ffff, transparent);
+            top: 0;
+            left: 0;
+            z-index: 3;
+            animation: scanDown 2s linear infinite;
+            display: none;
+            box-shadow: 0 0 15px #00ffff;
+        }
+
+        .scan-line.active {
+            display: block;
+        }
+
+        @keyframes scanDown {
+            0% {
+                top: 0%;
+            }
+            100% {
+                top: 100%;
+            }
+        }
+
+        /* Detection Status */
+        .detection-status {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            color: #00ff00;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            z-index: 4;
+            border: 1px solid #00ff00;
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
+        }
+
+        .detection-status.warning {
+            color: #ffaa00;
+            border-color: #ffaa00;
+            box-shadow: 0 0 10px rgba(255, 170, 0, 0.5);
+        }
+
+        /* Scan Progress */
+        .scan-progress {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #00ffff;
+            font-size: 64px;
+            font-weight: bold;
+            z-index: 10;
+            text-shadow: 0 0 30px rgba(0, 255, 255, 0.8);
+            display: none;
+        }
+
+        .scan-progress.active {
+            display: block;
+            animation: pulse-text 0.5s ease-in-out;
+        }
+
+        @keyframes pulse-text {
+            0%, 100% {
+                transform: translate(-50%, -50%) scale(1);
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.1);
+            }
+        }
+
+        /* Glitch Text */
+        .glitch-text {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #ff00ff;
+            font-size: 14px;
+            font-weight: bold;
+            z-index: 5;
+            display: none;
+            letter-spacing: 2px;
+            animation: glitch 0.3s infinite;
+        }
+
+        .glitch-text.active {
+            display: block;
+        }
+
+        @keyframes glitch {
+            0%, 100% {
+                text-shadow: 2px 0 #00ffff, -2px 0 #ff00ff;
+            }
+            50% {
+                text-shadow: -2px 0 #00ffff, 2px 0 #ff00ff;
+            }
+        }
+
+        /* Radar */
+        .radar {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            width: 80px;
+            height: 80px;
+            border: 2px solid #00ffff;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(0, 255, 255, 0.1) 0%, transparent 70%);
+            z-index: 5;
+            display: none;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3), inset 0 0 20px rgba(0, 255, 255, 0.1);
+        }
+
+        .radar.active {
+            display: block;
+        }
+
+        .radar-line {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 40px;
+            height: 1px;
+            background: linear-gradient(90deg, #ff00ff, transparent);
+            transform-origin: left center;
+            animation: radarSpin 2s linear infinite;
+        }
+
+        @keyframes radarSpin {
+            0% {
+                transform: translateX(-50%) rotate(0deg);
+            }
+            100% {
+                transform: translateX(-50%) rotate(360deg);
+            }
+        }
+
+        /* Buttons */
+        .buttons-container {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            flex: 1;
+            min-width: 150px;
+            padding: 15px 30px;
+            border: 2px solid #00ffff;
+            background: rgba(0, 255, 255, 0.1);
+            color: #00ffff;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+        }
+
+        .btn:hover {
+            background: rgba(0, 255, 255, 0.3);
+            box-shadow: 0 0 40px rgba(0, 255, 255, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn.secondary {
+            border-color: #ff00ff;
+            color: #ff00ff;
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.3);
+        }
+
+        .btn.secondary:hover {
+            background: rgba(255, 0, 255, 0.3);
+            box-shadow: 0 0 40px rgba(255, 0, 255, 0.6);
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .glass-container {
+                padding: 20px;
+            }
+
+            .title {
+                font-size: 22px;
+            }
+
+            .btn {
+                min-width: 120px;
+                padding: 12px 20px;
+                font-size: 14px;
+            }
+
+            .scan-progress {
+                font-size: 48px;
+            }
+
+            .back-to-hub {
+                font-size: 12px;
+                padding: 6px 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Back button to crazy.html -->
+    <a href="crazy.html" class="back-to-hub">← Back to Hub</a>
+
+    <!-- Particle Background -->
+    <div class="particle-bg" id="particleBg"></div>
+
+    <div class="container">
+        <div class="glass-container">
+            <div class="title">🔮 PALM READING BY KUPPLI BABA </div>
+
+            <!-- Scanner Box -->
+            <div class="scanner-box" id="scannerBox">
+                <video id="camera" autoplay playsinline></video>
+                <video id="resultVideo" preload="auto"></video>
+                <div class="scan-line" id="scanLine"></div>
+                <div class="glitch-text" id="glitchText">SCANNING...</div>
+                <div class="scan-progress" id="scanProgress">0%</div>
+                <div class="radar" id="radar">
+                    <div class="radar-line"></div>
+                </div>
+                <div class="detection-status" id="detectionStatus">🟢 READY</div>
+            </div>
+
+            <!-- Buttons -->
+            <div class="buttons-container">
+                <button class="btn" id="startScanBtn" onclick="app.startScan()">START SCAN</button>
+                <button class="btn secondary" id="resetBtn" onclick="app.goBack()" style="display: none;">BACK</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const app = {
+            model: null,
+            video: null,
+            videoNames: [
+                'video1.mp4',
+                'video2.mp4',
+                'video3.mp4',
+                'video4.mp4',
+                'video5.mp4',
+                'video6.mp4',
+                'video7.mp4',
+                'video8.mp4',
+                'video9.mp4',
+                'video10.mp4'
+            ],
+            isScanning: false,
+            handDetected: false,
+
+            async init() {
+                this.video = document.getElementById('camera');
+
+                // Load Hand Detection Model
+                try {
+                    const modelParams = {
+                        flipHorizontal: true,
+                        maxNumBoxes: 20,
+                        iouThreshold: 0.5,
+                        scoreThreshold: 0.6,
+                    };
+                    this.model = await handTrack.load(modelParams);
+                    console.log('Hand detection model loaded');
+                } catch (error) {
+                    console.error('Error loading hand detection model:', error);
+                }
+
+                this.createParticles();
+            },
+
+            async startScan() {
+                if (this.isScanning) return;
+                this.isScanning = true;
+
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({
+                        video: { 
+                            facingMode: 'user',
+                            width: { ideal: 1920 },
+                            height: { ideal: 1080 }
+                        },
+                        audio: false
+                    });
+                    this.video.srcObject = stream;
+                    this.video.style.display = 'block';
+
+                    await new Promise(resolve => {
+                        this.video.onloadedmetadata = resolve;
+                    });
+
+                    document.getElementById('startScanBtn').disabled = true;
+
+                    // Show scanning UI
+                    document.getElementById('scanLine').classList.add('active');
+                    document.getElementById('glitchText').classList.add('active');
+                    document.getElementById('radar').classList.add('active');
+                    document.getElementById('detectionStatus').textContent = '⚠ SHOW YOUR PALM';
+                    document.getElementById('detectionStatus').classList.add('warning');
+
+                    await this.waitForHandDetection();
+
+                    // Start scanning animation
+                    this.performScan();
+
+                } catch (error) {
+                    console.error('Camera access error:', error);
+                    alert('Unable to access camera. Please check permissions.');
+                    this.isScanning = false;
+                    document.getElementById('startScanBtn').disabled = false;
+                }
+            },
+
+            async waitForHandDetection() {
+                return new Promise(resolve => {
+                    const checkInterval = setInterval(async () => {
+                        try {
+                            const predictions = await this.model.estimateHands(this.video, true);
+                            if (predictions.length > 0) {
+                                clearInterval(checkInterval);
+                                document.getElementById('detectionStatus').textContent = '✓ PALM DETECTED';
+                                document.getElementById('detectionStatus').classList.remove('warning');
+                                this.handDetected = true;
+                                resolve();
+                            }
+                        } catch (error) {
+                            console.error('Detection error:', error);
+                        }
+                    }, 500);
+
+                    // Timeout after 8 seconds
+                    setTimeout(() => {
+                        clearInterval(checkInterval);
+                        if (!this.handDetected) {
+                            console.log('Hand detection timeout, proceeding anyway');
+                        }
+                        resolve();
+                    }, 8000);
+                });
+            },
+
+            performScan() {
+                const scanProgress = document.getElementById('scanProgress');
+                scanProgress.classList.add('active');
+
+                let progress = 0;
+                const glitchTexts = ['SCANNING...', 'ANALYZING...', 'PROCESSING...', 'READING FATE...'];
+                let glitchIndex = 0;
+
+                const glitchInterval = setInterval(() => {
+                    document.getElementById('glitchText').textContent = glitchTexts[glitchIndex % glitchTexts.length];
+                    glitchIndex++;
+                }, 300);
+
+                const interval = setInterval(() => {
+                    progress += Math.random() * 35;
+                    if (progress > 100) progress = 100;
+                    scanProgress.textContent = Math.floor(progress) + '%';
+
+                    if (progress >= 100) {
+                        clearInterval(interval);
+                        clearInterval(glitchInterval);
+                        setTimeout(() => {
+                            this.playRandomVideo();
+                        }, 300);
+                    }
+                }, 120);
+            },
+
+            playRandomVideo() {
+                // Hide camera
+                this.video.style.display = 'none';
+
+                // Get random video name
+                const randomVideo = this.videoNames[Math.floor(Math.random() * this.videoNames.length)];
+
+                // Hide scanning elements
+                document.getElementById('scanLine').classList.remove('active');
+                document.getElementById('glitchText').classList.remove('active');
+                document.getElementById('scanProgress').classList.remove('active');
+                document.getElementById('radar').classList.remove('active');
+                document.getElementById('detectionStatus').style.display = 'none';
+
+                // Play video from root folder
+                const resultVideo = document.getElementById('resultVideo');
+                resultVideo.src = `./${randomVideo}`;
+                resultVideo.style.display = 'block';
+
+                // Autoplay with audio (no controls)
+                resultVideo.play().catch(error => {
+                    console.log('Video play error:', error);
+                    // Try fallback to first video
+                    resultVideo.src = `./${this.videoNames[0]}`;
+                    resultVideo.play().catch(e => console.log('Fallback error:', e));
+                });
+
+                // Show back button
+                document.getElementById('startScanBtn').style.display = 'none';
+                document.getElementById('resetBtn').style.display = 'block';
+
+                // Stop scanning
+                this.isScanning = false;
+            },
+
+            goBack() {
+                // Stop camera
+                if (this.video.srcObject) {
+                    this.video.srcObject.getTracks().forEach(track => track.stop());
+                    this.video.srcObject = null;
+                }
+
+                // Reset video
+                const resultVideo = document.getElementById('resultVideo');
+                resultVideo.pause();
+                resultVideo.src = '';
+                resultVideo.style.display = 'none';
+
+                // Reset UI
+                this.video.style.display = 'block';
+                document.getElementById('scanLine').classList.remove('active');
+                document.getElementById('glitchText').classList.remove('active');
+                document.getElementById('scanProgress').classList.remove('active');
+                document.getElementById('radar').classList.remove('active');
+                document.getElementById('detectionStatus').style.display = 'block';
+                document.getElementById('detectionStatus').textContent = '🟢 READY';
+                document.getElementById('detectionStatus').classList.remove('warning');
+
+                // Reset buttons
+                document.getElementById('startScanBtn').style.display = 'block';
+                document.getElementById('startScanBtn').disabled = false;
+                document.getElementById('resetBtn').style.display = 'none';
+
+                this.isScanning = false;
+                this.handDetected = false;
+            },
+
+            createParticles() {
+                const container = document.getElementById('particleBg');
+                const particleCount = 40;
+
+                for (let i = 0; i < particleCount; i++) {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    particle.style.left = Math.random() * 100 + '%';
+                    particle.style.top = Math.random() * 100 + '%';
+                    particle.style.animationDuration = (Math.random() * 20 + 10) + 's';
+                    particle.style.animationDelay = Math.random() * 5 + 's';
+                    container.appendChild(particle);
+                }
+            }
+        };
+
+        window.addEventListener('load', () => {
+            app.init();
+        });
+    </script>
+</body>
+</html>

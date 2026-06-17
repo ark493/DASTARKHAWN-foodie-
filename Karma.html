@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KARMA · Biometric System</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;0,700;1,300&family=Outfit:wght@200;300;400;500;600&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="Karma.css">
+</head>
+
+<body>
+  <!-- SPACE BG -->
+  <div id="space-bg"></div>
+  <canvas id="star-canvas"></canvas>
+  <div id="page-cover"></div>
+  <!-- FULL SCREEN LOADER overlay -->
+  <div id="full-screen-loader">
+    <div class="glow-pulse"></div>
+    <p class="loading-text" id="loader-msg">Entering Karma...</p>
+  </div>
+  <!-- ██████████ FACE SCANNER MODAL ██████████ -->
+  <div id="face-scanner-modal">
+    <div id="fsc-topbar">
+      <div id="fsc-dots">
+        <span class="dot red"></span>
+        <span class="dot yellow"></span>
+        <span class="dot green-dot"></span>
+      </div>
+      <span id="fsc-title">KARMA · BIOMETRIC AUTH</span>
+      <button id="fsc-cancel">✕</button>
+    </div>
+    <div id="fsc-body">
+      <!-- Camera side -->
+      <div id="fsc-left">
+        <div id="fsc-cam-ring">
+          <div class="fsc-bracket tl"></div>
+          <div class="fsc-bracket tr"></div>
+          <div class="fsc-bracket bl"></div>
+          <div class="fsc-bracket br"></div>
+          <video id="fsc-video" autoplay muted playsinline></video>
+          <div id="fsc-laser"></div>
+          <canvas id="fsc-node-canvas"></canvas>
+          <!-- Motion warning -->
+          <div id="fsc-motion-overlay">
+            <svg viewBox="0 0 24 24" fill="none" width="40" height="40">
+              <path d="M12 9v4M12 16.5v.5" stroke="#ff4d4d" stroke-width="2" stroke-linecap="round" />
+              <path d="M10.3 4.7L2.9 17a2 2 0 001.7 3h14.8a2 2 0 001.7-3L13.7 4.7a2 2 0 00-3.4 0z" stroke="#ff4d4d"
+                stroke-width="1.5" />
+            </svg>
+            <span id="fsc-motion-msg">Keep still...</span>
+          </div>
+          <!-- Success overlay -->
+          <div id="fsc-success-overlay">
+            <svg viewBox="0 0 80 80" fill="none" width="70" height="70">
+              <circle cx="40" cy="40" r="37" stroke="#00ff88" stroke-width="2.5" opacity="0.5" />
+              <path d="M22 40l12 12 24-24" stroke="#00ff88" stroke-width="4" stroke-linecap="round"
+                stroke-linejoin="round" />
+            </svg>
+          </div>
+        </div>
+        <!-- Progress -->
+        <div id="fsc-progress-track">
+          <div id="fsc-progress-fill"></div>
+        </div>
+        <p id="fsc-pct">0%</p>
+      </div>
+      <!-- HUD side -->
+      <div id="fsc-hud">
+        <div id="fsc-hud-top">
+          <div id="fsc-signal">
+            <span class="sig-bar" style="height:5px"></span>
+            <span class="sig-bar" style="height:9px"></span>
+            <span class="sig-bar" style="height:13px"></span>
+            <span class="sig-bar" style="height:17px"></span>
+          </div>
+          <span id="fsc-sysid">SYS · KARMA-AUTH-v3</span>
+        </div>
+        <div id="fsc-checks">
+          <div class="fsc-row" id="chk-liveness"><span class="fsc-icon"></span><span class="fsc-lbl">Liveness
+              Detection</span><span class="fsc-val" id="v-liveness">—</span></div>
+          <div class="fsc-row" id="chk-depth"> <span class="fsc-icon"></span><span class="fsc-lbl">Depth Map
+              Analysis</span><span class="fsc-val" id="v-depth">—</span></div>
+          <div class="fsc-row" id="chk-nodes"> <span class="fsc-icon"></span><span class="fsc-lbl">Facial
+              Nodes (68pt)</span><span class="fsc-val" id="v-nodes">—</span></div>
+          <div class="fsc-row" id="chk-anti"> <span class="fsc-icon"></span><span
+              class="fsc-lbl">Anti-Spoofing</span><span class="fsc-val" id="v-anti">—</span></div>
+          <div class="fsc-row" id="chk-match"> <span class="fsc-icon"></span><span class="fsc-lbl">Identity
+              Match</span><span class="fsc-val" id="v-match">—</span></div>
+        </div>
+        <div id="fsc-hex">
+          <p class="hx" id="hx1">0x—</p>
+          <p class="hx" id="hx2">0x—</p>
+          <p class="hx" id="hx3">0x—</p>
+        </div>
+        <div id="fsc-status-row">
+          <span id="fsc-status-dot"></span>
+          <span id="fsc-status-txt">Awaiting scan...</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- ████ INTRO ████ -->
+  <div id="intro">
+    <div id="karma-word">
+      <span class="k-letter">K</span><span class="k-letter">A</span>
+      <span class="k-letter">R</span><span class="k-letter">M</span>
+      <span class="k-letter">A</span>
+    </div>
+    <div id="quote-area">
+      <p id="quote-line"></p>
+    </div>
+  </div>
+  <!-- ████ AUTH SCREEN ████ -->
+  <div id="auth-screen">
+    <!-- Character Animation Container (Moved outside glass card for left edge positioning) -->
+    <div id="cast-scene">
+      <!-- Purple tall rectangle character -->
+      <div id="char-purple" class="character">
+        <div class="eyes">
+          <div class="eye">
+            <div class="pupil"></div>
+          </div>
+          <div class="eye">
+            <div class="pupil"></div>
+          </div>
+        </div>
+      </div>
+      <!-- Black tall rectangle character -->
+      <div id="char-black" class="character">
+        <div class="eyes">
+          <div class="eye">
+            <div class="pupil"></div>
+          </div>
+          <div class="eye">
+            <div class="pupil"></div>
+          </div>
+        </div>
+      </div>
+      <!-- Orange semi-circle character -->
+      <div id="char-orange" class="character">
+        <div class="eyes">
+          <div class="pupil"></div>
+          <div class="pupil"></div>
+        </div>
+      </div>
+      <!-- Yellow tall rectangle character -->
+      <div id="char-yellow" class="character">
+        <div class="eyes">
+          <div class="pupil"></div>
+          <div class="pupil"></div>
+          <div class="mouth"></div>
+        </div>
+      </div>
+    </div>
+    <!-- Interface Card -->
+    <div id="glass-card">
+      <div id="mode-toggle">
+        <button class="mode-btn active" data-mode="login">Sign In</button>
+        <button class="mode-btn" data-mode="register">Sign Up</button>
+        <span id="toggle-pill"></span>
+      </div>
+      <!-- ══ LOGIN ══ -->
+      <div id="login-panel" class="panel active">
+        <form class="monk-form" id="login-form">
+          <div class="f-title">Sign In</div>
+          <div class="step-container">
+            <label class="f-label" for="l-email">Email</label>
+            <input class="f-input" type="email" id="l-email" placeholder="you@example.com" spellcheck="false"
+              required />
+            <div class="frg-row">
+              <label class="f-label" for="l-pass">Password</label>
+              <a href="#" class="forgot-link">Forgot?</a>
+            </div>
+            <div class="pass-wrap">
+              <input class="f-input pass-field" type="password" id="l-pass" placeholder="••••••••" spellcheck="false"
+                autocomplete="current-password" required />
+              <button type="button" class="eye-btn" id="l-eye" aria-label="Toggle visibility">
+                <!-- Eye open (visible) -->
+                <svg class="eye-open" style="display:none" viewBox="0 0 24 24" fill="none">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="1.5" />
+                  <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.5" />
+                </svg>
+                <!-- Eye closed (hidden) -->
+                <svg class="eye-closed" viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19M1 1l22 22"
+                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                </svg>
+              </button>
+            </div>
+            <label class="rem-label mt-4">
+              <input type="checkbox" id="l-rem" class="rem-chk" />
+              <span>Remember for 30 days</span>
+            </label>
+            <button class="f-submit" type="submit" id="btn-login">Log In</button>
+          </div>
+        </form>
+      </div>
+      <!-- ══ REGISTER ══ -->
+      <div id="register-panel" class="panel">
+        <form class="monk-form" id="register-form">
+          <div class="f-title">Join Karma</div>
+          <div class="step-container">
+            <label class="f-label" for="r-email">Email</label>
+            <input class="f-input" type="email" id="r-email" placeholder="you@example.com" spellcheck="false"
+              required />
+            <label class="f-label" for="r-pass">Create Password</label>
+            <div class="pass-wrap">
+              <input class="f-input pass-field" type="password" id="r-pass" placeholder="Choose a strong password"
+                spellcheck="false" autocomplete="new-password" required />
+              <button type="button" class="eye-btn" id="r-eye" aria-label="Toggle visibility">
+                <!-- Eye open (visible) -->
+                <svg class="eye-open" style="display:none" viewBox="0 0 24 24" fill="none">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" stroke="currentColor" stroke-width="1.5" />
+                  <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.5" />
+                </svg>
+                <!-- Eye closed (hidden) -->
+                <svg class="eye-closed" viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19M1 1l22 22"
+                    stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
+                </svg>
+              </button>
+            </div>
+            <!-- Strength bar -->
+            <div class="str-wrap" id="r-str-wrap">
+              <div class="str-segments" id="r-str-segs">
+                <div class="str-seg"></div>
+                <div class="str-seg"></div>
+                <div class="str-seg"></div>
+                <div class="str-seg"></div>
+              </div>
+              <span class="str-label" id="r-str-label"></span>
+            </div>
+            <!-- Tips -->
+            <div class="pass-tips" id="r-pass-tips"></div>
+            <button class="f-submit" type="submit" id="btn-create">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none">
+                <path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round" />
+                <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.5" />
+              </svg>
+              Verify Face &amp; Create Account
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <script src="Karma.js"></script>
+</body>
+
+</html>
