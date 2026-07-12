@@ -5,7 +5,17 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 
 app = Flask(__name__)
+from flask import send_from_directory
+
+@app.route('/')
+def serve_home():
+    return send_from_directory('.', 'home.html')
+
+@app.route('/<path:filename>')
+def serve_static(filename):
+    return send_from_directory('.', filename)
 CORS(app)
+ 
 
 # -------------------- DATABASE INIT (with migrations) --------------------
 def init_db():
