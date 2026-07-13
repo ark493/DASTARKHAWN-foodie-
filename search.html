@@ -390,7 +390,7 @@
             const storedAvatar = localStorage.getItem('karma_user_avatar');
             if (navAvatar && navAvatarPlaceholder && storedAvatar) {
                 navAvatarPlaceholder.style.display = 'none';
-                navAvatar.src = 'http://127.0.0.1:5000' + storedAvatar;
+                navAvatar.src = '' + storedAvatar;
                 navAvatar.style.display = 'block';
             }
 
@@ -451,7 +451,7 @@
                 searchResults.style.opacity = '0.5';
 
                 debounceTimer = setTimeout(() => {
-                    fetch(`http://127.0.0.1:5000/api/search?q=${encodeURIComponent(query)}`)
+                    fetch(`/api/search?q=${encodeURIComponent(query)}`)
                         .then(res => res.json())
                         .then(data => {
                             searchResults.style.opacity = '1';
@@ -482,7 +482,7 @@
                 let html = '';
                 users.forEach(u => {
                     const avatarHtml = u.avatar_url
-                        ? `<img src="http://127.0.0.1:5000${u.avatar_url}" alt="">`
+                        ? `<img src="${u.avatar_url}" alt="">`
                         : (u.username || '?').charAt(0).toUpperCase();
 
                     html += `

@@ -562,7 +562,7 @@
             const storedAvatar = localStorage.getItem('karma_user_avatar');
             if (navAvatar && navAvatarPlaceholder && storedAvatar) {
                 navAvatarPlaceholder.style.display = 'none';
-                navAvatar.src = 'http://127.0.0.1:5000' + storedAvatar;
+                navAvatar.src = '' + storedAvatar;
                 navAvatar.style.display = 'block';
             }
 
@@ -570,7 +570,7 @@
             let reelVideos = [];
 
             // Fetch posts
-            fetch('http://127.0.0.1:5000/api/posts')
+            fetch('/api/posts')
                 .then(r => r.json())
                 .then(data => {
                     if (data.ok) {
@@ -588,7 +588,7 @@
                             const videoUrl = post.media_urls.find(url => url.match(/\.(mp4|webm|ogg)$/i));
                             if (!videoUrl) return;
 
-                            const avatarSrc = post.author_avatar ? 'http://127.0.0.1:5000' + post.author_avatar : 'https://i.pravatar.cc/150?img=68';
+                            const avatarSrc = post.author_avatar ? '' + post.author_avatar : 'https://i.pravatar.cc/150?img=68';
                             const title = post.author_username;
                             const likes = post.likes || 0;
                             const comments = 0; // Backend comment count logic
@@ -602,12 +602,12 @@
                                 <div class="video-glass-container" id="reel-player-wrapper-${index}">
                                     <!-- Blurred Background Video for uncropped containment -->
                                     <video class="bg-video-blur" loop muted playsinline>
-                                        <source src="http://127.0.0.1:5000${videoUrl}" type="video/mp4">
+                                        <source src="${videoUrl}" type="video/mp4">
                                     </video>
                                     
                                     <!-- Sharp Foreground Video within boundary -->
                                     <video id="reel-video-${index}" class="reel-video" loop muted playsinline data-index="${index}">
-                                        <source src="http://127.0.0.1:5000${videoUrl}" type="video/mp4">
+                                        <source src="${videoUrl}" type="video/mp4">
                                     </video>
                                     
                                     <div class="video-overlay-gradient"></div>
@@ -766,7 +766,7 @@
                         return;
                     }
 
-                    fetch(`http://127.0.0.1:5000/api/like`, {
+                    fetch(`/api/like`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ post_id: postId, email: userEmail })
@@ -813,7 +813,7 @@
                         wrapper.querySelector('.video-glass-container').appendChild(heartEl);
                         setTimeout(() => heartEl.remove(), 800);
 
-                        fetch('http://127.0.0.1:5000/api/like', {
+                        fetch('/api/like', {
                             method: 'POST',
                             headers: { 'Content-Type': 'application/json' },
                             body: JSON.stringify({ post_id: postId, email: userEmail })
@@ -865,11 +865,11 @@
             const list = document.getElementById('awaaz-comments-list');
             overlay.style.display = 'flex';
             list.innerHTML = '<div style="text-align:center;color:#555;padding:20px 0;">Loading comments...</div>';
-            fetch(`http://127.0.0.1:5000/api/comments?post_id=${postId}`)
+            fetch(`/api/comments?post_id=${postId}`)
                 .then(r => r.json())
                 .then(data => {
                     if (data.ok && data.comments && data.comments.length > 0) {
-                        list.innerHTML = data.comments.map(c => `<div style="display:flex;gap:12px;align-items:flex-start;padding:4px 0;"><img src="${c.avatar ? 'http://127.0.0.1:5000' + c.avatar : 'https://i.pravatar.cc/40'}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;flex-shrink:0;"><div><span style="font-weight:600;font-size:13px;color:#eee;">@${c.username || 'User'}</span><p style="font-size:14px;color:#ccc;margin:4px 0 0 0;line-height:1.4;">${c.content}</p></div></div>`).join('');
+                        list.innerHTML = data.comments.map(c => `<div style="display:flex;gap:12px;align-items:flex-start;padding:4px 0;"><img src="${c.avatar ? '' + c.avatar : 'https://i.pravatar.cc/40'}" style="width:36px;height:36px;border-radius:50%;object-fit:cover;flex-shrink:0;"><div><span style="font-weight:600;font-size:13px;color:#eee;">@${c.username || 'User'}</span><p style="font-size:14px;color:#ccc;margin:4px 0 0 0;line-height:1.4;">${c.content}</p></div></div>`).join('');
                     } else {
                         list.innerHTML = '<div style="text-align:center;color:#555;padding:30px 0;">No comments yet. Be the first!</div>';
                     }
@@ -885,7 +885,7 @@
             const text = input.value.trim();
             const userEmail = localStorage.getItem('karma_user_email');
             if (!text || !userEmail || !currentCommentPostId) return;
-            fetch('http://127.0.0.1:5000/api/comments', {
+            fetch('/api/comments', {
                 method: 'POST', headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ post_id: currentCommentPostId, email: userEmail, content: text })
             }).then(r => r.json()).then(data => {

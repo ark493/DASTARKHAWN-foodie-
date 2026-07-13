@@ -5,7 +5,7 @@
   · Password strength + eye toggle
   · Auth via Flask → karma.db
 ═══════════════════════════════════ */
-const API = 'http://127.0.0.1:5000/api';
+const API = '/api';
 function navigateTo(url) {
   const cover = document.getElementById('page-cover');
   cover.classList.add('covering');

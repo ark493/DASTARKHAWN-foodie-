@@ -16,14 +16,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const storedAvatar = localStorage.getItem('karma_user_avatar');
     if (navAvatar && navAvatarPlaceholder && storedAvatar) {
         navAvatarPlaceholder.style.display = 'none';
-        navAvatar.src = 'http://127.0.0.1:5000' + storedAvatar;
+        navAvatar.src = '' + storedAvatar;
         navAvatar.style.display = 'block';
     }
 
     // ── 1. Load Real Followers Strip ─────────────────────────────────
     window.loadRealFollowers = function () {
         if (currentUser && followersStrip) {
-            fetch(`http://127.0.0.1:5000/api/followers?email=${encodeURIComponent(currentUser)}`)
+            fetch(`/api/followers?email=${encodeURIComponent(currentUser)}`)
                 .then(r => r.json())
                 .then(data => {
                     if (data.ok && data.followers.length > 0) {
@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             const initials = (u.username || '?').charAt(0).toUpperCase();
                             const statusNote = u.bio || u.locality || 'Karma member';
                             const avatarHtml = u.avatar
-                                ? `<img src="http://127.0.0.1:5000${u.avatar}" alt="${u.username}" class="follower-avatar-img">`
+                                ? `<img src="${u.avatar}" alt="${u.username}" class="follower-avatar-img">`
                                 : `<div class="follower-avatar-ph">${initials}</div>`;
                             return `<div class="follower-item">
                                 <div class="follower-status-note">${statusNote}</div>
@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <p>Loading the Karmic balance...</p>
             </div>`;
 
-        const url = `http://127.0.0.1:5000/api/feed?viewer=${encodeURIComponent(currentUser)}`;
+        const url = `/api/feed?viewer=${encodeURIComponent(currentUser)}`;
         fetch(url)
             .then(r => r.json())
             .then(data => {
@@ -87,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         allPosts.forEach(post => {
             let avatarHtml = `<div class="post-avatar-placeholder">${(post.author_username || '?').charAt(0).toUpperCase()}</div>`;
-            if (post.author_avatar) avatarHtml = `<img src="http://127.0.0.1:5000${post.author_avatar}" class="post-avatar" alt="">`;
+            if (post.author_avatar) avatarHtml = `<img src="${post.author_avatar}" class="post-avatar" alt="">`;
 
             let mediaHtml = '';
             if (post.media_url) {
@@ -99,9 +99,9 @@ document.addEventListener('DOMContentLoaded', () => {
                             ${urls.map(url => {
                         const ext = url.split('.').pop().toLowerCase();
                         if (['mp4', 'webm', 'ogg'].includes(ext)) {
-                            return `<video src="http://127.0.0.1:5000${url}" style="flex:0 0 100%; width:100%; object-fit:contain; scroll-snap-align:start;" autoplay muted loop playsinline></video>`;
+                            return `<video src="${url}" style="flex:0 0 100%; width:100%; object-fit:contain; scroll-snap-align:start;" autoplay muted loop playsinline></video>`;
                         } else {
-                            return `<img src="http://127.0.0.1:5000${url}" style="flex:0 0 100%; width:100%; object-fit:contain; scroll-snap-align:start;" alt="Post">`;
+                            return `<img src="${url}" style="flex:0 0 100%; width:100%; object-fit:contain; scroll-snap-align:start;" alt="Post">`;
                         }
                     }).join('')}
                         </div>
@@ -121,9 +121,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     const url = urls[0];
                     const ext = url.split('.').pop().toLowerCase();
                     if (['mp4', 'webm', 'ogg'].includes(ext)) {
-                        mediaHtml = `<div class="post-media" ondblclick="triggerDoubleTapLike(this, ${post.post_id})"><video src="http://127.0.0.1:5000${url}" autoplay muted loop playsinline></video></div>`;
+                        mediaHtml = `<div class="post-media" ondblclick="triggerDoubleTapLike(this, ${post.post_id})"><video src="${url}" autoplay muted loop playsinline></video></div>`;
                     } else {
-                        mediaHtml = `<div class="post-media" ondblclick="triggerDoubleTapLike(this, ${post.post_id})"><img src="http://127.0.0.1:5000${url}" alt="Post"></div>`;
+                        mediaHtml = `<div class="post-media" ondblclick="triggerDoubleTapLike(this, ${post.post_id})"><img src="${url}" alt="Post"></div>`;
                     }
                 }
             } else if (post.content) {
@@ -246,7 +246,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const postId = btn.closest('.post-card').dataset.postId;
             const likeEl = btn.closest('.ig-post-footer').querySelector('.like-number');
 
-            fetch('http://127.0.0.1:5000/api/like', {
+            fetch('/api/like', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ post_id: postId, email: currentUser })
@@ -366,7 +366,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!currentUser) { showToast('Login required', 'Please sign in to comment'); return; }
             if (!inputEl.value.trim()) return;
             postBtn.disabled = true;
-            fetch('http://127.0.0.1:5000/api/comments', {
+            fetch('/api/comments', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ post_id: post.post_id, author_email: currentUser, content: inputEl.value.trim() })
@@ -417,9 +417,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         ${urls.map(url => {
                     const ext = url.split('.').pop().toLowerCase();
                     if (['mp4', 'webm', 'ogg'].includes(ext)) {
-                        return `<video src="http://127.0.0.1:5000${url}" style="flex:0 0 100%; width:100%; height:100%; object-fit:contain; scroll-snap-align:start;" autoplay muted loop playsinline controls></video>`;
+                        return `<video src="${url}" style="flex:0 0 100%; width:100%; height:100%; object-fit:contain; scroll-snap-align:start;" autoplay muted loop playsinline controls></video>`;
                     } else {
-                        return `<img src="http://127.0.0.1:5000${url}" style="flex:0 0 100%; width:100%; height:100%; object-fit:contain; scroll-snap-align:start;" alt="Post">`;
+                        return `<img src="${url}" style="flex:0 0 100%; width:100%; height:100%; object-fit:contain; scroll-snap-align:start;" alt="Post">`;
                     }
                 }).join('')}
                     </div>
@@ -464,9 +464,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 const url = urls[0];
                 const ext = url.split('.').pop().toLowerCase();
                 if (['mp4', 'webm', 'ogg'].includes(ext)) {
-                    mediaContainer.innerHTML = `<video src="http://127.0.0.1:5000${url}" autoplay controls loop playsinline style="width:100%; height:100%; object-fit:contain;" ondblclick="triggerDoubleTapLike(this, ${post.post_id}, true)"></video>`;
+                    mediaContainer.innerHTML = `<video src="${url}" autoplay controls loop playsinline style="width:100%; height:100%; object-fit:contain;" ondblclick="triggerDoubleTapLike(this, ${post.post_id}, true)"></video>`;
                 } else {
-                    mediaContainer.innerHTML = `<img src="http://127.0.0.1:5000${url}" style="width:100%; height:100%; object-fit:contain;" ondblclick="triggerDoubleTapLike(this, ${post.post_id}, true)">`;
+                    mediaContainer.innerHTML = `<img src="${url}" style="width:100%; height:100%; object-fit:contain;" ondblclick="triggerDoubleTapLike(this, ${post.post_id}, true)">`;
                 }
             }
         } else if (post.content) {
@@ -476,7 +476,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Render Header Right
         const headerContainer = document.getElementById('post-modal-header');
         let avatarHtml = `<div class="modal-header-ph">${(post.author_username || '?').charAt(0).toUpperCase()}</div>`;
-        if (post.author_avatar) avatarHtml = `<img src="http://127.0.0.1:5000${post.author_avatar}" class="modal-header-avatar">`;
+        if (post.author_avatar) avatarHtml = `<img src="${post.author_avatar}" class="modal-header-avatar">`;
 
         headerContainer.innerHTML = `
             ${avatarHtml}
@@ -533,7 +533,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!currentUser) { showToast('Login required', 'Please sign in to comment'); return; }
             if (!commentInput.value.trim()) return;
             postCommentBtn.disabled = true;
-            fetch('http://127.0.0.1:5000/api/comments', {
+            fetch('/api/comments', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -648,7 +648,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('modal-like-count').textContent = `${post.like_count.toLocaleString()} ${post.like_count === 1 ? 'like' : 'likes'}`;
             }
 
-            fetch('http://127.0.0.1:5000/api/like', {
+            fetch('/api/like', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ post_id: postId, email: currentUser })
@@ -659,7 +659,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function handleModalLike(btn, postId) {
         if (!currentUser) return;
         btn.disabled = true;
-        fetch('http://127.0.0.1:5000/api/like', {
+        fetch('/api/like', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ post_id: postId, email: currentUser })
@@ -690,7 +690,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function loadModalComments(postId, listEl) {
-        fetch(`http://127.0.0.1:5000/api/comments?post_id=${postId}`)
+        fetch(`/api/comments?post_id=${postId}`)
             .then(r => r.json())
             .then(data => {
                 if (data.ok) {
@@ -704,7 +704,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         const diffMins = Math.round((Date.now() - d) / 60000);
                         const timeStr = diffMins < 1 ? 'Just now' : diffMins < 60 ? `${diffMins}m` : diffMins < 1440 ? `${Math.round(diffMins / 60)}h` : `${Math.round(diffMins / 1440)}d`;
                         let aHtml = `<div class="modal-header-ph">${(c.username || '?').charAt(0).toUpperCase()}</div>`;
-                        if (c.avatar) aHtml = `<img src="http://127.0.0.1:5000${c.avatar}" class="modal-header-avatar">`;
+                        if (c.avatar) aHtml = `<img src="${c.avatar}" class="modal-header-avatar">`;
                         return `
                         <div class="modal-comment">
                             ${aHtml}
@@ -726,7 +726,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const targetEmail = btn.dataset.target;
         btn.disabled = true;
 
-        fetch('http://127.0.0.1:5000/api/follow', {
+        fetch('/api/follow', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ follower_email: currentUser, target_email: targetEmail })
@@ -745,7 +745,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // ── 6. Load Comments from DB ─────────────────────────────────────
     function loadComments(postId, listEl) {
         listEl.innerHTML = '<p class="comment-loading">Loading…</p>';
-        fetch(`http://127.0.0.1:5000/api/comments?post_id=${postId}`)
+        fetch(`/api/comments?post_id=${postId}`)
             .then(r => r.json())
             .then(data => {
                 if (data.ok && data.comments.length > 0) {
@@ -775,7 +775,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const listEl = postCard.querySelector('.comment-list');
 
         btn.disabled = true;
-        fetch('http://127.0.0.1:5000/api/comments', {
+        fetch('/api/comments', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ post_id: postId, email: currentUser, content })

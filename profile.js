@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
         userEmail = "test@example.com"; // Fallback just to allow the page to load without crashing
     }
     // Attempt to load profile from database
-    fetch(`http://127.0.0.1:5000/api/profile?email=${encodeURIComponent(userEmail)}`)
+    fetch(`/api/profile?email=${encodeURIComponent(userEmail)}`)
         .then(res => res.json())
         .then(data => {
             if (data.ok && data.user) {
@@ -218,7 +218,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Send to backend
-        fetch('http://127.0.0.1:5000/api/profile/update', {
+        fetch('/api/profile/update', {
             method: 'POST',
             body: formData
         })
@@ -358,7 +358,7 @@ document.addEventListener('DOMContentLoaded', () => {
             // Note: If you add an avatar upload input to the edit settings form later, 
             // you'd append it here similar to the croppedAvatarBlob logic above.
 
-            fetch('http://127.0.0.1:5000/api/profile/update', {
+            fetch('/api/profile/update', {
                 method: 'POST',
                 body: formData
             })
@@ -535,9 +535,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         ${urls.map(url => {
                     const ext = url.split('.').pop().toLowerCase();
                     if (['mp4', 'webm', 'ogg'].includes(ext)) {
-                        return '<video src="http://127.0.0.1:5000' + url + '" style="flex:0 0 100%; width:100%; height:100%; object-fit:contain; scroll-snap-align:start;" autoplay muted loop playsinline controls></video>';
+                        return '<video src="' + url + '" style="flex:0 0 100%; width:100%; height:100%; object-fit:contain; scroll-snap-align:start;" autoplay muted loop playsinline controls></video>';
                     } else {
-                        return '<img src="http://127.0.0.1:5000' + url + '" style="flex:0 0 100%; width:100%; height:100%; object-fit:contain; scroll-snap-align:start;" alt="Post">';
+                        return '<img src="' + url + '" style="flex:0 0 100%; width:100%; height:100%; object-fit:contain; scroll-snap-align:start;" alt="Post">';
                     }
                 }).join('')}
                     </div>
@@ -582,9 +582,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 const url = urls[0];
                 const ext = url.split('.').pop().toLowerCase();
                 if (['mp4', 'webm', 'ogg'].includes(ext)) {
-                    mediaContainer.innerHTML = '<video src="http://127.0.0.1:5000' + url + '" autoplay controls loop playsinline style="width:100%; height:100%; object-fit:contain;" ondblclick="triggerDoubleTapLike(this, ' + post.post_id + ', true)"></video>';
+                    mediaContainer.innerHTML = '<video src="' + url + '" autoplay controls loop playsinline style="width:100%; height:100%; object-fit:contain;" ondblclick="triggerDoubleTapLike(this, ' + post.post_id + ', true)"></video>';
                 } else {
-                    mediaContainer.innerHTML = '<img src="http://127.0.0.1:5000' + url + '" style="width:100%; height:100%; object-fit:contain;" ondblclick="triggerDoubleTapLike(this, ' + post.post_id + ', true)">';
+                    mediaContainer.innerHTML = '<img src="' + url + '" style="width:100%; height:100%; object-fit:contain;" ondblclick="triggerDoubleTapLike(this, ' + post.post_id + ', true)">';
                 }
             }
         } else if (post.content) {
@@ -594,7 +594,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Render Header Right
         const headerContainer = document.getElementById('post-modal-header');
         let avatarHtml = `<div class="modal-header-ph">${(post.author_username || '?').charAt(0).toUpperCase()}</div>`;
-        if (post.author_avatar) avatarHtml = `<img src="http://127.0.0.1:5000${post.author_avatar}" class="modal-header-avatar">`;
+        if (post.author_avatar) avatarHtml = `<img src="${post.author_avatar}" class="modal-header-avatar">`;
 
         headerContainer.innerHTML = `
             ${avatarHtml}
@@ -650,7 +650,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!currentUser) { showToastMessage('Login required', 'Please sign in to comment'); return; }
             if (!commentInput.value.trim()) return;
             postCommentBtn.disabled = true;
-            fetch('http://127.0.0.1:5000/api/comments', {
+            fetch('/api/comments', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -695,7 +695,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Load Comments Helper
     function loadModalComments(postId, container) {
-        fetch(`http://127.0.0.1:5000/api/comments?post_id=${postId}`)
+        fetch(`/api/comments?post_id=${postId}`)
             .then(r => r.json())
             .then(data => {
                 if (data.ok && data.comments.length > 0) {
@@ -704,7 +704,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     const commentsHtml = data.comments.map(c => {
                         let cav = `<div class="modal-comment-ph">${(c.author_username || '?').charAt(0).toUpperCase()}</div>`;
-                        if (c.author_avatar) cav = `<img src="http://127.0.0.1:5000${c.author_avatar}" class="modal-comment-avatar">`;
+                        if (c.author_avatar) cav = `<img src="${c.author_avatar}" class="modal-comment-avatar">`;
                         const cd = new Date(c.created_at + 'Z');
                         const diffMins = Math.round((Date.now() - cd) / 60000);
                         const timeStr = diffMins < 1 ? 'now' : diffMins < 60 ? `${diffMins}m` : diffMins < 1440 ? `${Math.round(diffMins / 60)}h` : `${Math.round(diffMins / 1440)}d`;
@@ -733,7 +733,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function handleModalLike(btn, postId) {
         if (!currentUser) { showToastMessage('Login required', 'Please sign in to like'); return; }
         const isLiked = btn.classList.contains('liked');
-        const url = isLiked ? 'http://127.0.0.1:5000/api/posts/unlike' : 'http://127.0.0.1:5000/api/posts/like';
+        const url = isLiked ? '/api/posts/unlike' : '/api/posts/like';
         btn.classList.toggle('liked', !isLiked);
         const svg = btn.querySelector('svg');
         svg.setAttribute('fill', !isLiked ? 'var(--accent-red)' : 'none');
@@ -963,7 +963,7 @@ igShareBtn.addEventListener('click', () => {
     // Show Loading state
     igLoading.style.display = 'flex';
 
-    fetch('http://127.0.0.1:5000/api/posts', {
+    fetch('/api/posts', {
         method: 'POST',
         body: formData
     })
@@ -1280,7 +1280,7 @@ document.addEventListener('DOMContentLoaded', () => {
             uploadProgressFill.style.width = '10%';
 
             const xhr = new XMLHttpRequest();
-            xhr.open('POST', 'http://127.0.0.1:5000/api/posts', true);
+            xhr.open('POST', '/api/posts', true);
 
             // Track upload progress
             xhr.upload.onprogress = function (e) {
@@ -1370,7 +1370,7 @@ window.fetchUserPosts = function () {
             <div class="spinner"></div><p style="margin-top:10px; color:#a8a8a8;">Loading your deeds...</p>
         </div > `;
 
-    const url = `http://127.0.0.1:5000/api/feed?viewer=${encodeURIComponent(viewerEmail)}&user=${encodeURIComponent(viewerEmail)}`;
+    const url = `/api/feed?viewer=${encodeURIComponent(viewerEmail)}&user=${encodeURIComponent(viewerEmail)}`;
     fetch(url)
         .then(r => r.json())
         .then(data => {
@@ -1437,9 +1437,9 @@ function renderUserPosts() {
                         ${urls.map(url => {
                     const mapExt = url.split('.').pop().toLowerCase();
                     if (['mp4', 'webm', 'ogg'].includes(mapExt)) {
-                        return `<video src="http://127.0.0.1:5000${url}" style="position:absolute; top:0; left:0; flex:0 0 100%; width:100%; height:100%; object-fit:cover; scroll-snap-align:start;" muted loop playsinline></video>`;
+                        return `<video src="${url}" style="position:absolute; top:0; left:0; flex:0 0 100%; width:100%; height:100%; object-fit:cover; scroll-snap-align:start;" muted loop playsinline></video>`;
                     } else {
-                        return `<img src="http://127.0.0.1:5000${url}" style="position:absolute; top:0; left:0; flex:0 0 100%; width:100%; height:100%; object-fit:cover; scroll-snap-align:start;" alt="Post">`;
+                        return `<img src="${url}" style="position:absolute; top:0; left:0; flex:0 0 100%; width:100%; height:100%; object-fit:cover; scroll-snap-align:start;" alt="Post">`;
                     }
                 }).join('')}
                     </div>
@@ -1453,13 +1453,13 @@ function renderUserPosts() {
                 const ext = url.split('.').pop().toLowerCase();
                 if (['mp4', 'webm', 'ogg'].includes(ext)) {
                     item.innerHTML = `
-                        <video src="http://127.0.0.1:5000${url}" style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover;" autoplay muted loop playsinline></video>
+                        <video src="${url}" style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover;" autoplay muted loop playsinline></video>
                         <div style="position:absolute; top:8px; right:8px;">
                             <svg viewBox="0 0 24 24" width="20" height="20" fill="#fff"><path d="M8 5v14l11-7z"/></svg>
                         </div>
                     `;
                 } else {
-                    item.innerHTML = `<img src="http://127.0.0.1:5000${url}" style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover;" alt="Post">`;
+                    item.innerHTML = `<img src="${url}" style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover;" alt="Post">`;
                 }
             }
         } else if (post.content) {
@@ -1550,7 +1550,7 @@ window.fetchAwaazPosts = function () {
             <div class="spinner"></div><p style="margin-top:10px; color:#a8a8a8;">Loading Awaaz TV posts...</p>
         </div>`;
 
-    const url = `http://127.0.0.1:5000/api/feed?viewer=${encodeURIComponent(viewerEmail)}&user=${encodeURIComponent(viewerEmail)}`;
+    const url = `/api/feed?viewer=${encodeURIComponent(viewerEmail)}&user=${encodeURIComponent(viewerEmail)}`;
     fetch(url)
         .then(r => r.json())
         .then(data => {
@@ -1615,9 +1615,9 @@ function renderAwaazPosts() {
                         ${urls.map(url => {
                     const mapExt = url.split('.').pop().toLowerCase();
                     if (['mp4', 'webm', 'ogg'].includes(mapExt)) {
-                        return '<video src="http://127.0.0.1:5000' + url + '" style="position:absolute; top:0; left:0; flex:0 0 100%; width:100%; height:100%; object-fit:cover; scroll-snap-align:start; background:#000;" muted loop playsinline></video>';
+                        return '<video src="' + url + '" style="position:absolute; top:0; left:0; flex:0 0 100%; width:100%; height:100%; object-fit:cover; scroll-snap-align:start; background:#000;" muted loop playsinline></video>';
                     } else {
-                        return '<img src="http://127.0.0.1:5000' + url + '" style="position:absolute; top:0; left:0; flex:0 0 100%; width:100%; height:100%; object-fit:cover; scroll-snap-align:start; background:#000;" alt="Post">';
+                        return '<img src="' + url + '" style="position:absolute; top:0; left:0; flex:0 0 100%; width:100%; height:100%; object-fit:cover; scroll-snap-align:start; background:#000;" alt="Post">';
                     }
                 }).join('')}
                     </div>
@@ -1630,13 +1630,13 @@ function renderAwaazPosts() {
                 const ext = url.split('.').pop().toLowerCase();
                 if (['mp4', 'webm', 'ogg'].includes(ext)) {
                     item.innerHTML = `
-                        <video src="http://127.0.0.1:5000${url}" style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; background:#000;" autoplay muted loop playsinline></video>
+                        <video src="${url}" style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; background:#000;" autoplay muted loop playsinline></video>
                         <div style="position:absolute; top:8px; right:8px; background:rgba(0,0,0,0.5); border-radius:50%; padding:4px;">
                             <svg viewBox="0 0 24 24" width="16" height="16" fill="#fff"><path d="M8 5v14l11-7z"/></svg>
                         </div>
                     `;
                 } else {
-                    item.innerHTML = `<img src="http://127.0.0.1:5000${url}" style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; background:#000;" alt="Post">`;
+                    item.innerHTML = `<img src="${url}" style="position:absolute; top:0; left:0; width:100%; height:100%; object-fit:cover; background:#000;" alt="Post">`;
                 }
             }
         } else if (post.content) {

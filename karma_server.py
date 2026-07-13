@@ -25,6 +25,9 @@ import uuid
 
 app = Flask(__name__)
 CORS(app)
+@app.route('/')
+def serve_home():
+    return send_from_directory('.', 'welcome.html')
 
 DB   = 'karma.db'
 SALT = 'KARMA_SALT_2025'
@@ -748,5 +751,5 @@ def donate_food():
 
 if __name__ == '__main__':
     init_db()
-    print('KARMA Auth Server running at http://127.0.0.1:5000')
+    print('KARMA Auth Server running at ')
     app.run(debug=True, port=5000)

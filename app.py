@@ -427,5 +427,5 @@ def health():
 
 if __name__ == '__main__':
     init_db()
-    print("🚀 Dastarkhwan Backend (merged) started on http://127.0.0.1:5000")
+    print("🚀 Dastarkhwan Backend (merged) started on ")
     app.run(host='127.0.0.1', port=5000, debug=True)
