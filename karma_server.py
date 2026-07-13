@@ -28,6 +28,9 @@ CORS(app)
 @app.route('/')
 def serve_home():
     return send_from_directory('.', 'welcome.html')
+@app.route('/<path:filename>')
+def serve_static(filename):
+    return send_from_directory('.', filename)
 
 DB   = 'karma.db'
 SALT = 'KARMA_SALT_2025'
