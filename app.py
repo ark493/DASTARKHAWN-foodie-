@@ -9,7 +9,7 @@ from flask import send_from_directory
 
 @app.route('/')
 def serve_home():
-    return send_from_directory('.', 'home.html')
+    return send_from_directory('.', 'welcome.html')
 
 @app.route('/<path:filename>')
 def serve_static(filename):
